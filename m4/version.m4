@@ -23,16 +23,16 @@
 #  Additional labels for pre-release and build metadata are available as
 #  extensions to the MAJOR.MINOR.MICRO-PATCH format.
 #
-m4_define([magick_name], [MagickCache])
-m4_define([magick_major_version], [1])
-m4_define([magick_minor_version], [0])
-m4_define([magick_micro_version], [0])
-m4_define([magick_patchlevel_version], [0])
-m4_define([magick_bugreport],
+m4_define([magickcache_name], [MagickCache])
+m4_define([magickcache_major_version], [0])
+m4_define([magickcache_minor_version], [9])
+m4_define([magickcache_micro_version], [2])
+m4_define([magickcache_patchlevel_version], [0])
+m4_define([magickcache_bugreport],
           [https://github.com/ImageMagick/MagickCache/issues])
-m4_define([magick_url], [https://imagemagick.org])
-m4_define([magick_lib_version], [0x10A])
-m4_define([magick_tarname],[MagickCache])
+m4_define([magickcache_url], [https://imagemagick.org])
+m4_define([magickcache_lib_version], [0x10A])
+m4_define([magickcache_tarname],[MagickCache])
 
 #
 # If the library source code has changed at all since the last update,
@@ -47,6 +47,6 @@ m4_define([magick_tarname],[MagickCache])
 # files if you raise these versions.
 #
 # Bump the minor release # whenever there is an SOVersion bump.
-m4_define([magick_library_current], [0])
-m4_define([magick_library_revision], [0])
-m4_define([magick_library_age], [0])
+m4_define([magickcache_library_current], [0])
+m4_define([magickcache_library_revision], [0])
+m4_define([magickcache_library_age], [0])

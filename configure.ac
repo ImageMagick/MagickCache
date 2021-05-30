@@ -18,86 +18,153 @@ AC_PREREQ(2.69)
 # Initialize Automake
 # ==============================================================================
 m4_include([m4/version.m4])
-m4_define([magick_base_version],
-          [magick_major_version.magick_minor_version.magick_micro_version])
-m4_define([magick_version],
-          [magick_base_version-magick_patchlevel_version])
-m4_define([magick_lib_version_number],
-          [magick_major_version,magick_minor_version,magick_micro_version,magick_patchlevel_version])
-m4_define([magick_git_revision],
+m4_define([magickcache_base_version],
+          [magickcache_major_version.magickcache_minor_version.magickcache_micro_version])
+m4_define([magickcache_version],
+          [magickcache_base_version-magickcache_patchlevel_version])
+m4_define([magickcache_lib_version_number],
+          [magickcache_major_version,magickcache_minor_version,magickcache_micro_version,magickcache_patchlevel_version])
+m4_define([magickcache_git_revision],
           m4_esyscmd([
             c=$(git log --full-history --format=tformat:. HEAD | wc -l)
             h=$(git rev-parse --short HEAD)
             d=$(date +%Y%m%d)
             printf %s "$c:$h:$d"
           ]))
-m4_define([magick_release_date],
+m4_define([magickcache_release_date],
           m4_esyscmd([
             d=$(date +%F -r ./ChangeLog)
             printf %s "$d"
           ]))
 
-AC_INIT([magick_name],
-        [magick_version],
-        [magick_bugreport],
-        [magick_tarname],
-        [magick_url])
+AC_INIT([magickcache_name],
+        [magickcache_version],
+        [magickcache_bugreport],
+        [magickcache_tarname],
+        [magickcache_url])
 
-AC_CONFIG_SRCDIR([MagickCache/MagickCache.h])
-AC_CONFIG_AUX_DIR([config])
-AC_REQUIRE_AUX_FILE([tap-driver.sh])
+AC_CONFIG_SRCDIR([utilities/magick-cache.c])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADERS([config/config.h])
-AX_PREFIX_CONFIG_H([MagickCache/magick-baseconfig.h],[MagickCache])
-AC_CANONICAL_SYSTEM
-AC_CANONICAL_TARGET
-
 AM_INIT_AUTOMAKE([foreign no-define color-tests parallel-tests -Wall -Wno-portability subdir-objects dist-bzip2 dist-lzip dist-xz dist-zip tar-ustar])
 
-AM_SILENT_RULES([yes])
-AC_SUBST([CONFIGURE_DEPENDENCIES],["$CONFIGURE_DEPENDENCIES \$(top_srcdir)/ChangeLog \$(top_srcdir)/m4/version.m4"])
+PKG_PROG_PKG_CONFIG
 
-# ==============================================================================
-# Generate build environment
-# ==============================================================================
-AC_CONFIG_FILES([\
-    Makefile
-])
+# Ensure that make can run correctly
+AM_SANITY_CHECK
+
+# Substitute versioning
+AC_SUBST([MAGICKCACHE_MAJOR_VERSION],[magickcache_major_version])
+AC_SUBST([MAGICKCACHE_MINOR_VERSION],[magickcache_minor_version])
+AC_SUBST([MAGICKCACHE_MICRO_VERSION],[magickcache_micro_version])
+AC_SUBST([MAGICKCACHE_PATCHLEVEL_VERSION],[magickcache_patchlevel_version])
+AC_SUBST([MAGICKCACHE_VERSION],[magickcache_version])
+AC_SUBST([MAGICKCACHE_GIT_REVISION],[magickcache_git_revision])
+
+# Substitute library versioning
+AC_SUBST([MAGICKCACHE_LIBRARY_CURRENT],[magickcache_library_current])dnl
+AC_SUBST([MAGICKCACHE_LIBRARY_REVISION],[magickcache_library_revision])dnl
+AC_SUBST([MAGICKCACHE_LIBRARY_AGE],[magickcache_library_age])dnl
+AC_SUBST([MAGICKCACHE_LIBRARY_CURRENT_MIN],
+         [`expr $MAGICKCACHE_LIBRARY_CURRENT - $MAGICKCACHE_LIBRARY_AGE`])
+AC_SUBST([MAGICKCACHE_LIBRARY_VERSION_INFO],
+         [$MAGICKCACHE_LIBRARY_CURRENT:$MAGICKCACHE_LIBRARY_REVISION:$MAGICKCACHE_LIBRARY_AGE])
+
+AC_SUBST([PACKAGE_BASE_VERSION],[magickcache_base_version])
+AC_SUBST([PACKAGE_PATCHLEVEL_VERSION],[magickcache_patchlevel_version])
+AC_SUBST([PACKAGE_VERSION_ADDENDUM],[-magickcache_patchlevel_version])
+AC_SUBST([PACKAGE_LIB_VERSION],[magickcache_lib_version])
+AC_SUBST([PACKAGE_LIB_VERSION_NUMBER],[magickcache_lib_version_number])
+AC_SUBST([PACKAGE_RELEASE_DATE],[magickcache_release_date])
+
+# versioning of library
+MAGICKCACHE_LIB_VERSION="0x"
+if test ${MAGICKCACHE_LIBRARY_CURRENT} -lt 10 ; then
+  MAGICKCACHE_LIB_VERSION=${MAGICKCACHE_LIB_VERSION}0
+fi
+MAGICKCACHE_LIB_VERSION=${MAGICKCACHE_LIB_VERSION}${MAGICKCACHE_LIBRARY_CURRENT}
+if test ${MAGICKCACHE_LIBRARY_AGE} -lt 10 ; then
+  MAGICKCACHE_LIB_VERSION=${MAGICKCACHE_LIB_VERSION}0
+fi
+MAGICKCACHE_LIB_VERSION=${MAGICKCACHE_LIB_VERSION}${MAGICKCACHE_LIBRARY_AGE}
+if test ${MAGICKCACHE_LIBRARY_REVISION} -lt 10 ; then
+  MAGICKCACHE_LIB_VERSION=${MAGICKCACHE_LIB_VERSION}0
+fi
+MAGICKCACHE_LIB_VERSION=${MAGICKCACHE_LIB_VERSION}${MAGICKCACHE_LIBRARY_REVISION}
+AC_SUBST([MAGICKCACHE_LIB_VERSION])
+
+# Definition used to define MagickLibVersionText in version.h
+MAGICKCACHE_LIB_VERSION_TEXT="${PACKAGE_BASE_VERSION}"
+AC_SUBST([MAGICKCACHE_LIB_VERSION_TEXT])
+
+# Definition used to define MagickLibVersionNumber in version.h
+MAGICKCACHE_LIB_VERSION_NUMBER="${MAGICKCACHE_LIBRARY_CURRENT},${MAGICKCACHE_LIBRARY_AGE},${MAGICKCACHE_LIBRARY_REVISION}"
+AC_SUBST([MAGICKCACHE_LIB_VERSION_NUMBER])
+
+
+# Definition used to define MagickLibVersionText in version.h
+MAGICKPP_LIB_VERSION_TEXT="${PACKAGE_BASE_VERSION}"
+AC_SUBST([MAGICKPP_LIB_VERSION_TEXT])
+
+# Definition used to define MagickLibVersionNumber in version.h
+MAGICKCACHE_LIB_VERSION_NUMBER="${MAGICKCACHE_LIBRARY_CURRENT},${MAGICKCACHE_LIBRARY_AGE},${MAGICKCACHE_LIBRARY_REVISION}"
+AC_SUBST([MAGICKCACHE_LIB_VERSION_NUMBER])
+
+
+# Remember externally set CFLAGS
+EXTERNAL_CFLAGS="$CFLAGS"
+
+# Checks for programs. These may set default variables, such as CFLAGS
+AC_PROG_CC
+AC_PROG_CC_C99
+AC_PROG_RANLIB
+
+# Reset the externally set CFLAGS after calling AC_PROG*
+CFLAGS="$EXTERNAL_CFLAGS"
+
+# Use the C language and compiler for the following checks
+AC_LANG([C])
+
+# Checks for libraries.
+PKG_CHECK_MODULES([MAGICKCORE], [MagickCore], [have_libMagickCore=yes], [have_libMagickCore=no])
+AM_CONDITIONAL([LIB_MAGICKCORE],  [test "$have_libMagickCore" = "yes"])
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([stdio.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIZE_T
+
+# Add debug support
+AC_ARG_ENABLE(debug,
+  AS_HELP_STRING(
+    [--enable-debug],
+    [enable debugging, default: no]),
+    [case "${enableval}" in
+      yes) debug=true ;;
+      no)  debug=false ;;
+      *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+    esac],
+    [debug=false])
+AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
+AM_COND_IF(DEBUG,
+    AC_DEFINE(DEBUG, 1, [Define to 0 if this is a release build]),
+    AC_DEFINE(DEBUG, 0, [Define to 1 or higher if this is a debug build]))
+
+dnl ===========================================================================
+
+# Check for functions
+#
+AC_CHECK_FUNCS([sysconf])
+
+dnl ===========================================================================
+
+# Checks for library functions.
+
+AC_CONFIG_FILES([Makefile
+                 MagickCache/Makefile
+                 MagickCache/version.h
+                 utilities/Makefile
+                 utilities/magick-cache.1])
 AC_OUTPUT
-
-# ==============================================================================
-# ImageMagick Configuration
-# ==============================================================================
-AC_MSG_NOTICE([
-==============================================================================
-${PACKAGE_NAME} ${PACKAGE_VERSION} is configured as follows. Please verify that this
-configuration matches your expectations.
-
-Host system type: $host
-Build system type: $build
-
-                  Option                        Value
-------------------------------------------------------------------------------
-Shared libraries  --enable-shared=$enable_shared    $libtool_build_shared_libs
-Static libraries  --enable-static=$enable_static    $libtool_build_static_libs
-Build utilities   --with-utilities=$with_utilities    $with_utilities
-Module support    --with-modules=$build_modules   $build_modules
-GNU ld            --with-gnu-ld=$with_gnu_ld    $lt_cv_prog_gnu_ld
-
-ptions used to compile and link:
-  PREFIX          = $PREFIX_DIR
-  EXEC-PREFIX     = $EXEC_PREFIX_DIR
-  VERSION         = $PACKAGE_VERSION
-  CC              = $CC
-  CFLAGS          = $CFLAGS
-  CPPFLAGS        = $CPPFLAGS
-  PCFLAGS         = $PCFLAGS
-  DEFS            = $DEFS
-  LDFLAGS         = $LDFLAGS
-  LIBS            = $MAGICK_DEP_LIBS
-  CXX             = $CXX
-  CXXFLAGS        = $CXXFLAGS
-  FEATURES        = $MAGICK_FEATURES
-  DELEGATES       = $MAGICK_DELEGATES
-==============================================================================
-])

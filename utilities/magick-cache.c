@@ -86,11 +86,11 @@ static void MagickCacheUsage(int argc,char **argv)
 {
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
-  (void) fprintf(stdout,"Usage: %s create PATH\n",*argv);
+  (void) fprintf(stdout,"Usage: %s create path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-key passphrase] "
-    "[delete | expire | list] PATH IRI\n",*argv);
+    "[delete | expire | list] path iri\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-key passphrase -ttl seconds] "
-    "[get | put] PATH IRI filename\n",*argv);
+    "[get | put] path iri filename\n",*argv);
   exit(0);
 }
 

@@ -14,7 +14,7 @@ $ magick-cache create /opt/magick-cache
 
 Once you create the magick cache, you will want to populate it with resources including images, video, audio, or metadata.
 
-## Put an image in the Magick Cache
+## Put Content in the Magick Cache
 
 ```
 $ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
@@ -30,7 +30,7 @@ $ magick-cache -key s5hPjbxEwS -ttl "2 days" put /opt/magick-cache movies/image/
 
 Don't forget your cache key. Without it, you will not be able to get, list, delete or expire your content.
 
-## Get an image from the Magick Cache
+## Get Content from the Magick Cache
 
 ```
 $ magick-cache -key s5hPjbxEwS get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
@@ -38,7 +38,7 @@ $ magick-cache -key s5hPjbxEwS get /opt/magick-cache movies/image/mission-imposs
 
 Notice the original image was put in the Magick Cache in the JPEG format. Here we the the image and convert it to the PNG image format.
 
-## Delete an image from the Magick Cache
+## Delete Content from the Magick Cache
 $ magick-cache -key s5hPjbxEwS delete /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 
 To delete any cast images that have expired (exceeded their respective time to live), try this comand:
 

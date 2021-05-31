@@ -20,7 +20,7 @@ Once you create the magick cache, you will want to populate it with resources in
 $ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
 ```
 
-Note, image identifier is an IRI composed of project/type/resource-path. In this example, the project is movies, type is image, and the resource path is mission-impossible/cast/rebecca-ferguson. The path uniquely identifies a resource. Two different images cannot be stored with the same resource path. Instead use something like mission-impossible/cast/200508-rebecca-ferguson and mission-impossible/cast/200513-rebecca-ferguson
+Note, image identifier is an IRI composed of project/type/resource-path. In this example, the project is movies, type is image, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/200508-rebecca-ferguson` and `mission-impossible/cast/200513-rebecca-ferguson`.
 
 Set a cache key and the time to live to 2 days. Anytime after 1 day, the image will automatically expire with the expire function. To get, expire, or delete the image, you will need to use the same cache key.
 

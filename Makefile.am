@@ -7,7 +7,7 @@ SUBDIRS = \
 TOP_EXTRA_DIST = \
 	ChangeLog \
 	LICENSE \
-	README.txt
+	README.md
 
 # Additional files to distribute
 EXTRA_DIST = \

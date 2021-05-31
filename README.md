@@ -16,7 +16,7 @@ $ magick-cache create /opt/magick-cache
 
 Once its created, you will want to populate it with content that includes images, video, audio, or metadata.
 
-## Put Content in the Magick Cache
+## Put content in the Magick Cache
 
 Let's add a movie cast image to the cache to our newly created cache:</p>
 
@@ -34,7 +34,7 @@ $ magick-cache -key s5hPjbxEwS -ttl "2 days" put /opt/magick-cache movies/image/
 
 Don't forget your cache key. Without it, you will not be able to get, list, delete or expire your content.
 
-## Get Content from the Magick Cache
+## Get content from the Magick Cache
 
 Eventually you will want retrieve your content, let's get our cast image from the cache:
 
@@ -44,7 +44,7 @@ $ magick-cache -key s5hPjbxEwS get /opt/magick-cache movies/image/mission-imposs
 
 Notice the original image was put in the Magick Cache in the JPEG format. Here we conveniently convert it to the PNG image format.
 
-## Delete Content from the Magick Cache
+## Delete content from the Magick Cache
 
 We can explicitedly delete content:
 
@@ -58,7 +58,7 @@ or we can delete cast images that have expired (exceeded their respective time t
 $ magick-cache -key s5hPjbxEwS expire /opt/magick-cache movies/image/mission-impossible/cast
 ```
 
-## List the Magick Cache Content
+## List the Magick Cache content
 
 Perhaps you want to audit all the content you own:
 
@@ -68,7 +68,7 @@ $ magick-cache -key s5hPjbxEwS list /opt/magick-cache movies/image/mission-impos
 
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get it, delete it, or list it.
 
-## Magick Cache is not just for Images
+## Magick Cache is not just for images
 
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of blob or metadata with a content type of meta:
 

@@ -4,7 +4,7 @@
 
 The Magick Cache stores and retrieves images efficiently within milliseconds with a small memory footprint. In addition to images, you can store video, audio, and associated properties. The cache supports virtually unlimited content upwards of billions of images making it suitable as a web image service.
 
-The Magick Cache works in concert with ImageMagick. Download the MagickCache and install. You'll now want to create the cache and populate it with images, video, and associated metadata.
+The Magick Cache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You'll now want to create the cache and populate it with images, video, and associated metadata.
 
 ## Create a Magick Cache
 

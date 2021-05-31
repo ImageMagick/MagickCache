@@ -280,7 +280,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @DEBUG_FALSE@AM_CFLAGS = -I$(top_srcdir)/utilities \
-@DEBUG_FALSE@	-I$(top_srcdir)/MagickCache -Wall -g -O3 \
+@DEBUG_FALSE@	-I$(top_srcdir)/MagickCache -Wall -O3 \
 @DEBUG_FALSE@	$(MAGICKCORE_CFLAGS)
 @DEBUG_TRUE@AM_CFLAGS = -I$(top_srcdir)/utilities \
 @DEBUG_TRUE@	-I$(top_srcdir)/MagickCache -Wall -g -O3 \

@@ -157,8 +157,8 @@ CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
-	COPYING ChangeLog INSTALL NEWS README compile depcomp \
-	install-sh missing
+	COPYING ChangeLog INSTALL NEWS compile depcomp install-sh \
+	missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -232,7 +232,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAGICKCACHE_GIT_REVISION = 3:81e36cf:20210530
+MAGICKCACHE_GIT_REVISION = 13:27aa439:20210531
 MAGICKCACHE_LIBRARY_AGE = 0
 MAGICKCACHE_LIBRARY_CURRENT = 0
 MAGICKCACHE_LIBRARY_CURRENT_MIN = 0
@@ -259,7 +259,7 @@ PACKAGE_LIB_VERSION = 0x10A
 PACKAGE_LIB_VERSION_NUMBER = 0,9,2,0
 PACKAGE_NAME = MagickCache
 PACKAGE_PATCHLEVEL_VERSION = 0
-PACKAGE_RELEASE_DATE = 2021-05-30
+PACKAGE_RELEASE_DATE = 2021-05-31
 PACKAGE_STRING = MagickCache 0.9.2-0
 PACKAGE_TARNAME = MagickCache
 PACKAGE_URL = https://imagemagick.org
@@ -321,6 +321,16 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
 					MagickCache \
           utilities
+
+TOP_EXTRA_DIST = \
+	ChangeLog \
+	LICENSE \
+	README.txt
+
+
+# Additional files to distribute
+EXTRA_DIST = \
+	$(TOP_EXTRA_DIST)
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

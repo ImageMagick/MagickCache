@@ -266,7 +266,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         {
           ssize_t count = 0;
           status=IterateMagickCacheResources(cache,iri,&count,ExpireResources);
-          (void) fprintf(stdout,"expired %g resources\n",(double) count);
+          (void) fprintf(stderr,"expired %g resources\n",(double) count);
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
@@ -340,7 +340,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         {
           ssize_t count = 0;
           status=IterateMagickCacheResources(cache,iri,&count,ListResources);
-          (void) fprintf(stdout,"listed %g resources\n",(double) count);
+          (void) fprintf(stderr,"listed %g resources\n",(double) count);
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,

@@ -1,6 +1,6 @@
 # Magick Cache: an Efficient Image Cache
 
-`The Magick cache is a work in progress. Do not use the cache in production services until the API is at least version 1.0.0. It is currently 0.9.2. The Magick Cache requires ImageMagick version 7.0.11-14 or above.`
+`The Magick cache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The Magick Cache requires ImageMagick version 7.0.11-14 or above.`
 
 The Magick Cache stores and retrieves images (and other content) efficiently within milliseconds with a small memory footprint. In addition to images, you can store video, audio, and associated properties. The cache supports virtually unlimited content upwards of billions of images making it suitable as a web image service.
 

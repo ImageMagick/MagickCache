@@ -70,7 +70,7 @@ Others can store content in the cache along side your content.  However, their c
 
 ## Magick Cache is not just for images
 
-In addition to a type of image, you can store the image content in its original form, video, or audio as content type of blob or metadata with a content type of meta:
+In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:
 
 ```
 $ magick-cache -key D4HiNCZeRn put /opt/magick-cache movies/blob/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.mp4

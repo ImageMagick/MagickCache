@@ -252,6 +252,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path)
   (void) ConcatenateString(&sentinel_path,"/");
   (void) ConcatenateString(&sentinel_path,MagickCacheSentinel);
   sentinel=FileToBlob(sentinel_path,~0UL,&extent,cache->exception);
+  sentinel_path=DestroyString(sentinel_path);
   if (sentinel == NULL)
     {
       cache=DestroyMagickCache(cache);
@@ -605,7 +606,15 @@ MagickExport MagickCacheResource *DestroyMagickCacheResource(
 {
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);
-  if (resource->nonce != (StringInfo *) NULL )
+  if (resource->iri != (char *) NULL)
+    resource->iri=DestroyString(resource->iri);
+  if (resource->project != (char *) NULL)
+    resource->project=DestroyString(resource->project);
+  if (resource->type != (char *) NULL)
+    resource->type=DestroyString(resource->type);
+  if (resource->id != (char *) NULL)
+    resource->id=DestroyString(resource->id);
+  if (resource->nonce != (StringInfo *) NULL)
     resource->nonce=DestroyStringInfo(resource->nonce);
   if (resource->exception != (ExceptionInfo *) NULL)
     resource->exception=DestroyExceptionInfo(resource->exception);
@@ -762,6 +771,8 @@ static void SetMagickCacheResourceID(MagickCache *cache,
   signature=DestroyStringInfo(signature);
   if (digest != (char *) NULL)
     {
+      if (resource->id != (char *) NULL)
+        resource->id=DestroyString(resource->id);
       resource->id=ConstantString(digest);
       digest=DestroyString(digest);
     }
@@ -1442,11 +1453,14 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
         }
       if ((strcmp(entry->d_name, ".") == 0) ||
           (strcmp(entry->d_name, "..") == 0))
-        continue;
+        {
+          path=DestroyString(path);
+          continue;
+        }
       if (S_ISDIR(attributes.st_mode) != 0)
         {
           node=AcquireCriticalMemory(sizeof(struct ResourceNode));
-          node->path=ConstantString(path);
+          node->path=path;
           node->next=(struct ResourceNode *) NULL;
           q->next=node;
           q=q->next;
@@ -1464,6 +1478,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
                 GetPathComponent(path,HeadPath,path);
                 resource=AcquireMagickCacheResource(cache,path+
                   strlen(cache->path)+1);
+                path=DestroyString(path);
                 status=GetMagickCacheResource(cache,resource);
                 if (status != MagickFalse)
                   status=callback(cache,resource,context);
@@ -1474,6 +1489,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
                     break;
                   }
               }
+            path=DestroyString(path);
             sentinel=DestroyString(sentinel);
           }
       path=DestroyString(path);
@@ -1845,21 +1861,31 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
   MagickCacheResource *resource,const char *iri)
 {
   char
+    *path,
     *p;
 
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);
+  if (resource->iri != (char *) NULL)
+    resource->iri=DestroyString(resource->iri);
   resource->iri=ConstantString(iri);
-  resource->project=ConstantString(iri);
-  p=strtok(resource->project,"/");
+  path=ConstantString(iri);
+  p=strtok(path,"/");
   if (p == (char *) NULL)
     return(MagickFalse);
+  if (resource->project != (char *) NULL)
+    resource->project=DestroyString(resource->project);
   resource->project=ConstantString(p);
   p=strtok(NULL,"/");
   if (p == (char *) NULL)
     return(MagickFalse);
-  resource->id=ConstantString("");
+  if (resource->type != (char *) NULL)
+    resource->type=DestroyString(resource->type);
   resource->type=ConstantString(p);
+  path=DestroyString(path);
+  if (resource->id != (char *) NULL)
+    resource->id=DestroyString(resource->id);
+  resource->id=ConstantString("");
   if (LocaleCompare(resource->type,"blob") == 0)
     resource->resource_type=BlobResourceType;
   else

@@ -64,7 +64,7 @@
 %
 */
 
-static MagickBooleanType ExpireMyResources(MagickCache *cache,
+static MagickBooleanType ExpireResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
   ssize_t *count = (ssize_t *) context;
@@ -72,13 +72,23 @@ static MagickBooleanType ExpireMyResources(MagickCache *cache,
   return(ExpireMagickCacheResource(cache,resource));
 }
 
-static MagickBooleanType ListMyResources(MagickCache *cache,
+static MagickBooleanType ListResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
-  ssize_t *count = (ssize_t *) context;
+  char
+    timestamp[sizeof("9999-99-99T99:99:99Z")];
+
+  ssize_t
+    *count = (ssize_t *) context;
+
+  time_t
+    epoch;
+
+  epoch=GetMagickCacheResourceTimestamp(resource);
+  (void) strftime(timestamp,sizeof(timestamp),"%FT%TZ",gmtime(&epoch));
+  (void) fprintf(stderr,"%s %gs %s\n",GetMagickCacheResourceIRI(resource),
+    (double) GetMagickCacheResourceTTL(resource),timestamp);
   (*count)++;
-  (void) fprintf(stderr,"%s %g\n",GetMagickCacheResourceIRI(resource),
-    (double) GetMagickCacheResourceTTL(resource));
   return(MagickTrue);
 }
 
@@ -130,6 +140,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ImageInfo
     *image_info;
 
+  int
+    i = 1;
+
   MagickBooleanType
     status;
 
@@ -145,9 +158,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   size_t
     extent,
     ttl = 0;
-
-  ssize_t
-    i = 1;
 
   void
     *blob;
@@ -171,7 +181,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       */
       if (i == (argc-1))
         MagickCacheUsage(argc,argv);
-      ttl=InterpretLocaleValue(argv[++i],&q);
+      ttl=(size_t) InterpretLocaleValue(argv[++i],&q);
       if (q != argv[i])
         {
           while (isspace((int) ((unsigned char) *q)) != 0)
@@ -255,9 +265,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       if (LocaleCompare(function,"expire") == 0)
         {
           ssize_t count = 0;
-          status=IterateMagickCacheResources(cache,iri,&count,
-            ExpireMyResources);
-          (void) fprintf(stdout,"%g resources expired\n",(double) count);
+          status=IterateMagickCacheResources(cache,iri,&count,ExpireResources);
+          (void) fprintf(stdout,"expired %g resources\n",(double) count);
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
@@ -330,9 +339,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       if (LocaleCompare(function,"list") == 0)
         {
           ssize_t count = 0;
-          status=IterateMagickCacheResources(cache,iri,&count,
-            ListMyResources);
-          (void) fprintf(stdout,"%g resources listed\n",(double) count);
+          status=IterateMagickCacheResources(cache,iri,&count,ListResources);
+          (void) fprintf(stdout,"listed %g resources\n",(double) count);
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
@@ -397,6 +405,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       ThrowMagickCacheException(exception);
     }
   }
+  resource=DestroyMagickCacheResource(resource);
   cache=DestroyMagickCache(cache);
   return(0);
 }

@@ -12,7 +12,7 @@ The Magick Cache works in concert with ImageMagick. Download the MagickCache and
 $ magick-cache create /opt/magick-cache
 ```
 
-Once you create the magick cache, you will want to populate it with resources including images, video, audio, or metadata.
+Once you create the magick cache, you will want to populate it with content that includes images, video, audio, or metadata.
 
 ## Put Content in the Magick Cache
 

@@ -44,6 +44,18 @@ $ magick-cache -key s5hPjbxEwS get /opt/magick-cache movies/image/mission-imposs
 
 Notice the original image was put in the Magick Cache in the JPEG format. Here we conveniently convert it to the PNG image format.
 
+The `-extract` option is useful when retrieving an image.  To extract a portion of the image, specify tile width, height, and offset:
+
+```
+$ magick-cache -key s5hPjbxEwS -extract 100x100+0+0 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+```
+
+To resize instead, do not specify the offset:
+
+```
+$ magick-cache -key s5hPjbxEwS -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+```
+
 ## Delete content from the Magick Cache
 
 We can explicitedly delete content:

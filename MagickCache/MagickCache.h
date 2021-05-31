@@ -60,7 +60,8 @@ extern MagickExport ExceptionInfo
   *GetMagickCacheResourceException(const MagickCacheResource *);
 
 extern MagickExport Image
-  *GetMagickCacheResourceImage(MagickCache *cache,MagickCacheResource *);
+  *GetMagickCacheResourceImage(MagickCache *cache,MagickCacheResource *,
+    const char *);
 
 extern MagickExport MagickBooleanType
   CreateMagickCache(const char *),

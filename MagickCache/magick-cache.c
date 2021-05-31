@@ -1056,7 +1056,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %  The format of the GetMagickCacheResourceImage method is:
 %
 %      Image *GetMagickCacheResourceImage(MagickCache *cache,
-%        MagickCacheResource *resource)
+%        MagickCacheResource *resource,const char *extract)
 %
 %  A description of each parameter follows:
 %
@@ -1064,9 +1064,11 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %
 %    o resource: the resource.
 %
+%    o extract: the extract geometry.
+%
 */
 MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
-  MagickCacheResource *resource)
+  MagickCacheResource *resource,const char *extract)
 {
   char
     *path;
@@ -1095,6 +1097,12 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
   (void) ConcatenateString(&path,resource->iri);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->id);
+  if (extract != (const char *) NULL)
+    {
+      (void) ConcatenateString(&path,"[");
+      (void) ConcatenateString(&path,extract);
+      (void) ConcatenateString(&path,"]");
+    }
   if (strlen(path) > (MagickPathExtent-2))
     {
       path=DestroyString(path);

@@ -103,8 +103,10 @@ static void MagickCacheUsage(int argc,char **argv)
   (void) fprintf(stdout,"Usage: %s create path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-key passphrase] "
     "[delete | expire | list] path iri\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-extract geometry -key passphrase "
+    "-ttl seconds] get path iri filename\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-key passphrase -ttl seconds] "
-    "[get | put] path iri filename\n",*argv);
+    "put path iri filename\n",*argv);
   exit(0);
 }
 
@@ -130,6 +132,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 }
 
   char
+    *extract = (char *) NULL,
     *filename = (char *) NULL,
     *function,
     *iri,
@@ -168,45 +171,44 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 
   if (argc < 2)
     MagickCacheUsage(argc,argv);
-  if (LocaleCompare(argv[i],"-key") == 0)
-    {
-      if (i == (argc-1))
-        MagickCacheUsage(argc,argv);
+  for ( ; i < (argc-1); i++)
+  {
+    if (*argv[i] != '-')
+      break;
+    if (LocaleCompare(argv[i],"-key") == 0)
       key=argv[++i];
-      i++;
-    }
-  if (LocaleCompare(argv[i],"-ttl") == 0)
-    {
-      char
-        *q;
+    if (LocaleCompare(argv[i],"-ttl") == 0)
+      {
+        char
+          *q;
 
-      /*
-        Time to live, absolute or relative, e.g. 1440, 2 hours, 3 days, ...
-      */
-      if (i == (argc-1))
-        MagickCacheUsage(argc,argv);
-      ttl=(size_t) InterpretLocaleValue(argv[++i],&q);
-      if (q != argv[i])
-        {
-          while (isspace((int) ((unsigned char) *q)) != 0)
-            q++;
-          if (LocaleNCompare(q,"second",6) == 0)
-            ttl*=1;
-          if (LocaleNCompare(q,"minute",6) == 0)
-            ttl*=60;
-          if (LocaleNCompare(q,"hour",4) == 0)
-            ttl*=3600;
-          if (LocaleNCompare(q,"day",3) == 0)
-            ttl*=86400;
-          if (LocaleNCompare(q,"week",4) == 0)
-            ttl*=604800;
-          if (LocaleNCompare(q,"month",5) == 0)
-            ttl*=2628000;
-          if (LocaleNCompare(q,"year",4) == 0)
-            ttl*=31536000;
-        }
-      i++;
-    }
+        /*
+          Time to live, absolute or relative, e.g. 1440, 2 hours, 3 days, ...
+        */
+        ttl=(size_t) InterpretLocaleValue(argv[++i],&q);
+        if (q != argv[i])
+          {
+            while (isspace((int) ((unsigned char) *q)) != 0)
+              q++;
+            if (LocaleNCompare(q,"second",6) == 0)
+              ttl*=1;
+            if (LocaleNCompare(q,"minute",6) == 0)
+              ttl*=60;
+            if (LocaleNCompare(q,"hour",4) == 0)
+              ttl*=3600;
+            if (LocaleNCompare(q,"day",3) == 0)
+              ttl*=86400;
+            if (LocaleNCompare(q,"week",4) == 0)
+              ttl*=604800;
+            if (LocaleNCompare(q,"month",5) == 0)
+              ttl*=2628000;
+            if (LocaleNCompare(q,"year",4) == 0)
+              ttl*=31536000;
+          }
+      }
+    if (LocaleCompare(argv[i],"-extract") == 0)
+      extract=argv[++i];
+  }
   if (i == (argc-1))
     MagickCacheUsage(argc,argv);
   function=argv[i];
@@ -298,7 +300,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             }
             case ImageResourceType:
             {
-              image=GetMagickCacheResourceImage(cache,resource);
+              image=GetMagickCacheResourceImage(cache,resource,extract);
               if (image == (Image *) NULL)
                 {
                   status=MagickFalse;

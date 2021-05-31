@@ -856,7 +856,8 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceBlob() gets a resource identified by its IRI in the
-%  MagickCacheResource structure.
+%  MagickCacheResource structure.  When you are done with the resource,
+%  free it with RelinquishMagickMemory().
 %
 %  The format of the GetMagickCacheResourceBlob method is:
 %
@@ -1049,7 +1050,8 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceImage() gets a resource identified by its IRI in the
-%  MagickCacheResource structure.
+%  MagickCacheResource structure. When you are done with the resource, free it
+%  with DestroyImage().
 %
 %  The format of the GetMagickCacheResourceImage method is:
 %
@@ -1156,6 +1158,7 @@ MagickExport const char *GetMagickCacheResourceIRI(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceMeta() gets any metadata associated with the resource.
+%  When you are done with the metadata, free it with DestroyString().
 %
 %  The format of the GetMagickCacheResourceMeta method is:
 %

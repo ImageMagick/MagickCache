@@ -48,6 +48,7 @@
 #include <string.h>
 #include <strings.h>
 #include <ctype.h>
+#include <math.h>
 #include "MagickCache/MagickCache.h"
 
 /*
@@ -76,6 +77,7 @@ static MagickBooleanType ListResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
   char
+    extent[MagickPathExtent],
     timestamp[sizeof("9999-99-99T99:99:99Z")];
 
   ssize_t
@@ -84,10 +86,12 @@ static MagickBooleanType ListResources(MagickCache *cache,
   time_t
     epoch;
 
+  (void) FormatMagickSize(GetMagickCacheResourceExtent(resource),MagickTrue,
+    "B",MagickPathExtent,extent);
   epoch=GetMagickCacheResourceTimestamp(resource);
   (void) strftime(timestamp,sizeof(timestamp),"%FT%TZ",gmtime(&epoch));
-  (void) fprintf(stderr,"%s %gs %s\n",GetMagickCacheResourceIRI(resource),
-    (double) GetMagickCacheResourceTTL(resource),timestamp);
+  (void) fprintf(stderr,"%s %gs %s %s\n",GetMagickCacheResourceIRI(resource),
+    (double) GetMagickCacheResourceTTL(resource),extent,timestamp);
   (*count)++;
   return(MagickTrue);
 }

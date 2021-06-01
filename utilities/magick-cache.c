@@ -83,15 +83,23 @@ static MagickBooleanType ListResources(MagickCache *cache,
   ssize_t
     *count = (ssize_t *) context;
 
+  size_t
+    columns,
+    rows;
+
   time_t
     epoch;
 
-  (void) FormatMagickSize(GetMagickCacheResourceExtent(resource),MagickTrue,
-    "B",MagickPathExtent,extent);
+  GetMagickCacheResourceExtent(resource,&columns,&rows);
+  if (GetMagickCacheResourceType(resource) != ImageResourceType)
+    (void) FormatMagickSize(columns,MagickTrue,"B",MagickPathExtent,extent);
+  else
+    (void) snprintf(extent,MagickPathExtent,"%gx%g",(double) columns,(double)
+      rows);
   epoch=GetMagickCacheResourceTimestamp(resource);
   (void) strftime(timestamp,sizeof(timestamp),"%FT%TZ",gmtime(&epoch));
-  (void) fprintf(stderr,"%s %gs %s %s\n",GetMagickCacheResourceIRI(resource),
-    (double) GetMagickCacheResourceTTL(resource),extent,timestamp);
+  (void) fprintf(stderr,"%s %s %gs %s\n",GetMagickCacheResourceIRI(resource),
+    extent,(double) GetMagickCacheResourceTTL(resource),timestamp);
   (*count)++;
   return(MagickTrue);
 }
@@ -287,14 +295,18 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           {
             case BlobResourceType:
             {
+              size_t
+                extent,
+                sans;
+
               blob=GetMagickCacheResourceBlob(cache,resource);
               if (blob == (void *) NULL)
                 {
                   status=MagickFalse;
                   break;
                 }
-              status=BlobToFile(filename,blob,GetMagickCacheResourceExtent(
-                resource),exception);
+              GetMagickCacheResourceExtent(resource,&extent,&sans);
+              status=BlobToFile(filename,blob,extent,exception);
               blob=RelinquishMagickMemory(blob);
               break;
             }

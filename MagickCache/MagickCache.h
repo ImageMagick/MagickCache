@@ -47,7 +47,6 @@ extern MagickExport const char
   *GetMagickCacheResourceIRI(const MagickCacheResource *);
 
 extern MagickExport const size_t
-  GetMagickCacheResourceExtent(const MagickCacheResource *),
   GetMagickCacheResourceTTL(const MagickCacheResource *),
   GetMagickCacheResourceVersion(const MagickCacheResource *);
 
@@ -95,6 +94,7 @@ extern MagickExport MagickCacheResourceType
 
 extern MagickExport void
   *GetMagickCacheResourceBlob(MagickCache *,MagickCacheResource *),
+  GetMagickCacheResourceExtent(const MagickCacheResource *,size_t *,size_t *),
   SetMagickCacheKey(MagickCache *,const char *),
   SetMagickCacheResourceTTL(MagickCacheResource *,const size_t);
 

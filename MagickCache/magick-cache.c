@@ -116,7 +116,8 @@ struct _MagickCacheResource
     ttl;
 
   size_t
-    extent,
+    columns,
+    rows,
     version;
 
   StringInfo
@@ -752,6 +753,10 @@ static void GetMagickCacheResourceSentinel(MagickCacheResource *resource,
   p+=GetStringInfoLength(resource->nonce);
   (void) memcpy(&resource->ttl,p,sizeof(resource->ttl));
   p+=sizeof(resource->ttl);
+  (void) memcpy(&resource->columns,p,sizeof(resource->columns));
+  p+=sizeof(resource->columns);
+  (void) memcpy(&resource->rows,p,sizeof(resource->rows));
+  p+=sizeof(resource->rows);
 }
 
 static void SetMagickCacheResourceID(MagickCache *cache,
@@ -838,9 +843,10 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
         CacheError,"cannot access resource sentinel","`%s'",path);
       return(MagickFalse);
     }
-  path=DestroyString(path);
   resource->timestamp=(time_t) attributes.st_ctime;
-  resource->extent=(size_t) attributes.st_size;
+  if (resource->resource_type != ImageResourceType)
+    resource->columns=(size_t) attributes.st_size;
+  path=DestroyString(path);
   return(MagickTrue);
 }
 
@@ -895,7 +901,8 @@ MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
   (void) ConcatenateString(&path,resource->iri);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->id);
-  blob=FileToBlob(path,resource->extent,&resource->extent,resource->exception);
+  blob=FileToBlob(path,resource->columns,&resource->columns,
+    resource->exception);
   path=DestroyString(path);
   return(blob);
 }
@@ -948,20 +955,21 @@ MagickExport ExceptionInfo *GetMagickCacheResourceException(
 %
 %  The format of the GetMagickCacheResourceExtent method is:
 %
-%      const size_t GetMagickCacheResourceExtent(
-%        const MagickCacheResource *resource)
+%      const void GetMagickCacheResourceExtent(
+%        const MagickCacheResource *resource,size_t *columns,size_t *rows)
 %
 %  A description of each parameter follows:
 %
 %    o resource: a pointer to a MagickCacheResource structure.
 %
 */
-MagickExport const size_t GetMagickCacheResourceExtent(
-  const MagickCacheResource *resource)
+MagickExport void GetMagickCacheResourceExtent(
+  const MagickCacheResource *resource,size_t *columns,size_t *rows)
 {
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCacheSignature);
-  return(resource->extent);
+  *columns=resource->columns;
+  *rows=resource->rows;
 }
 
 /*
@@ -1207,7 +1215,7 @@ MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
       errno=ENAMETOOLONG;
       return((char *) NULL);
     }
-  meta=(char *) FileToBlob(path,resource->extent,&resource->extent,
+  meta=(char *) FileToBlob(path,resource->columns,&resource->columns,
     resource->exception);
   path=DestroyString(path);
   return(meta);
@@ -1572,6 +1580,10 @@ static StringInfo *SetMagickCacheResourceSentinel(
   p+=GetStringInfoLength(resource->nonce);
   (void) memcpy(p,&resource->ttl,sizeof(resource->ttl));
   p+=sizeof(resource->ttl);
+  (void) memcpy(p,&resource->columns,sizeof(resource->columns));
+  p+=sizeof(resource->ttl);
+  (void) memcpy(p,&resource->rows,sizeof(resource->rows));
+  p+=sizeof(resource->ttl);
   SetStringInfoLength(meta,(size_t) (p-GetStringInfoDatum(meta)));
   return(meta);
 }
@@ -1733,6 +1745,8 @@ MagickExport MagickBooleanType PutMagickCacheResourceImage(MagickCache *cache,
   /*
     Puts an image resource in the magick cache identified by its IRI.
   */
+  resource->columns=image->columns; 
+  resource->rows=image->rows; 
   status=PutMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(status);

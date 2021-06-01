@@ -126,7 +126,7 @@ CFLAGS="$EXTERNAL_CFLAGS"
 AC_LANG([C])
 
 # Checks for libraries.
-PKG_CHECK_MODULES([MAGICKCORE], [MagickCore], [have_libMagickCore=yes], [have_libMagickCore=no])
+PKG_CHECK_MODULES([MAGICKCORE], [MagickCore >= 7.0.11], [have_libMagickCore=yes], [have_libMagickCore=no])
 AM_CONDITIONAL([LIB_MAGICKCORE],  [test "$have_libMagickCore" = "yes"])
 
 # Checks for header files.

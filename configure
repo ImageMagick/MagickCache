@@ -3176,7 +3176,7 @@ MAGICKCACHE_PATCHLEVEL_VERSION=0
 
 MAGICKCACHE_VERSION=0.9.2-0
 
-MAGICKCACHE_GIT_REVISION=35:b4fb18c:20210601
+MAGICKCACHE_GIT_REVISION=36:535afec:20210601
 
 
 # Substitute library versioning
@@ -4569,12 +4569,12 @@ if test -n "$MAGICKCORE_CFLAGS"; then
     pkg_cv_MAGICKCORE_CFLAGS="$MAGICKCORE_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "MagickCore") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore >= 7.0.11\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "MagickCore >= 7.0.11") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_MAGICKCORE_CFLAGS=`$PKG_CONFIG --cflags "MagickCore" 2>/dev/null`
+  pkg_cv_MAGICKCORE_CFLAGS=`$PKG_CONFIG --cflags "MagickCore >= 7.0.11" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -4586,12 +4586,12 @@ if test -n "$MAGICKCORE_LIBS"; then
     pkg_cv_MAGICKCORE_LIBS="$MAGICKCORE_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "MagickCore") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore >= 7.0.11\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "MagickCore >= 7.0.11") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_MAGICKCORE_LIBS=`$PKG_CONFIG --libs "MagickCore" 2>/dev/null`
+  pkg_cv_MAGICKCORE_LIBS=`$PKG_CONFIG --libs "MagickCore >= 7.0.11" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -4612,9 +4612,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "MagickCore" 2>&1`
+	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "MagickCore >= 7.0.11" 2>&1`
         else
-	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "MagickCore" 2>&1`
+	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "MagickCore >= 7.0.11" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$MAGICKCORE_PKG_ERRORS" >&5

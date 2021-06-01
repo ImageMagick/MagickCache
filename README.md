@@ -76,7 +76,7 @@ Perhaps you want to audit all the content you own:
 
 ```
 $ magick-cache -key s5hPjbxEwS list /opt/magick-cache movies/image/mission-impossible/cast
-movies/image/mission-impossible/cast/rebecca-ferguson 1368x912 86400s 2021-05-30T17:41:42Z
+movies/image/mission-impossible/cast/rebecca-ferguson 1368x912 1:0:0:0 2021-05-30T17:41:42Z
 listed 1 resources
 ```
 

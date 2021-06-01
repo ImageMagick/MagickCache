@@ -85,11 +85,7 @@ static MagickBooleanType ListResources(MagickCache *cache,
 
   size_t
     columns,
-    days,
-    hours,
-    minutes,
     rows,
-    seconds,
     ttl;
 
   time_t
@@ -104,16 +100,10 @@ static MagickBooleanType ListResources(MagickCache *cache,
   epoch=GetMagickCacheResourceTimestamp(resource);
   (void) strftime(timestamp,sizeof(timestamp),"%FT%TZ",gmtime(&epoch));
   ttl=GetMagickCacheResourceTTL(resource);
-  days=ttl/24/3600;
-  ttl%=24*3600;
-  hours=ttl/3600;
-  ttl%=3600;
-  minutes=ttl/60;
-  ttl%=60;
-  seconds=ttl;
   (void) fprintf(stderr,"%s %s %g:%g:%g:%g %s\n",
-    GetMagickCacheResourceIRI(resource),extent,(double) days,(double) hours,
-    (double) minutes,(double) seconds,timestamp);
+    GetMagickCacheResourceIRI(resource),extent,(double) (ttl/(3600*24)),
+      (double) ((ttl % (24*3600))/3600),(double) ((ttl % 3600)/60),
+      (double) ((ttl % 3600) % 60),timestamp);
   (*count)++;
   return(MagickTrue);
 }

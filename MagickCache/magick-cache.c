@@ -1511,7 +1511,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
       if (S_ISDIR(attributes.st_mode) != 0)
         {
           node=AcquireCriticalMemory(sizeof(struct ResourceNode));
-          node->path=path;
+          node->path=ConstantString(path);
           node->next=(struct ResourceNode *) NULL;
           q->next=node;
           q=q->next;

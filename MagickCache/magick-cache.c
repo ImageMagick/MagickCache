@@ -401,24 +401,6 @@ MagickExport const size_t GetMagickCacheResourceExtent(
 %
 */
 
-static unsigned int GetMagickCachePassphrase(const char *path,
-  const StringInfo *key,const StringInfo *nonce)
-{
-  StringInfo
-    *signature;
-
-  unsigned int
-    passphrase;
-
-  signature=StringToStringInfo(path);
-  ConcatenateStringInfo(signature,key);
-  ConcatenateStringInfo(signature,nonce);
-  passphrase=CRC32(GetStringInfoDatum(signature),
-    GetStringInfoLength(signature));
-  signature=DestroyStringInfo(signature);
-  return(passphrase);
-}
-
 static StringInfo *SetMagickCacheSentinel(void)
 {
   RandomInfo

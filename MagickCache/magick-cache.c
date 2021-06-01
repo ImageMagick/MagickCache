@@ -118,6 +118,7 @@ struct _MagickCacheResource
   size_t
     columns,
     rows,
+    extent,
     version;
 
   StringInfo
@@ -342,6 +343,38 @@ MagickExport MagickBooleanType ClearMagickCacheException(MagickCache *cache)
       cache->path != (char *) NULL ? cache->path : "");
   ClearMagickException(cache->exception);
   return(MagickTrue);
+}
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%   G e t M a g i c k C a c h e R e s o u r c e E x t e n t                   %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  GetMagickCacheResourceExtent() returns the resource extent associated with
+%  the MagickCacheResource structure.
+%
+%  The format of the GetMagickCacheResourceTTL method is:
+%
+%      const size_t GetMagickCacheResourceExtent(
+%        const MagickCacheResource *resource)
+%
+%  A description of each parameter follows:
+%
+%    o resource: a pointer to a MagickCacheResource structure.
+%
+*/
+MagickExport const size_t GetMagickCacheResourceExtent(
+  const MagickCacheResource *resource)
+{
+  assert(resource != (MagickCacheResource *) NULL);
+  assert(resource->signature == MagickCacheSignature);
+  return(resource->extent);
 }
 
 /*
@@ -844,8 +877,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
       return(MagickFalse);
     }
   resource->timestamp=(time_t) attributes.st_ctime;
-  if (resource->resource_type != ImageResourceType)
-    resource->columns=(size_t) attributes.st_size;
+  resource->extent=(size_t) attributes.st_size;
   path=DestroyString(path);
   return(MagickTrue);
 }
@@ -937,39 +969,6 @@ MagickExport ExceptionInfo *GetMagickCacheResourceException(
   assert(resource != (const MagickCacheResource *) NULL);
   assert(resource->signature == MagickCacheSignature);
   return(resource->exception);
-}
-
-/*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-%                                                                             %
-%                                                                             %
-%   G e t M a g i c k C a c h e R e s o u r c e E x t e n t                   %
-%                                                                             %
-%                                                                             %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  GetMagickCacheResourceExtent() returns the extent of the resource blob,
-%  image, or meta associated with the MagickCacheResource structure.
-%
-%  The format of the GetMagickCacheResourceExtent method is:
-%
-%      const void GetMagickCacheResourceExtent(
-%        const MagickCacheResource *resource,size_t *columns,size_t *rows)
-%
-%  A description of each parameter follows:
-%
-%    o resource: a pointer to a MagickCacheResource structure.
-%
-*/
-MagickExport void GetMagickCacheResourceExtent(
-  const MagickCacheResource *resource,size_t *columns,size_t *rows)
-{
-  assert(resource != (MagickCacheResource *) NULL);
-  assert(resource->signature == MagickCacheSignature);
-  *columns=resource->columns;
-  *rows=resource->rows;
 }
 
 /*
@@ -1219,6 +1218,39 @@ MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
     resource->exception);
   path=DestroyString(path);
   return(meta);
+}
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%   G e t M a g i c k C a c h e R e s o u r c e S i z e                       %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  GetMagickCacheResourceSize() returns the extent of the resource blob,
+%  image, or meta associated with the MagickCacheResource structure.
+%
+%  The format of the GetMagickCacheResourceSize method is:
+%
+%      const void GetMagickCacheResourceSize(
+%        const MagickCacheResource *resource,size_t *columns,size_t *rows)
+%
+%  A description of each parameter follows:
+%
+%    o resource: a pointer to a MagickCacheResource structure.
+%
+*/
+MagickExport void GetMagickCacheResourceSize(
+  const MagickCacheResource *resource,size_t *columns,size_t *rows)
+{
+  assert(resource != (MagickCacheResource *) NULL);
+  assert(resource->signature == MagickCacheSignature);
+  *columns=resource->columns;
+  *rows=resource->rows;
 }
 
 /*

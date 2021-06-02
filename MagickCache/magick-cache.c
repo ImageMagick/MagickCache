@@ -1098,7 +1098,7 @@ MagickExport const void *GetMagickCacheResourceBlob(MagickCache *cache,
   (void) ConcatenateString(&path,resource->iri);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->id);
-  status=ResourceToBlob(resource,path); 
+  status=ResourceToBlob(resource,path);
   path=DestroyString(path);
   if (status == MagickFalse)
     return((const void *) NULL);
@@ -1378,7 +1378,7 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
       errno=ENAMETOOLONG;
       return((char *) NULL);
     }
-  status=ResourceToBlob(resource,path); 
+  status=ResourceToBlob(resource,path);
   path=DestroyString(path);
   if (status == MagickFalse)
     return((const char *) NULL);
@@ -1942,8 +1942,8 @@ MagickExport MagickBooleanType PutMagickCacheResourceImage(MagickCache *cache,
   /*
     Puts an image resource in the magick cache identified by its IRI.
   */
-  resource->columns=image->columns; 
-  resource->rows=image->rows; 
+  resource->columns=image->columns;
+  resource->rows=image->rows;
   status=PutMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(status);

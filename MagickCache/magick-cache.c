@@ -659,24 +659,27 @@ static MagickBooleanType UnmapResourceBlob(void *map,const size_t length)
 #endif
 }
 
+static void DestroyMagickCacheResourceBlob(MagickCacheResource *resource)
+{
+  if (resource->resource_type == ImageResourceType)
+    resource->blob=DestroyImageList((Image *) resource->blob);
+  else
+    if (resource->memory_mapped == MagickFalse)
+      resource->blob=RelinquishMagickMemory(resource->blob);
+    else
+      {
+        (void) UnmapResourceBlob(resource->blob,resource->extent);
+        resource->memory_mapped=MagickFalse;
+      }
+}
+
 MagickExport MagickCacheResource *DestroyMagickCacheResource(
   MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);
   if (resource->blob != NULL)
-    {
-      if (resource->resource_type == ImageResourceType)
-        resource->blob=DestroyImageList((Image *) resource->blob);
-      else
-        if (resource->memory_mapped == MagickFalse)
-          resource->blob=RelinquishMagickMemory(resource->blob);
-        else
-          {
-            (void) UnmapResourceBlob(resource->blob,resource->extent);
-            resource->memory_mapped=MagickFalse;
-          }
-    }
+    DestroyMagickCacheResourceBlob(resource);
   if (resource->iri != (char *) NULL)
     resource->iri=DestroyString(resource->iri);
   if (resource->project != (char *) NULL)
@@ -1030,6 +1033,8 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
     }
   resource->extent=(size_t) attributes.st_size;
   file=open_utf8(path,O_RDONLY | O_BINARY,0);
+  if (resource->blob != NULL)
+    DestroyMagickCacheResourceBlob(resource);
   resource->blob=MapResourceBlob(file,ReadMode,0,resource->extent);
   if (resource->blob != NULL)
     {
@@ -1278,6 +1283,8 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
   (void) strcpy(image_info->filename,path);
   (void) strcpy(image_info->magick,"MPC");
   exception=AcquireExceptionInfo();
+  if (resource->blob != NULL)
+    DestroyMagickCacheResourceBlob(resource);
   resource->blob=(void *) ReadImage(image_info,exception);
   exception=DestroyExceptionInfo(exception);
   if (resource->blob == (void *) NULL)

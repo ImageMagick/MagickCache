@@ -260,12 +260,16 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   resource=AcquireMagickCacheResource(cache,iri);
   SetMagickCacheResourceTTL(resource,ttl);
   type=GetMagickCacheResourceType(resource);
-  if (type == UndefinedResourceType)
-    ThrowMagickCacheException(GetMagickCacheResourceException(resource));
   if ((LocaleCompare(function,"delete") != 0) &&
       (LocaleCompare(function,"expire") != 0) &&
       (LocaleCompare(function,"list") != 0))
     {
+      if (type == UndefinedResourceType)
+        {
+          (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
+            "unrecognized resource type","`%s'",iri);
+          ThrowMagickCacheException(exception);
+        }
       if (i == (argc-1))
         MagickCacheUsage(argc,argv);
       filename=argv[++i];

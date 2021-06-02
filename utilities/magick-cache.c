@@ -245,7 +245,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       return(0);
     }
-  cache=AcquireMagickCache(path);
+  cache=AcquireMagickCache(path,key);
   if (cache == (MagickCache *) NULL)
     {
       message=GetExceptionMessage(errno);
@@ -253,7 +253,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         "unable to open magick cache","`%s': %s",path,message);
       ThrowMagickCacheException(exception);
     }
-  SetMagickCacheKey(cache,key);
   if (i == (argc-1))
     MagickCacheUsage(argc,argv);
   iri=argv[++i];

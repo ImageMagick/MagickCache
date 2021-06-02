@@ -160,12 +160,14 @@ struct _MagickCacheResource
 %
 %  The format of the AcquireMagickCache method is:
 %
-%      MagickCache *AcquireMagickCache(const char *path)
+%      MagickCache *AcquireMagickCache(const char *path,const char *key)
 %
 %  A description of each parameter follows:
 %
 %    o path: the magick cache path, absolute (e.g. /myrepo) or relative (e.g.
 %      ./myrepo).
+%
+%    o key: the magick cache key.
 %
 */
 
@@ -215,7 +217,7 @@ static inline unsigned int GetMagickCacheSignature(const StringInfo *nonce)
   return(signature);
 }
 
-MagickExport MagickCache *AcquireMagickCache(const char *path)
+MagickExport MagickCache *AcquireMagickCache(const char *path,const char *key)
 {
   char
     *sentinel_path;
@@ -251,7 +253,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path)
   cache->timestamp=(time_t) attributes.st_ctime;
   cache->random_info=AcquireRandomInfo();
   cache->nonce=GetRandomKey(cache->random_info,MagickCacheNonceExtent);
-  cache->key=AcquireStringInfo(0);
+  cache->key=StringToStringInfo(key);
   cache->exception=AcquireExceptionInfo();
   cache->debug=IsEventLogging();
   cache->signature=MagickCacheSignature;
@@ -2017,41 +2019,6 @@ MagickExport MagickBooleanType PutMagickCacheResourceMeta(MagickCache *cache,
   status=BlobToFile(path,properties,strlen(properties)+1,cache->exception);
   path=DestroyString(path);
   return(status);
-}
-
-/*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-%                                                                             %
-%                                                                             %
-%   S e t M a g i c k C a c h e K e y                                         %
-%                                                                             %
-%                                                                             %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  SetMagickCacheKey() associates an API key with the magick-cache.
-%
-%  The format of the SetMagickCacheKey method is:
-%
-%      SetMagickCacheKey(MagickCache *cache,const char *key)
-%
-%  A description of each parameter follows:
-%
-%    o resource: a pointer to a MagickCacheResource structure.
-%
-%    o key: the API key.
-%
-*/
-MagickExport void SetMagickCacheKey(MagickCache *cache,const char *key)
-{
-  assert(cache != (MagickCache *) NULL);
-  assert(cache->signature == MagickCoreSignature);
-  if (key == (const char *) NULL)
-    return;
-  if (cache->key != (StringInfo *) NULL )
-    cache->key=DestroyStringInfo(cache->key);
-  cache->key=StringToStringInfo(key);
 }
 
 /*

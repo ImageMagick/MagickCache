@@ -84,7 +84,7 @@ extern MagickExport MagickBooleanType
   SetMagickCacheResourceVersion(MagickCacheResource *,const size_t);
 
 extern MagickExport MagickCache
-  *AcquireMagickCache(const char *),
+  *AcquireMagickCache(const char *,const char *),
   *DestroyMagickCache(MagickCache *);
 
 extern MagickExport MagickCacheResource
@@ -96,7 +96,6 @@ extern MagickExport MagickCacheResourceType
 
 extern MagickExport void
   GetMagickCacheResourceSize(const MagickCacheResource *,size_t *,size_t *),
-  SetMagickCacheKey(MagickCache *,const char *),
   SetMagickCacheResourceTTL(MagickCacheResource *,const size_t);
 
 #if defined(__cplusplus) || defined(c_plusplus)

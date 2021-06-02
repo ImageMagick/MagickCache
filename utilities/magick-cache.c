@@ -154,11 +154,16 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     *iri,
     *key = (char *) NULL,
     *message = (char *) NULL,
-    *meta,
     *path;
 
-  Image
+  const char
+    *meta;
+
+  const Image
     *image;
+
+  const void
+    *blob;
 
   ImageInfo
     *image_info;
@@ -181,9 +186,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   size_t
     extent,
     ttl = 0;
-
-  void
-    *blob;
 
   if (argc < 2)
     MagickCacheUsage(argc,argv);
@@ -303,23 +305,21 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           {
             case BlobResourceType:
             {
-              size_t
-                extent,
-                sans;
-
               blob=GetMagickCacheResourceBlob(cache,resource);
               if (blob == (void *) NULL)
                 {
                   status=MagickFalse;
                   break;
                 }
-              GetMagickCacheResourceSize(resource,&extent,&sans);
-              status=BlobToFile(filename,blob,extent,exception);
-              blob=RelinquishMagickMemory(blob);
+              status=BlobToFile(filename,blob,GetMagickCacheResourceExtent(
+                resource),exception);
               break;
             }
             case ImageResourceType:
             {
+              Image
+                *write_image;
+
               image=GetMagickCacheResourceImage(cache,resource,extract);
               if (image == (Image *) NULL)
                 {
@@ -327,9 +327,10 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
                   break;
                 }
               image_info=AcquireImageInfo();
-              status=WriteImages(image_info,image,filename,exception);
+              write_image=CloneImageList(image,exception);
+              status=WriteImages(image_info,write_image,filename,exception);
+              write_image=DestroyImageList(write_image);
               image_info=DestroyImageInfo(image_info);
-              image=DestroyImage(image);
               break;
             }
             case MetaResourceType:
@@ -341,7 +342,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
                   break;
                 }
               status=BlobToFile(filename,meta,strlen(meta),exception);
-              meta=(char *) RelinquishMagickMemory(meta);
               break;
             }
             default:
@@ -352,8 +352,11 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             }
           }
           if (status == MagickFalse)
-            ThrowMagickCacheException(GetMagickCacheResourceException(
-              resource));
+            {
+              (void) ThrowMagickException(exception,GetMagickModule(),
+                OptionError,"unable to get resource","`%s'",filename);
+              ThrowMagickCacheException(exception);
+            }
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
@@ -385,7 +388,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
               if (blob == (void *) NULL)
                 break;
               status=PutMagickCacheResourceBlob(cache,resource,extent,blob);
-              blob=RelinquishMagickMemory(blob);
               break;
             }
             case ImageResourceType:
@@ -396,7 +398,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
               image=ReadImage(image_info,exception);
               image_info=DestroyImageInfo(image_info);
               status=PutMagickCacheResourceImage(cache,resource,image);
-              image=DestroyImage(image);
               break;
             }
             case MetaResourceType:
@@ -405,7 +406,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
               if (meta == (char *) NULL)
                 break;
               status=PutMagickCacheResourceMeta(cache,resource,meta);
-              meta=(char *) RelinquishMagickMemory(meta);
               break;
             }
             default:
@@ -416,8 +416,11 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             }
           }
           if (status == MagickFalse)
-            ThrowMagickCacheException(GetMagickCacheResourceException(
-              resource));
+            {
+              (void) ThrowMagickException(exception,GetMagickModule(),
+                OptionError,"unable to put resource","`%s'",filename);
+              ThrowMagickCacheException(exception);
+            }
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,

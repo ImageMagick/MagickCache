@@ -40,11 +40,9 @@ typedef struct _MagickCache
 typedef struct _MagickCacheResource
   MagickCacheResource;
 
-extern MagickExport char
-  *GetMagickCacheResourceMeta(MagickCache *,MagickCacheResource *);
-
 extern MagickExport const char
-  *GetMagickCacheResourceIRI(const MagickCacheResource *);
+  *GetMagickCacheResourceIRI(const MagickCacheResource *),
+  *GetMagickCacheResourceMeta(MagickCache *,MagickCacheResource *);
 
 extern MagickExport const size_t
   GetMagickCacheResourceExtent(const MagickCacheResource *),
@@ -55,11 +53,14 @@ extern MagickExport const time_t
   GetMagickCacheTimestamp(const MagickCache *),
   GetMagickCacheResourceTimestamp(const MagickCacheResource *);
 
+extern MagickExport const void
+  *GetMagickCacheResourceBlob(MagickCache *,MagickCacheResource *);
+
 extern MagickExport ExceptionInfo
   *GetMagickCacheException(const MagickCache *),
   *GetMagickCacheResourceException(const MagickCacheResource *);
 
-extern MagickExport Image
+extern MagickExport const Image
   *GetMagickCacheResourceImage(MagickCache *cache,MagickCacheResource *,
     const char *);
 
@@ -94,7 +95,6 @@ extern MagickExport MagickCacheResourceType
   GetMagickCacheResourceType(const MagickCacheResource *);
 
 extern MagickExport void
-  *GetMagickCacheResourceBlob(MagickCache *,MagickCacheResource *),
   GetMagickCacheResourceSize(const MagickCacheResource *,size_t *,size_t *),
   SetMagickCacheKey(MagickCache *,const char *),
   SetMagickCacheResourceTTL(MagickCacheResource *,const size_t);

@@ -48,8 +48,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <MagickCore/MagickCore.h>
 #include "MagickCache/MagickCache.h"
 #include "MagickCache/magick-cache-private.h"
@@ -110,6 +112,12 @@ struct _MagickCacheResource
 
   MagickCacheResourceType
     resource_type;
+
+  void
+    *blob;
+
+  MagickBooleanType
+    memory_mapped;
 
   time_t
     timestamp,
@@ -635,11 +643,40 @@ MagickExport MagickCache *DestroyMagickCache(MagickCache *cache)
 %    o resource_info: the image info.
 %
 */
+
+static MagickBooleanType UnmapResourceBlob(void *map,const size_t length)
+{
+#if defined(MAGICKCORE_HAVE_MMAP)
+  int
+    status;
+
+  status=munmap(map,length);
+  return(status == -1 ? MagickFalse : MagickTrue);
+#else
+  (void) map;
+  (void) length;
+  return(MagickFalse);
+#endif
+}
+
 MagickExport MagickCacheResource *DestroyMagickCacheResource(
   MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);
+  if (resource->blob != NULL)
+    {
+      if (resource->resource_type == ImageResourceType)
+        resource->blob=DestroyImageList((Image *) resource->blob);
+      else
+        if (resource->memory_mapped == MagickFalse)
+          resource->blob=RelinquishMagickMemory(resource->blob);
+        else
+          {
+            (void) UnmapResourceBlob(resource->blob,resource->extent);
+            resource->memory_mapped=MagickFalse;
+          }
+    }
   if (resource->iri != (char *) NULL)
     resource->iri=DestroyString(resource->iri);
   if (resource->project != (char *) NULL)
@@ -899,7 +936,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %
 %  The format of the GetMagickCacheResourceBlob method is:
 %
-%      void *GetMagickCacheResourceBlob(MagickCache *cache,
+%      const void *GetMagickCacheResourceBlob(MagickCache *cache,
 %        MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
@@ -909,7 +946,133 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %    o resource: the resource.
 %
 */
-MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
+
+static void *MapResourceBlob(int file,const MapMode mode,
+  const MagickOffsetType offset,const size_t length)
+{
+#if defined(MAGICKCORE_HAVE_MMAP)
+  int
+    flags,
+    protection;
+
+  void
+    *map;
+
+  /*
+    Map file.
+  */
+  flags=0;
+  if (file == -1)
+#if defined(MAP_ANONYMOUS)
+    flags|=MAP_ANONYMOUS;
+#else
+    return(NULL);
+#endif
+  switch (mode)
+  {
+    case ReadMode:
+    default:
+    {
+      protection=PROT_READ;
+      flags|=MAP_PRIVATE;
+      break;
+    }
+    case WriteMode:
+    {
+      protection=PROT_WRITE;
+      flags|=MAP_SHARED;
+      break;
+    }
+    case IOMode:
+    {
+      protection=PROT_READ | PROT_WRITE;
+      flags|=MAP_SHARED;
+      break;
+    }
+  }
+#if !defined(MAGICKCORE_HAVE_HUGEPAGES) || !defined(MAP_HUGETLB)
+  map=mmap((char *) NULL,length,protection,flags,file,offset);
+#else
+  map=mmap((char *) NULL,length,protection,flags | MAP_HUGETLB,file,offset);
+  if (map == MAP_FAILED)
+    map=mmap((char *) NULL,length,protection,flags,file,offset);
+#endif
+  if (map == MAP_FAILED)
+    return(NULL);
+  return(map);
+#else
+  (void) file;
+  (void) mode;
+  (void) offset;
+  (void) length;
+  return(NULL);
+#endif
+}
+
+static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
+  const char *path)
+{
+  int
+    file;
+
+  ssize_t
+    count = 0,
+    i;
+
+  struct stat
+    attributes;
+
+  if (GetPathAttributes(path,&attributes) == MagickFalse)
+    {
+      (void) ThrowMagickException(resource->exception,GetMagickModule(),
+        CacheError,"cannot get resource","`%s'",resource->iri);
+      return(MagickFalse);
+    }
+  resource->extent=(size_t) attributes.st_size;
+  file=open_utf8(path,O_RDONLY | O_BINARY,0);
+  resource->blob=MapResourceBlob(file,ReadMode,0,resource->extent);
+  if (resource->blob != NULL)
+    {
+      resource->memory_mapped=MagickTrue;
+      file=close(file)-1;
+      return(MagickTrue);
+    }
+  resource->blob=AcquireMagickMemory(resource->extent);
+  if (resource->blob == NULL)
+    return(MagickFalse);
+  for (i=0; i < (ssize_t) resource->extent; i+=count)
+  {
+    ssize_t
+      count;
+
+    count=read(file,resource->blob+i,(size_t) MagickCacheMin(resource->extent-i,
+      (size_t) SSIZE_MAX));
+    if (count <= 0)
+      {
+        count=0;
+        if (errno != EINTR)
+          break;
+      }
+  }
+  if (i < (ssize_t) resource->extent)
+    {
+      file=close(file)-1;
+      resource->blob=RelinquishMagickMemory(resource->blob);
+      (void) ThrowMagickException(resource->exception,GetMagickModule(),
+        CacheError,"cannot get resource","`%s'",resource->iri);
+      return(MagickFalse);
+    }
+  if (close(file) == -1)
+    {
+      resource->blob=RelinquishMagickMemory(resource->blob);
+      (void) ThrowMagickException(resource->exception,GetMagickModule(),
+        CacheError,"cannot get resource","`%s'",resource->iri);
+      return(MagickFalse);
+    }
+  return(MagickTrue);
+}
+
+MagickExport const void *GetMagickCacheResourceBlob(MagickCache *cache,
   MagickCacheResource *resource)
 {
   char
@@ -917,9 +1080,6 @@ MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
 
   MagickBooleanType
     status;
-
-  void
-    *blob;
 
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
@@ -933,10 +1093,11 @@ MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
   (void) ConcatenateString(&path,resource->iri);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->id);
-  blob=FileToBlob(path,resource->columns,&resource->columns,
-    resource->exception);
+  status=ResourceToBlob(resource,path); 
   path=DestroyString(path);
-  return(blob);
+  if (status == MagickFalse)
+    return((const void *) NULL);
+  return((const void *) resource->blob);
 }
 
 /*
@@ -1062,7 +1223,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %
 %  The format of the GetMagickCacheResourceImage method is:
 %
-%      Image *GetMagickCacheResourceImage(MagickCache *cache,
+%      const Image *GetMagickCacheResourceImage(MagickCache *cache,
 %        MagickCacheResource *resource,const char *extract)
 %
 %  A description of each parameter follows:
@@ -1074,7 +1235,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %    o extract: the extract geometry.
 %
 */
-MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
+MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
   MagickCacheResource *resource,const char *extract)
 {
   char
@@ -1082,9 +1243,6 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
 
   ExceptionInfo
     *exception;
-
-  Image
-    *image;
 
   ImageInfo
     *image_info;
@@ -1120,14 +1278,14 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
   (void) strcpy(image_info->filename,path);
   (void) strcpy(image_info->magick,"MPC");
   exception=AcquireExceptionInfo();
-  image=ReadImage(image_info,exception);
+  resource->blob=(void *) ReadImage(image_info,exception);
   exception=DestroyExceptionInfo(exception);
-  if (image == (Image *) NULL)
+  if (resource->blob == (void *) NULL)
     (void) ThrowMagickException(resource->exception,GetMagickModule(),
       CacheError,"cannot get resource","`%s'",resource->iri);
   path=DestroyString(path);
   image_info=DestroyImageInfo(image_info);
-  return(image);
+  return((const Image *) resource->blob);
 }
 
 /*
@@ -1177,7 +1335,7 @@ MagickExport const char *GetMagickCacheResourceIRI(
 %
 %  The format of the GetMagickCacheResourceMeta method is:
 %
-%      char *GetMagickCacheResourceMeta(MagickCacheResource *resource)
+%      const char *GetMagickCacheResourceMeta(MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
@@ -1186,11 +1344,10 @@ MagickExport const char *GetMagickCacheResourceIRI(
 %    o resource: the resource.
 %
 */
-MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
+MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
   MagickCacheResource *resource)
 {
   char
-    *meta,
     *path;
 
   MagickBooleanType
@@ -1214,10 +1371,11 @@ MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
       errno=ENAMETOOLONG;
       return((char *) NULL);
     }
-  meta=(char *) FileToBlob(path,resource->columns,&resource->columns,
-    resource->exception);
+  status=ResourceToBlob(resource,path); 
   path=DestroyString(path);
-  return(meta);
+  if (status == MagickFalse)
+    return((const char *) NULL);
+  return((const char *) resource->blob);
 }
 
 /*

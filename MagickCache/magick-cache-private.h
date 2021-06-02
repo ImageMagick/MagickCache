@@ -26,6 +26,12 @@ extern "C" {
 #include <fcntl.h>
 #include <dirent.h>
 
+#define MagickCacheMin(x,y)  (((x) < (y)) ? (x) : (y))
+
+#if !defined(O_BINARY)
+#define O_BINARY  0x00
+#endif
+
 #if defined(MAGICKCORE_WINDOWS_SUPPORT)
 #if !defined(readdir)
 #  define readdir(directory)  NTReadDirectory(directory)
@@ -203,6 +209,26 @@ static inline MagickBooleanType MagickCreatePath(const char *path)
   directed_path=DestroyString(directed_path);
   directed_walk=DestroyString(directed_walk);
   return(status == 0 ? MagickTrue : MagickFalse);
+}
+
+static inline int open_utf8(const char *path,int flags,mode_t mode)
+{
+#if !defined(MAGICKCORE_WINDOWS_SUPPORT) || defined(__CYGWIN__)
+  return(open(path,flags,mode));
+#else
+   int
+     status;
+
+   wchar_t
+     *path_wide;
+
+   path_wide=create_wchar_path(path);
+   if (path_wide == (wchar_t *) NULL)
+     return(-1);
+   status=_wopen(path_wide,flags,mode);
+   path_wide=(wchar_t *) RelinquishMagickMemory(path_wide);
+   return(status);
+#endif
 }
 
 static inline int remove_utf8(const char *path)

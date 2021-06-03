@@ -252,7 +252,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,const char *key)
   cache->path=ConstantString(path);
   cache->timestamp=(time_t) attributes.st_ctime;
   cache->random_info=AcquireRandomInfo();
-  cache->nonce=GetRandomKey(cache->random_info,MagickCacheNonceExtent);
+  cache->nonce=AcquireStringInfo(MagickCacheNonceExtent);
   cache->key=StringToStringInfo(key);
   cache->exception=AcquireExceptionInfo();
   cache->debug=IsEventLogging();

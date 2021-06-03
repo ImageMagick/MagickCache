@@ -418,7 +418,7 @@ static StringInfo *SetMagickCacheSentinel(void)
 
   StringInfo
     *key_info,
-    *meta;
+    *sentinel;
 
   unsigned char
     *p;
@@ -426,19 +426,19 @@ static StringInfo *SetMagickCacheSentinel(void)
   unsigned int
     signature;
 
-  meta=AcquireStringInfo(MagickPathExtent);
+  sentinel=AcquireStringInfo(MagickPathExtent);
   random_info=AcquireRandomInfo();
   key_info=GetRandomKey(random_info,MagickCacheNonceExtent);
-  p=GetStringInfoDatum(meta);
+  p=GetStringInfoDatum(sentinel);
   signature=GetMagickCacheSignature(key_info);
   (void) memcpy(p,&signature,sizeof(signature));
   p+=sizeof(signature);
   (void) memcpy(p,GetStringInfoDatum(key_info),MagickCacheNonceExtent);
   p+=MagickCacheNonceExtent;
-  SetStringInfoLength(meta,(size_t) (p-GetStringInfoDatum(meta)));
+  SetStringInfoLength(sentinel,(size_t) (p-GetStringInfoDatum(sentinel)));
   key_info=DestroyStringInfo(key_info);
   random_info=DestroyRandomInfo(random_info);
-  return(meta);
+  return(sentinel);
 }
 
 MagickExport MagickBooleanType CreateMagickCache(const char *path)
@@ -1696,16 +1696,18 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
                 GetPathComponent(path,HeadPath,path);
                 resource=AcquireMagickCacheResource(cache,path+
                   strlen(cache->path)+1);
-                path=DestroyString(path);
                 status=GetMagickCacheResource(cache,resource);
                 if (status != MagickFalse)
-                  status=callback(cache,resource,context);
-                resource=DestroyMagickCacheResource(resource);
-                if (status == MagickFalse)
                   {
-                    sentinel=DestroyString(sentinel);
-                    break;
+                    status=callback(cache,resource,context);
+                    if (status == MagickFalse)
+                      {
+                        resource=DestroyMagickCacheResource(resource);
+                        sentinel=DestroyString(sentinel);
+                        break;
+                      }
                   }
+                resource=DestroyMagickCacheResource(resource);
               }
             path=DestroyString(path);
             sentinel=DestroyString(sentinel);

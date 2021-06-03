@@ -117,7 +117,7 @@ static void MagickCacheUsage(int argc,char **argv)
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
   (void) fprintf(stdout,"Usage: %s create path\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-key passphrase] "
+  (void) fprintf(stdout,"Usage: %s [-key filename] "
     "[delete | expire | list] path iri\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-extract geometry -key passphrase "
     "-ttl seconds] get path iri filename\n",*argv);
@@ -194,7 +194,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     if (*argv[i] != '-')
       break;
     if (LocaleCompare(argv[i],"-key") == 0)
-      key=argv[++i];
+      key=FileToStringInfo(argv[++i],~0UL,exception);
     if (LocaleCompare(argv[i],"-ttl") == 0)
       {
         char

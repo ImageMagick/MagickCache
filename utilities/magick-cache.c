@@ -78,7 +78,10 @@ static MagickBooleanType ListResources(MagickCache *cache,
 {
   char
     extent[MagickPathExtent],
-    timestamp[sizeof("9999-99-99T99:99:99Z")];
+    iso8601[sizeof("9999-99-99T99:99:99Z")];
+
+  int
+    expired;
 
   ssize_t
     *count = (ssize_t *) context;
@@ -102,12 +105,15 @@ static MagickBooleanType ListResources(MagickCache *cache,
         rows);
     }
   epoch=GetMagickCacheResourceTimestamp(resource);
-  (void) strftime(timestamp,sizeof(timestamp),"%FT%TZ",gmtime(&epoch));
+  (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",gmtime(&epoch));
   ttl=GetMagickCacheResourceTTL(resource);
-  (void) fprintf(stderr,"%s %s %g:%g:%g:%g %s\n",
+  expired=' ';
+  if ((ttl != 0) && ((ttl+epoch) < time(0)))
+    expired='*';
+  (void) fprintf(stderr,"%s %s %g:%g:%g:%g%c %s\n",
     GetMagickCacheResourceIRI(resource),extent,(double) (ttl/(3600*24)),
       (double) ((ttl % (24*3600))/3600),(double) ((ttl % 3600)/60),
-      (double) ((ttl % 3600) % 60),timestamp);
+      (double) ((ttl % 3600) % 60),expired,iso8601);
   (*count)++;
   return(MagickTrue);
 }

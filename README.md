@@ -40,6 +40,8 @@ The cache key ensures only you and the cache owner can access your image.  To pr
 $ magick-cache -cache-key passkey.txt -cipher-key passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
 ```
 
+Note, blobs and metadata are stored in the cache in plaintext.
+
 ## Get content from the Magick Cache
 
 Eventually you will want retrieve your content, let's get our cast image from the cache:
@@ -92,7 +94,7 @@ movies/image/mission-impossible/cast/rebecca-ferguson 1368x912 1:0:0:0 2021-05-3
 listed 1 resources
 ```
 
-Each entry includes the IRI, image dimensions, time to live, and creation date.  For meta and blob content, the extent in bytes is listed.
+Each entry includes the IRI, image dimensions, time to live, whether the resource is expired (denoted with a `*`), and the creation date.  For meta and blob content, the extent in bytes is listed.
 
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get it, delete it, or list it.
 

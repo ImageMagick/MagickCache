@@ -157,8 +157,7 @@ CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
-	COPYING ChangeLog INSTALL NEWS compile depcomp install-sh \
-	missing
+	ChangeLog INSTALL NEWS compile depcomp install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -211,7 +210,7 @@ AUTOMAKE = ${SHELL} /home/cristy/MagickCache-0.9.2/missing automake-1.16
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g
+CFLAGS = 
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -232,7 +231,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAGICKCACHE_GIT_REVISION = 38:5888275:20210601
+MAGICKCACHE_GIT_REVISION = 52:52b76b8:20210604
 MAGICKCACHE_LIBRARY_AGE = 0
 MAGICKCACHE_LIBRARY_CURRENT = 0
 MAGICKCACHE_LIBRARY_CURRENT_MIN = 0
@@ -259,7 +258,7 @@ PACKAGE_LIB_VERSION = 0x10A
 PACKAGE_LIB_VERSION_NUMBER = 0,9,2,0
 PACKAGE_NAME = MagickCache
 PACKAGE_PATCHLEVEL_VERSION = 0
-PACKAGE_RELEASE_DATE = 2021-05-31
+PACKAGE_RELEASE_DATE = 2021-06-04
 PACKAGE_STRING = MagickCache 0.9.2-0
 PACKAGE_TARNAME = MagickCache
 PACKAGE_URL = https://imagemagick.org
@@ -320,7 +319,8 @@ top_srcdir = .
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
 					MagickCache \
-          utilities
+          utilities \
+          tests
 
 TOP_EXTRA_DIST = \
 	ChangeLog \

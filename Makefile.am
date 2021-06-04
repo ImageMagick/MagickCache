@@ -2,7 +2,8 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = \
 					MagickCache \
-          utilities
+          utilities \
+          tests
 
 TOP_EXTRA_DIST = \
 	ChangeLog \

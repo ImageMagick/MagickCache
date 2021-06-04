@@ -160,7 +160,7 @@ struct _MagickCacheResource
 %
 %  The format of the AcquireMagickCache method is:
 %
-%      MagickCache *AcquireMagickCache(const char *path,const char *key)
+%      MagickCache *AcquireMagickCache(const char *path,const StringInfo *key)
 %
 %  A description of each parameter follows:
 %
@@ -217,7 +217,8 @@ static inline unsigned int GetMagickCacheSignature(const StringInfo *nonce)
   return(signature);
 }
 
-MagickExport MagickCache *AcquireMagickCache(const char *path,const char *key)
+MagickExport MagickCache *AcquireMagickCache(const char *path,
+  const StringInfo *key)
 {
   char
     *sentinel_path;
@@ -253,7 +254,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,const char *key)
   cache->timestamp=(time_t) attributes.st_ctime;
   cache->random_info=AcquireRandomInfo();
   cache->nonce=AcquireStringInfo(MagickCacheNonceExtent);
-  cache->key=StringToStringInfo(key);
+  cache->key=CloneStringInfo(key);
   cache->exception=AcquireExceptionInfo();
   cache->debug=IsEventLogging();
   cache->signature=MagickCacheSignature;

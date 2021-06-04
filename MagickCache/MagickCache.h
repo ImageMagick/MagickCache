@@ -84,7 +84,7 @@ extern MagickExport MagickBooleanType
   SetMagickCacheResourceVersion(MagickCacheResource *,const size_t);
 
 extern MagickExport MagickCache
-  *AcquireMagickCache(const char *,const char *),
+  *AcquireMagickCache(const char *,const StringInfo *),
   *DestroyMagickCache(MagickCache *);
 
 extern MagickExport MagickCacheResource

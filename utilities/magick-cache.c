@@ -117,11 +117,11 @@ static void MagickCacheUsage(int argc,char **argv)
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
   (void) fprintf(stdout,"Usage: %s create path\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-key filename] "
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename] "
     "[delete | expire | list] path iri\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-extract geometry -key passphrase "
+  (void) fprintf(stdout,"Usage: %s [-extract geometry -cache-key passphrase "
     "-ttl seconds] get path iri filename\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-key passphrase -ttl seconds] "
+  (void) fprintf(stdout,"Usage: %s [-cache-key passphrase -ttl seconds] "
     "put path iri filename\n",*argv);
   exit(0);
 }
@@ -152,7 +152,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     *filename = (char *) NULL,
     *function,
     *iri,
-    *key = (char *) NULL,
     *message = (char *) NULL,
     *path;
 
@@ -187,14 +186,17 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     extent,
     ttl = 0;
 
+  StringInfo
+    *cache_key = (StringInfo *) NULL;
+
   if (argc < 2)
     MagickCacheUsage(argc,argv);
   for ( ; i < (argc-1); i++)
   {
     if (*argv[i] != '-')
       break;
-    if (LocaleCompare(argv[i],"-key") == 0)
-      key=FileToStringInfo(argv[++i],~0UL,exception);
+    if (LocaleCompare(argv[i],"-cache-key") == 0)
+      cache_key=FileToStringInfo(argv[++i],~0UL,exception);
     if (LocaleCompare(argv[i],"-ttl") == 0)
       {
         char
@@ -245,7 +247,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       return(0);
     }
-  cache=AcquireMagickCache(path,key);
+  cache=AcquireMagickCache(path,cache_key);
   if (cache == (MagickCache *) NULL)
     {
       message=GetExceptionMessage(errno);

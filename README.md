@@ -29,7 +29,7 @@ Note, the image identifier is an IRI composed of `project/type/resource-path`. I
 Now, set a cache key and the time to live to 2 days. Anytime after 1 day, the image will automatically expire with the `expire` function. To get, expire, or delete the image, you will need to use the same cache key.
 
 ```
-$ magick-cache -key passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
+$ magick-cache -cache-key passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
 ```
 
 Where `passphrase.txt` contains your passphrase. Don't forget your cache key. Without it, you will not be able to get, list, delete or expire your content.
@@ -39,7 +39,7 @@ Where `passphrase.txt` contains your passphrase. Don't forget your cache key. Wi
 Eventually you will want retrieve your content, let's get our cast image from the cache:
 
 ```
-$ magick-cache -key passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -cache-key passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 Notice the original image was put in the Magick Cache in the JPEG format. Here we conveniently convert it to the PNG image format.
@@ -47,13 +47,13 @@ Notice the original image was put in the Magick Cache in the JPEG format. Here w
 The `-extract` option is useful when retrieving an image.  To extract a portion of the image, specify tile width, height, and offset:
 
 ```
-$ magick-cache -key passphrase.txt -extract 100x100+0+0 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -cache-key passphrase.txt -extract 100x100+0+0 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 To resize instead, do not specify the offset:
 
 ```
-$ magick-cache -key passphrase.txt -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -cache-key passphrase.txt -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 ## Delete content from the Magick Cache
@@ -61,13 +61,13 @@ $ magick-cache -key passphrase.txt -extract 100x100 get /opt/magick-cache movies
 We can explicitedly delete content:
 
 ```
-$ magick-cache -key passphrase.txt delete /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 
+$ magick-cache -cache-key passphrase.txt delete /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 
 ```
 
 or we can delete cast images that have expired (exceeded their respective time to live), try this comand:
 
 ```
-$ magick-cache -key passphrase.txt expire /opt/magick-cache movies/image/mission-impossible/cast
+$ magick-cache -cache-key passphrase.txt expire /opt/magick-cache movies/image/mission-impossible/cast
 ```
 
 ## List the Magick Cache content
@@ -75,7 +75,7 @@ $ magick-cache -key passphrase.txt expire /opt/magick-cache movies/image/mission
 Perhaps you want to audit all the content you own:
 
 ```
-$ magick-cache -key passphrase.txt list /opt/magick-cache movies/image/mission-impossible/cast
+$ magick-cache -cache-key passphrase.txt list /opt/magick-cache movies/image/mission-impossible/cast
 movies/image/mission-impossible/cast/rebecca-ferguson 1368x912 1:0:0:0 2021-05-30T17:41:42Z
 listed 1 resources
 ```
@@ -89,13 +89,13 @@ Others can store content in the cache along side your content.  However, their c
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:
 
 ```
-$ magick-cache -key passphrase.txt put /opt/magick-cache movies/blob/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.mp4
+$ magick-cache -cache-key passphrase.txt put /opt/magick-cache movies/blob/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.mp4
 ```
 
 or
 
 ```
-$ magick-cache -key passphrase.txt put /opt/magick-cache movies/meta/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.txt
+$ magick-cache -cache-key passphrase.txt put /opt/magick-cache movies/meta/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.txt
 ```
 
 Images must be in a format that ImageMagick understands.  Metadata must be text.  Blobs can be any content including images, video, audio, or binary files.

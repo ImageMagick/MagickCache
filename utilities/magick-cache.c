@@ -196,7 +196,16 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     if (*argv[i] != '-')
       break;
     if (LocaleCompare(argv[i],"-cache-key") == 0)
-      cache_key=FileToStringInfo(argv[++i],~0UL,exception);
+      {
+        cache_key=FileToStringInfo(argv[++i],~0UL,exception);
+        if (cache_key == (StringInfo *) NULL)
+          {
+            message=GetExceptionMessage(errno);
+            (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
+              "unable to read passphrase","`%s': %s",argv[i],message);
+            ThrowMagickCacheException(exception);
+          }
+      }
     if (LocaleCompare(argv[i],"-ttl") == 0)
       {
         char

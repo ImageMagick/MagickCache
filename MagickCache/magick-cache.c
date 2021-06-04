@@ -254,7 +254,10 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
   cache->timestamp=(time_t) attributes.st_ctime;
   cache->random_info=AcquireRandomInfo();
   cache->nonce=AcquireStringInfo(MagickCacheNonceExtent);
-  cache->key=CloneStringInfo(key);
+  if (key == (StringInfo *) NULL)
+    cache->key=AcquireStringInfo(0);
+  else
+    cache->key=CloneStringInfo(key);
   cache->exception=AcquireExceptionInfo();
   cache->debug=IsEventLogging();
   cache->signature=MagickCacheSignature;

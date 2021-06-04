@@ -211,7 +211,7 @@ AUTOMAKE = ${SHELL} /home/cristy/MagickCache-0.9.2/missing automake-1.16
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = 
+CFLAGS = -g
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo

@@ -119,10 +119,10 @@ static void MagickCacheUsage(int argc,char **argv)
   (void) fprintf(stdout,"Usage: %s create path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] "
     "[delete | expire | list] path iri\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-extract geometry -cache-key passphrase "
-    "-ttl seconds] get path iri filename\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-cache-key passphrase -ttl seconds] "
-    "put path iri filename\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename -cipher-key filename"
+    "-extract geometry -ttl seconds] get path iri filename\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename -cipher-key filename"
+    "-ttl seconds] put path iri filename\n",*argv);
   exit(0);
 }
 
@@ -138,6 +138,10 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 #define ThrowMagickCacheException(exception) \
 { \
   CatchException(exception); \
+  if (cipher_key != (StringInfo *) NULL) \
+    cipher_key=DestroyStringInfo(cipher_key); \
+  if (cache_key != (StringInfo *) NULL) \
+    cache_key=DestroyStringInfo(cache_key); \
   if (resource != (MagickCacheResource *) NULL) \
     resource=DestroyMagickCacheResource(resource); \
   if (cache != (MagickCache *) NULL) \
@@ -187,7 +191,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     ttl = 0;
 
   StringInfo
-    *cache_key = (StringInfo *) NULL;
+    *cache_key = (StringInfo *) NULL,
+    *cipher_key = (StringInfo *) NULL;
 
   if (argc < 2)
     MagickCacheUsage(argc,argv);
@@ -342,6 +347,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
                 }
               image_info=AcquireImageInfo();
               write_image=CloneImageList(image,exception);
+              if (cipher_key != (StringInfo *) NULL)
+                status=PasskeyDecipherImage(write_image,cipher_key,exception);
               status=WriteImages(image_info,write_image,filename,exception);
               write_image=DestroyImageList(write_image);
               image_info=DestroyImageInfo(image_info);
@@ -400,25 +407,43 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             {
               blob=FileToBlob(filename,~0UL,&extent,exception);
               if (blob == (void *) NULL)
-                break;
+                {
+                  status=MagickFalse;
+                  break;
+                }
               status=PutMagickCacheResourceBlob(cache,resource,extent,blob);
               break;
             }
             case ImageResourceType:
             {
+              Image
+                *read_image;
+
               image_info=AcquireImageInfo();
               (void) CopyMagickString(image_info->filename,filename,
                 MagickPathExtent);
               image=ReadImage(image_info,exception);
               image_info=DestroyImageInfo(image_info);
-              status=PutMagickCacheResourceImage(cache,resource,image);
+              if (image == (Image *) NULL)
+                {
+                  status=MagickFalse;
+                  break;
+                }
+              read_image=CloneImageList(image,exception);
+              if (cipher_key != (StringInfo *) NULL)
+                status=PasskeyEncipherImage(read_image,cipher_key,exception);
+              status=PutMagickCacheResourceImage(cache,resource,read_image);
+              read_image=DestroyImageList(read_image);
               break;
             }
             case MetaResourceType:
             {
               meta=(char *) FileToBlob(filename,~0UL,&extent,exception);
               if (meta == (char *) NULL)
-                break;
+                {
+                  status=MagickFalse;
+                  break;
+                }
               status=PutMagickCacheResourceMeta(cache,resource,meta);
               break;
             }
@@ -448,6 +473,10 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       ThrowMagickCacheException(exception);
     }
   }
+  if (cipher_key != (StringInfo *) NULL)
+    cipher_key=DestroyStringInfo(cipher_key);
+  if (cache_key != (StringInfo *) NULL)
+    cache_key=DestroyStringInfo(cache_key);
   resource=DestroyMagickCacheResource(resource);
   cache=DestroyMagickCache(cache);
   return(0);

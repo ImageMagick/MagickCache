@@ -34,6 +34,12 @@ $ magick-cache -cache-key passkey.txt -ttl "2 days" put /opt/magick-cache movies
 
 Where `passkey.txt` contains your passkey. Don't forget your cache key. Without it, you will not be able to get, list, delete or expire your content.
 
+The cache key ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with:
+
+```
+$ magick-cache -cache-key passkey.txt -cipher-key passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
+```
+
 ## Get content from the Magick Cache
 
 Eventually you will want retrieve your content, let's get our cast image from the cache:
@@ -54,6 +60,12 @@ To resize instead, do not specify the offset:
 
 ```
 $ magick-cache -cache-key passkey.txt -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+```
+
+If your image is scrambled, provide the cipher key to descrample it:
+
+```
+$ magick-cache -cache-key passkey.txt -cipher-key passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 ## Delete content from the Magick Cache

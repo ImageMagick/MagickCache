@@ -69,6 +69,8 @@
 static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionInfo *exception)
 {
+#define MagickCacheKey  "5u[Jz,3!"
+#define MagickCacheResourceImageIRI  "repo/image/rose"
 #define ThrowMagickCacheException(cache) \
 { \
   description=GetMagickCacheException(cache,&severity); \
@@ -93,20 +95,29 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionType
     severity = UndefinedException;
 
-  MagickCache
-    *cache;
+  Image
+    *rose;
+
+  ImageInfo
+    *image_info;
 
   MagickBooleanType
     status;
+
+  MagickCache
+    *cache = (MagickCache *) NULL;
+
+  MagickCacheResource
+    *resource = (MagickCacheResource *) NULL;
 
   size_t
     fail = 0,
     tests = 0;
 
   StringInfo
-    *cache_key = StringToStringInfo("5u[Jz,3!");
+    *cache_key = StringToStringInfo(MagickCacheKey);
 
-  (void) FormatLocaleFile(stdout,"create magick cache:\n");
+  (void) FormatLocaleFile(stdout,"create magick cache\n");
   tests++;
   status=CreateMagickCache(path,cache_key);
   if (status == MagickFalse)
@@ -116,7 +127,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       fail++;
     }
 
-  (void) FormatLocaleFile(stdout,"acquire magick cache:\n");
+  (void) FormatLocaleFile(stdout,"acquire magick cache\n");
   tests++;
   cache=AcquireMagickCache(path,cache_key);
   if (cache == (MagickCache *) NULL)
@@ -126,9 +137,10 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       fail++;
     }
 
-  (void) FormatLocaleFile(stdout,"delete magick cache:\n");
+  (void) FormatLocaleFile(stdout,"delete magick cache\n");
   tests++;
-  status=DeleteMagickCache(cache);
+  if (cache != (MagickCache *) NULL)
+    status=DeleteMagickCache(cache);
   if (status == MagickFalse)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
@@ -137,9 +149,28 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       fail++;
     }
 
-  cache=DestroyMagickCache(cache);
+  (void) FormatLocaleFile(stdout,"acquire magick cache resource\n");
+  if (cache != (MagickCache *) NULL)
+    resource=AcquireMagickCacheResource(cache,MagickCacheResourceImageIRI);
+  if (resource == (MagickCacheResource *) NULL)
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheException(cache);
+      fail++;
+    }
 
-  tests++;
+  /*
+    Free memory.
+  */
+  if (resource != (MagickCacheResource *) NULL)
+    resource=DestroyMagickCacheResource(resource);
+  if (cache != (MagickCache *) NULL)
+    cache=DestroyMagickCache(cache);
+
+  /*
+    Unit tests accounting.
+  */
   (void) FormatLocaleFile(stdout,
     "validation suite: %.20g tests; %.20g passed; %.20g failed.\n",(double)
      tests,(double) (tests-fail),(double) fail);

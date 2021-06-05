@@ -86,7 +86,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     *cache_key = StringToStringInfo("5u[Jz,3!");
 
   tests++;
-  status=CreateMagickCache(path);
+  status=CreateMagickCache(path,cache_key);
   if (status == MagickFalse)
     fail++;
 

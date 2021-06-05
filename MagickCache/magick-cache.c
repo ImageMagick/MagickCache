@@ -530,14 +530,104 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
 %    o cache: the magick cache.
 %
 */
-MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache)
+
+static MagickBooleanType DeleteMagickCacheContent(MagickCache *cache)
 {
+  struct ResourceNode
+  {
+    char
+      *path;
+
+    struct ResourceNode
+      *next;
+  };
+
   char
-    *digest,
     *path;
+
+  DIR
+    *directory;
 
   MagickBooleanType
     status;
+
+  struct dirent
+    *entry;
+
+  struct ResourceNode
+    *head,
+    *node,
+    *p,
+    *q;
+
+  struct stat
+    attributes;
+
+  /*
+    Check that resource id exists in magick cache.
+  */
+  assert(cache != (MagickCache *) NULL);
+  assert(cache->signature == MagickCacheSignature);
+  status=MagickTrue;
+  head=AcquireCriticalMemory(sizeof(struct ResourceNode));
+  head->path=AcquireString(cache->path);
+  head->next=(struct ResourceNode *) NULL;
+  q=head;
+  for (p=head; p != (struct ResourceNode *) NULL; p=p->next)
+  {
+    directory=opendir(p->path);
+    if (directory == (DIR *) NULL)
+      return(-1);
+    while ((entry=readdir(directory)) != (struct dirent *) NULL)
+    {
+      path=AcquireString(p->path);
+      (void) ConcatenateString(&path,"/");
+      (void) ConcatenateString(&path,entry->d_name);
+      if (GetPathAttributes(path,&attributes) <= 0)
+        {
+          path=DestroyString(path);
+          break;
+        }
+      if ((strcmp(entry->d_name, ".") == 0) ||
+          (strcmp(entry->d_name, "..") == 0))
+        {
+          path=DestroyString(path);
+          continue;
+        }
+      if (S_ISDIR(attributes.st_mode) != 0)
+        {
+          node=AcquireCriticalMemory(sizeof(struct ResourceNode));
+          node->path=path;
+          node->next=(struct ResourceNode *) NULL;
+          q->next=node;
+          q=q->next;
+        }
+      else
+        if (S_ISREG(attributes.st_mode) != 0)
+          {
+            path=DestroyString(path);
+          }
+    }
+    (void) closedir(directory);
+  }
+  /*
+    Free resources.
+  */
+  for (p=head; p != (struct ResourceNode *) NULL; )
+  {
+    node=p;
+    p=p->next;
+    if (node->path != (char *) NULL)
+      node->path=DestroyString(node->path);
+    node=(struct ResourceNode *) RelinquishMagickMemory(node);
+  }
+  return(status);
+}
+
+MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache)
+{
+  char
+    *digest;
 
   StringInfo
     *passkey;
@@ -555,18 +645,15 @@ MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache)
   if (strcmp(cache->digest,digest) != 0)
     {
       digest=DestroyString(digest);
-      (void) ThrowMagickException(resource->exception,GetMagickModule(),
+      (void) ThrowMagickException(cache->exception,GetMagickModule(),
         CacheError,"authentication failure","`%s'",cache->path);
       return(MagickFalse);
     }
   digest=DestroyString(digest);
-  status=MagickTrue;
   /*
-    Delete resource id in magick cache.
+    Delete magick cache.
   */
-  path=AcquireString(cache->path);
-  (void) path;
-  return(status);
+  return(DeleteMagickCacheContent(cache));
 }
 
 /*
@@ -1764,7 +1851,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
       if (S_ISDIR(attributes.st_mode) != 0)
         {
           node=AcquireCriticalMemory(sizeof(struct ResourceNode));
-          node->path=ConstantString(path);
+          node->path=path;
           node->next=(struct ResourceNode *) NULL;
           q->next=node;
           q=q->next;
@@ -1788,6 +1875,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
                     status=callback(cache,resource,context);
                     if (status == MagickFalse)
                       {
+                        path=DestroyString(path);
                         resource=DestroyMagickCacheResource(resource);
                         sentinel=DestroyString(sentinel);
                         break;
@@ -1798,7 +1886,6 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
             path=DestroyString(path);
             sentinel=DestroyString(sentinel);
           }
-      path=DestroyString(path);
     }
     (void) closedir(directory);
   }

@@ -98,6 +98,9 @@ struct _MagickCache
     *nonce,
     *key;
 
+  char
+    *digest;
+
   size_t
     signature;
 };
@@ -184,6 +187,8 @@ static void GetMagickCacheSentinel(MagickCache *cache,unsigned char *sentinel)
   (void) memcpy(GetStringInfoDatum(cache->nonce),p,
     GetStringInfoLength(cache->nonce));
   p+=GetStringInfoLength(cache->nonce);
+  (void) memcpy(cache->digest,p,strlen(cache->digest));
+  p+=strlen(cache->digest);
 }
 
 static inline unsigned int GetMagickCacheSignature(const StringInfo *nonce)
@@ -258,6 +263,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
     cache->key=AcquireStringInfo(0);
   else
     cache->key=CloneStringInfo(key);
+  cache->digest=StringInfoToDigest(cache->key);
   cache->exception=AcquireExceptionInfo();
   cache->debug=IsEventLogging();
   cache->signature=MagickCacheSignature;
@@ -420,6 +426,9 @@ MagickExport const size_t GetMagickCacheResourceExtent(
 static StringInfo *SetMagickCacheSentinel(const char *path,
   const StringInfo *cache_key)
 {
+  char
+    *digest;
+
   RandomInfo
     *random_info;
 
@@ -446,10 +455,12 @@ static StringInfo *SetMagickCacheSentinel(const char *path,
   passkey=StringToStringInfo(path);
   ConcatenateStringInfo(passkey,cache_key);
   ConcatenateStringInfo(passkey,key_info);
-  (void) memcpy(p,GetStringInfoDatum(passkey),GetStringInfoLength(passkey));
-  p+=GetStringInfoLength(passkey);
-  SetStringInfoLength(sentinel,(size_t) (p-GetStringInfoDatum(sentinel)));
+  digest=StringInfoToDigest(passkey);
   passkey=DestroyStringInfo(passkey);
+  (void) memcpy(p,digest,strlen(digest));
+  p+=strlen(digest);
+  SetStringInfoLength(sentinel,(size_t) (p-GetStringInfoDatum(sentinel)));
+  digest=DestroyString(digest);
   key_info=DestroyStringInfo(key_info);
   random_info=DestroyRandomInfo(random_info);
   return(sentinel);
@@ -522,16 +533,33 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
 MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache)
 {
   char
+    *digest,
     *path;
 
   MagickBooleanType
     status;
+
+  StringInfo
+    *passkey;
 
   /*
     Check that magick cache exists.
   */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
+  passkey=StringToStringInfo(cache->path);
+  ConcatenateStringInfo(passkey,cache->key);
+  ConcatenateStringInfo(passkey,cache->nonce);
+  digest=StringInfoToDigest(passkey);
+  passkey=DestroyStringInfo(passkey);
+  if (strcmp(cache->digest,digest) != 0)
+    {
+      digest=DestroyString(digest);
+      (void) ThrowMagickException(resource->exception,GetMagickModule(),
+        CacheError,"authentication failure","`%s'",cache->path);
+      return(MagickFalse);
+    }
+  digest=DestroyString(digest);
   status=MagickTrue;
   /*
     Delete resource id in magick cache.

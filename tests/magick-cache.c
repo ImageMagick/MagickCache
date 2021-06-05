@@ -95,6 +95,14 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   if (cache == (MagickCache *) NULL)
     fail++;
 
+  tests++;
+  status=DeleteMagickCache(cache);
+  if (status == MagickFalse)
+    fail++;
+
+  cache=DestroyMagickCache(cache);
+
+  tests++;
   (void) FormatLocaleFile(stdout,
     "validation suite: %.20g tests; %.20g passed; %.20g failed.\n",(double)
      tests,(double) (tests-fail),(double) fail);

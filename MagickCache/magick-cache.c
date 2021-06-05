@@ -417,13 +417,15 @@ MagickExport const size_t GetMagickCacheResourceExtent(
 %    o cache_key: the magick cache key.
 */
 
-static StringInfo *SetMagickCacheSentinel(const StringInfo *cache_key)
+static StringInfo *SetMagickCacheSentinel(const char *path,
+  const StringInfo *cache_key)
 {
   RandomInfo
     *random_info;
 
   StringInfo
     *key_info,
+    *passkey,
     *sentinel;
 
   unsigned char
@@ -432,7 +434,6 @@ static StringInfo *SetMagickCacheSentinel(const StringInfo *cache_key)
   unsigned int
     signature;
 
-  (void) cache_key;
   sentinel=AcquireStringInfo(MagickPathExtent);
   random_info=AcquireRandomInfo();
   key_info=GetRandomKey(random_info,MagickCacheNonceExtent);
@@ -442,7 +443,13 @@ static StringInfo *SetMagickCacheSentinel(const StringInfo *cache_key)
   p+=sizeof(signature);
   (void) memcpy(p,GetStringInfoDatum(key_info),MagickCacheNonceExtent);
   p+=MagickCacheNonceExtent;
+  passkey=StringToStringInfo(path);
+  ConcatenateStringInfo(passkey,cache_key);
+  ConcatenateStringInfo(passkey,key_info);
+  (void) memcpy(p,GetStringInfoDatum(passkey),GetStringInfoLength(passkey));
+  p+=GetStringInfoLength(passkey);
   SetStringInfoLength(sentinel,(size_t) (p-GetStringInfoDatum(sentinel)));
+  passkey=DestroyStringInfo(passkey);
   key_info=DestroyStringInfo(key_info);
   random_info=DestroyRandomInfo(random_info);
   return(sentinel);
@@ -480,7 +487,7 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
       errno=EEXIST;
       return(MagickFalse);
     }
-  meta=SetMagickCacheSentinel(cache_key);
+  meta=SetMagickCacheSentinel(path,cache_key);
   exception=AcquireExceptionInfo();
   status=BlobToFile(sentinel_path,GetStringInfoDatum(meta),
     GetStringInfoLength(meta),exception);
@@ -505,18 +512,14 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
 %
 %  The format of the DeleteMagickCache method is:
 %
-%      MagickBooleanType DeleteMagickCache(MagickCache *cache,
-%        const  *StringInfo *cache_key)
+%      MagickBooleanType DeleteMagickCache(MagickCache *cache)
 %
 %  A description of each parameter follows:
 %
 %    o cache: the magick cache.
 %
-%    o cache_key: the magick cache key.
-%
 */
-MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache,
-  const StringInfo *cache_key)
+MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache)
 {
   char
     *path;

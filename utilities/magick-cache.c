@@ -277,7 +277,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     }
   if (LocaleCompare(function,"delete") == 0)
     {
-      status=DeleteMagickCache(cache,cache_key);
+      status=DeleteMagickCache(cache);
       if (status == MagickFalse)
         {
           message=GetExceptionMessage(errno);

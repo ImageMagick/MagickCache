@@ -40,6 +40,10 @@ typedef struct _MagickCache
 typedef struct _MagickCacheResource
   MagickCacheResource;
 
+extern MagickExport char
+  *GetMagickCacheException(const MagickCache *,ExceptionType *),
+  *GetMagickCacheResourceException(const MagickCacheResource *,ExceptionType *);
+
 extern MagickExport const char
   *GetMagickCacheResourceIRI(const MagickCacheResource *),
   *GetMagickCacheResourceMeta(MagickCache *,MagickCacheResource *);
@@ -55,10 +59,6 @@ extern MagickExport const time_t
 
 extern MagickExport const void
   *GetMagickCacheResourceBlob(MagickCache *,MagickCacheResource *);
-
-extern MagickExport ExceptionInfo
-  *GetMagickCacheException(const MagickCache *),
-  *GetMagickCacheResourceException(const MagickCacheResource *);
 
 extern MagickExport const Image
   *GetMagickCacheResourceImage(MagickCache *cache,MagickCacheResource *,

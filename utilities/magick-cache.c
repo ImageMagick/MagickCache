@@ -141,7 +141,7 @@ static inline unsigned long StringToUnsignedLong(
 static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionInfo *exception)
 {
-#define ThrowMagickCacheException(exception) \
+#define MagickCacheExit(exception) \
 { \
   CatchException(exception); \
   if (cipher_key != (StringInfo *) NULL) \
@@ -156,8 +156,25 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     message=DestroyString(message); \
   return(-1); \
 }
+#define ThrowMagickCacheException(cache) \
+{ \
+  description=GetMagickCacheException(cache,&severity); \
+  (void) FormatLocaleFile(stderr,"%s %s %lu %s\n",GetMagickModule(), \
+    description); \
+  description=(char *) DestroyString(description); \
+  MagickCacheExit(exception); \
+}
+#define ThrowMagickCacheResourceException(resource) \
+{ \
+  description=GetMagickCacheResourceException(resource,&severity); \
+  (void) FormatLocaleFile(stderr,"%s %s %lu %s\n",GetMagickModule(), \
+    description); \
+  description=(char *) DestroyString(description); \
+  MagickCacheExit(exception); \
+}
 
   char
+    *description = (char *) NULL,
     *extract = (char *) NULL,
     *filename = (char *) NULL,
     *function,
@@ -173,6 +190,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 
   const void
     *blob;
+
+  ExceptionType
+    severity = UndefinedException;
 
   ImageInfo
     *image_info;
@@ -214,7 +234,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             message=GetExceptionMessage(errno);
             (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
               "unable to read passphrase","`%s': %s",argv[i],message);
-            ThrowMagickCacheException(exception);
+            MagickCacheExit(exception);
           }
       }
     if (LocaleCompare(argv[i],"-ttl") == 0)
@@ -263,7 +283,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           message=GetExceptionMessage(errno);
           (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
             "unable to create magick cache","`%s': %s",path,message);
-          ThrowMagickCacheException(exception);
+          MagickCacheExit(exception);
         }
       return(0);
     }
@@ -273,7 +293,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       message=GetExceptionMessage(errno);
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unable to open magick cache","`%s': %s",path,message);
-      ThrowMagickCacheException(exception);
+      MagickCacheExit(exception);
     }
   if (LocaleCompare(function,"delete") == 0)
     {
@@ -283,7 +303,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           message=GetExceptionMessage(errno);
           (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
             "unable to delete magick cache","`%s': %s",path,message);
-          ThrowMagickCacheException(exception);
+          MagickCacheExit(exception);
         }
       return(0);
     }
@@ -301,7 +321,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         {
           (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
             "unrecognized resource type","`%s'",iri);
-          ThrowMagickCacheException(exception);
+          MagickCacheExit(exception);
         }
       if (i == (argc-1))
         MagickCacheUsage(argc,argv);
@@ -319,7 +339,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unrecognized magick cache function","`%s'",filename);
-      ThrowMagickCacheException(exception);
+      MagickCacheExit(exception);
     }
     case 'e':
     {
@@ -332,7 +352,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unrecognized magick cache function","`%s'",filename);
-      ThrowMagickCacheException(exception);
+      MagickCacheExit(exception);
     }
     case 'g':
     {
@@ -394,13 +414,13 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             {
               (void) ThrowMagickException(exception,GetMagickModule(),
                 OptionError,"unable to get resource","`%s'",filename);
-              ThrowMagickCacheException(exception);
+              MagickCacheExit(exception);
             }
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unrecognized magick cache function","`%s'",filename);
-      ThrowMagickCacheException(exception);
+      MagickCacheExit(exception);
     }
     case 'l':
     {
@@ -413,7 +433,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unrecognized magick cache function","`%s'",filename);
-      ThrowMagickCacheException(exception);
+      MagickCacheExit(exception);
     }
     case 'p':
     {
@@ -476,19 +496,19 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             {
               (void) ThrowMagickException(exception,GetMagickModule(),
                 OptionError,"unable to put resource","`%s'",filename);
-              ThrowMagickCacheException(exception);
+              MagickCacheExit(exception);
             }
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
          "unrecognized magick cache function","`%s'",function);
-      ThrowMagickCacheException(exception);
+      MagickCacheExit(exception);
     }
     default:
     {
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
          "unrecognized magick cache function","`%s'",function);
-      ThrowMagickCacheException(exception);
+      MagickCacheExit(exception);
     }
   }
   if (cipher_key != (StringInfo *) NULL)

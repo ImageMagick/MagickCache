@@ -69,8 +69,29 @@
 static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionInfo *exception)
 {
+#define ThrowMagickCacheException(cache) \
+{ \
+  description=GetMagickCacheException(cache,&severity); \
+  (void) FormatLocaleFile(stderr,"%s %s %lu %s\n",GetMagickModule(), \
+    description); \
+  description=(char *) DestroyString(description); \
+}
+#define ThrowMagickCacheResourceException(resource) \
+{ \
+  description=GetMagickCacheResourceException(resource,&severity); \
+  (void) FormatLocaleFile(stderr,"%s %s %lu %s\n",GetMagickModule(), \
+    description); \
+  description=(char *) DestroyString(description); \
+}
+
+  char
+    *description;
+
   const char
-    *path = "./magick-cache-tests";
+    *path = "./magick-cache-repo";
+
+  ExceptionType
+    severity = UndefinedException;
 
   MagickCache
     *cache;
@@ -85,20 +106,36 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   StringInfo
     *cache_key = StringToStringInfo("5u[Jz,3!");
 
+  (void) FormatLocaleFile(stdout,"create magick cache:\n");
   tests++;
   status=CreateMagickCache(path,cache_key);
   if (status == MagickFalse)
-    fail++;
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      fail++;
+    }
 
+  (void) FormatLocaleFile(stdout,"acquire magick cache:\n");
   tests++;
   cache=AcquireMagickCache(path,cache_key);
   if (cache == (MagickCache *) NULL)
-    fail++;
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      fail++;
+    }
 
+  (void) FormatLocaleFile(stdout,"delete magick cache:\n");
   tests++;
   status=DeleteMagickCache(cache);
   if (status == MagickFalse)
-    fail++;
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheException(cache);
+      fail++;
+    }
 
   cache=DestroyMagickCache(cache);
 

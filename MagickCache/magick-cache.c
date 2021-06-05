@@ -942,23 +942,54 @@ MagickExport MagickBooleanType ExpireMagickCacheResource(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheException() return the exception associated with the image
-%  cache.
+%  GetMagickCacheException() returns the severity, reason, and description of
+%  any exception that occurs associated with the magick cache.
 %
 %  The format of the GetMagickCacheException method is:
 %
-%      ExceptionInfo *GetMagickCacheException(const MagickCache *cache)
+%      char *GetMagickCacheException(const MagickCache *cache,
+%        ExceptionType *severity)
 %
 %  A description of each parameter follows:
 %
 %    o cache: the magick cache.
 %
+%    o severity: the severity of the error is returned here.
+%
 */
-MagickExport ExceptionInfo *GetMagickCacheException(const MagickCache *cache)
+MagickExport char *GetMagickCacheException(const MagickCache *cache,
+  ExceptionType *severity)
 {
+  char
+    *description;
+
   assert(cache != (const MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
-  return(cache->exception);
+  if (cache->debug != MagickFalse)
+    (void) LogMagickEvent(WandEvent,GetMagickModule(),"%s",cache->path);
+  assert(severity != (ExceptionType *) NULL);
+  *severity=cache->exception->severity;
+  description=(char *) AcquireQuantumMemory(2UL*MagickPathExtent,
+    sizeof(*description));
+  if (description == (char *) NULL)
+    {
+      (void) ThrowMagickException(cache->exception,GetMagickModule(),WandError,
+        "MemoryAllocationFailed","`%s'",cache->path);
+      return((char *) NULL);
+    }
+  *description='\0';
+  if (cache->exception->reason != (char *) NULL)
+    (void) CopyMagickString(description,GetLocaleExceptionMessage(
+      cache->exception->severity,cache->exception->reason),MagickPathExtent);
+  if (cache->exception->description != (char *) NULL)
+    {
+      (void) ConcatenateMagickString(description," (",MagickPathExtent);
+      (void) ConcatenateMagickString(description,GetLocaleExceptionMessage(
+        cache->exception->severity,cache->exception->description),
+        MagickPathExtent);
+      (void) ConcatenateMagickString(description,")",MagickPathExtent);
+    }
+  return(description);
 }
 
 /*
@@ -1295,25 +1326,55 @@ MagickExport const void *GetMagickCacheResourceBlob(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceException() returns the exception associated with
-%  the magick cache resource.
+%  GetMagickCacheResourceException() returns the severity, reason, and
+%  description of any exception that occurs assoicated with a resource.
 %
-%  The format of the GetMagickCacheResourceException method is:
+%  The format of the GetMagickCacheException method is:
 %
-%      ExceptionInfo *GetMagickCacheResourceException(
-%        const MagickCacheResource *resource)
+%      char *GetMagickCacheResourceException(
+%        const MagickCacheResource  *resource,ExceptionType *severity)
 %
 %  A description of each parameter follows:
 %
-%    o resource: the magick cache resource.
+%    o resource: the magick resource.
+%
+%    o severity: the severity of the error is returned here.
 %
 */
-MagickExport ExceptionInfo *GetMagickCacheResourceException(
-  const MagickCacheResource *resource)
+MagickExport char *GetMagickCacheResourceException(
+  const MagickCacheResource *resource,ExceptionType *severity)
 {
+  char
+    *description;
+
   assert(resource != (const MagickCacheResource *) NULL);
   assert(resource->signature == MagickCacheSignature);
-  return(resource->exception);
+  if (resource->debug != MagickFalse)
+    (void) LogMagickEvent(WandEvent,GetMagickModule(),"%s",resource->iri);
+  assert(severity != (ExceptionType *) NULL);
+  *severity=resource->exception->severity;
+  description=(char *) AcquireQuantumMemory(2UL*MagickPathExtent,
+    sizeof(*description));
+  if (description == (char *) NULL)
+    {
+      (void) ThrowMagickException(resource->exception,GetMagickModule(),
+        WandError,"MemoryAllocationFailed","`%s'",resource->iri);
+      return((char *) NULL);
+    }
+  *description='\0';
+  if (resource->exception->reason != (char *) NULL)
+    (void) CopyMagickString(description,GetLocaleExceptionMessage(
+      resource->exception->severity,resource->exception->reason),
+      MagickPathExtent);
+  if (resource->exception->description != (char *) NULL)
+    {
+      (void) ConcatenateMagickString(description," (",MagickPathExtent);
+      (void) ConcatenateMagickString(description,GetLocaleExceptionMessage(
+        resource->exception->severity,resource->exception->description),
+        MagickPathExtent);
+      (void) ConcatenateMagickString(description,")",MagickPathExtent);
+    }
+  return(description);
 }
 
 /*

@@ -144,6 +144,16 @@ struct _MagickCacheResource
   size_t
     signature;
 };
+
+struct ResourceNode
+{
+  char
+    *path;
+
+  struct ResourceNode
+    *previous,
+    *next;
+};
 
 /*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -533,15 +543,6 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
 
 static MagickBooleanType DeleteMagickCacheContent(MagickCache *cache)
 {
-  struct ResourceNode
-  {
-    char
-      *path;
-
-    struct ResourceNode
-      *next;
-  };
-
   char
     *path;
 
@@ -577,7 +578,7 @@ static MagickBooleanType DeleteMagickCacheContent(MagickCache *cache)
   {
     directory=opendir(p->path);
     if (directory == (DIR *) NULL)
-      return(-1);
+      return(MagickFalse);
     while ((entry=readdir(directory)) != (struct dirent *) NULL)
     {
       path=AcquireString(p->path);
@@ -599,12 +600,14 @@ static MagickBooleanType DeleteMagickCacheContent(MagickCache *cache)
           node=AcquireCriticalMemory(sizeof(struct ResourceNode));
           node->path=path;
           node->next=(struct ResourceNode *) NULL;
+          node->previous=q;
           q->next=node;
           q=q->next;
         }
       else
         if (S_ISREG(attributes.st_mode) != 0)
           {
+            (void) remove_utf8(path);
             path=DestroyString(path);
           }
     }
@@ -613,14 +616,15 @@ static MagickBooleanType DeleteMagickCacheContent(MagickCache *cache)
   /*
     Free resources.
   */
-  for (p=head; p != (struct ResourceNode *) NULL; )
+  for ( ; q != (struct ResourceNode *) NULL; )
   {
-    node=p;
-    p=p->next;
-    if (node->path != (char *) NULL)
-      node->path=DestroyString(node->path);
+    node=q;
+    q=q->previous;
+    (void) remove_utf8(node->path);
+    node->path=DestroyString(node->path);
     node=(struct ResourceNode *) RelinquishMagickMemory(node);
   }
+  (void) remove_utf8(cache->path);
   return(status);
 }
 
@@ -1785,15 +1789,6 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   const char *iri,const void *context,MagickBooleanType (*callback)(
     MagickCache *cache,MagickCacheResource *resource,const void *context))
 {
-  struct ResourceNode
-  {
-    char
-      *path;
-
-    struct ResourceNode
-      *next;
-  };
-
   char
     *path;
 
@@ -1831,7 +1826,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   {
     directory=opendir(p->path);
     if (directory == (DIR *) NULL)
-      return(-1);
+      return(MagickFalse);
     while ((entry=readdir(directory)) != (struct dirent *) NULL)
     {
       path=AcquireString(p->path);
@@ -1853,6 +1848,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
           node=AcquireCriticalMemory(sizeof(struct ResourceNode));
           node->path=path;
           node->next=(struct ResourceNode *) NULL;
+          node->previous=q;
           q->next=node;
           q=q->next;
         }
@@ -1892,12 +1888,11 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   /*
     Free resources.
   */
-  for (p=head; p != (struct ResourceNode *) NULL; )
+  for ( ; q != (struct ResourceNode *) NULL; )
   {
-    node=p;
-    p=p->next;
-    if (node->path != (char *) NULL)
-      node->path=DestroyString(node->path);
+    node=q;
+    q=q->previous;
+    node->path=DestroyString(node->path);
     node=(struct ResourceNode *) RelinquishMagickMemory(node);
   }
   return(status);

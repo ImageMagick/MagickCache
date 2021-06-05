@@ -70,7 +70,10 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionInfo *exception)
 {
   const char
-    *path = "magick-cache-tests";
+    *path = "./magick-cache-tests";
+
+  MagickCache
+    *cache;
 
   MagickBooleanType
     status;
@@ -79,15 +82,23 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     fail = 0,
     tests = 0;
 
+  StringInfo
+    *cache_key = StringToStringInfo("5u[Jz,3!");
+
   tests++;
-  remove_utf8(path);
   status=CreateMagickCache(path);
   if (status == MagickFalse)
     fail++;
+
+  tests++;
+  cache=AcquireMagickCache(path,cache_key);
+  if (cache == (MagickCache *) NULL)
+    fail++;
+
   (void) FormatLocaleFile(stdout,
-    "validation suite: %.20g tests; %.20g passed; %.20g failed.\n",
-    (double) tests,(double) (tests-fail),(double) fail);
-  return(MagickTrue);
+    "validation suite: %.20g tests; %.20g passed; %.20g failed.\n",(double)
+     tests,(double) (tests-fail),(double) fail);
+  return(fail == 0 ? 1 : 0);
 }
 
 static int MagickCacheMain(int argc,char **argv)

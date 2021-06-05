@@ -11,8 +11,10 @@ The Magick Cache works in concert with [ImageMagick](https://imagemagick.org). D
 You'll need a place to store and retrieve your content.  Let's create a cache on our local filesystem:
 
 ```
-$ magick-cache create /opt/magick-cache
+$ magick-cache -cache-key passkey.txt create /opt/magick-cache
 ```
+
+Where `passkey.txt` contains your passkey. Don't forget your cache key. Without it, you will not be able to delete the cache.
 
 Once its created, you will want to populate it with content that includes images, video, audio, or metadata.
 
@@ -113,3 +115,13 @@ $ magick-cache -cache-key passkey.txt put /opt/magick-cache movies/meta/mission-
 ```
 
 Images must be in a format that ImageMagick understands.  Metadata must be text.  Blobs can be any content including images, video, audio, or binary files.
+
+## Delete a Magick Cache
+
+To completely delete all the content within a cache and the cache itself:
+
+```
+$ magick-cache -cache-key passkey.txt delete /opt/magick-cache
+```
+
+Be careful, after this command, your cache content is irrevocably lost.

@@ -406,16 +406,18 @@ MagickExport const size_t GetMagickCacheResourceExtent(
 %
 %  The format of the CreateMagickCache method is:
 %
-%      MagickBooleanType CreateMagickCache(const char *path)
+%      MagickBooleanType CreateMagickCache(const char *path,
+%        const StringInfo *cache_key)
 %
 %  A description of each parameter follows:
 %
 %    o path: the magick cache directory path, absolute (e.g. /myrepo) or
 %      relative (e.g. ./myrepo).
 %
+%    o cache_key: the magick cache key.
 */
 
-static StringInfo *SetMagickCacheSentinel(void)
+static StringInfo *SetMagickCacheSentinel(const StringInfo *cache_key)
 {
   RandomInfo
     *random_info;
@@ -430,6 +432,7 @@ static StringInfo *SetMagickCacheSentinel(void)
   unsigned int
     signature;
 
+  (void) cache_key;
   sentinel=AcquireStringInfo(MagickPathExtent);
   random_info=AcquireRandomInfo();
   key_info=GetRandomKey(random_info,MagickCacheNonceExtent);
@@ -445,7 +448,8 @@ static StringInfo *SetMagickCacheSentinel(void)
   return(sentinel);
 }
 
-MagickExport MagickBooleanType CreateMagickCache(const char *path)
+MagickExport MagickBooleanType CreateMagickCache(const char *path,
+  const StringInfo *cache_key)
 {
   char
     *sentinel_path;
@@ -476,7 +480,7 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path)
       errno=EEXIST;
       return(MagickFalse);
     }
-  meta=SetMagickCacheSentinel();
+  meta=SetMagickCacheSentinel(cache_key);
   exception=AcquireExceptionInfo();
   status=BlobToFile(sentinel_path,GetStringInfoDatum(meta),
     GetStringInfoLength(meta),exception);
@@ -491,14 +495,61 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path)
 %                                                                             %
 %                                                                             %
 %                                                                             %
+%   D e l e t e M a g i c k C a c h e                                         %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  DeleteMagickCache() deletes a magick cache.
+%
+%  The format of the DeleteMagickCache method is:
+%
+%      MagickBooleanType DeleteMagickCache(MagickCache *cache,
+%        const  *StringInfo *cache_key)
+%
+%  A description of each parameter follows:
+%
+%    o cache: the magick cache.
+%
+%    o cache_key: the magick cache key.
+%
+*/
+MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache,
+  const StringInfo *cache_key)
+{
+  char
+    *path;
+
+  MagickBooleanType
+    status;
+
+  /*
+    Check that magick cache exists.
+  */
+  assert(cache != (MagickCache *) NULL);
+  assert(cache->signature == MagickCacheSignature);
+  status=MagickTrue;
+  /*
+    Delete resource id in magick cache.
+  */
+  path=AcquireString(cache->path);
+  (void) path;
+  return(status);
+}
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
 %   D e l e t e M a g i c k C a c h e R e s o u r c e                         %
 %                                                                             %
 %                                                                             %
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  DeleteMagickCacheResourceException() deletes a resource within the magick
-%  cache.
+%  DeleteMagickCacheResource() deletes a resource within the magick cache.
 %
 %  The format of the DeleteMagickCacheResource method is:
 %

@@ -122,7 +122,7 @@ static void MagickCacheUsage(int argc,char **argv)
 {
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
-  (void) fprintf(stdout,"Usage: %s create path\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [create delete] path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] "
     "[delete | expire | list] path iri\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename -cipher-key filename"
@@ -257,7 +257,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   path=argv[++i];
   if (LocaleCompare(function,"create") == 0)
     {
-      status=CreateMagickCache(path);
+      status=CreateMagickCache(path,cache_key);
       if (status == MagickFalse)
         {
           message=GetExceptionMessage(errno);
@@ -274,6 +274,18 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unable to open magick cache","`%s': %s",path,message);
       ThrowMagickCacheException(exception);
+    }
+  if (LocaleCompare(function,"delete") == 0)
+    {
+      status=DeleteMagickCache(cache,cache_key);
+      if (status == MagickFalse)
+        {
+          message=GetExceptionMessage(errno);
+          (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
+            "unable to delete magick cache","`%s': %s",path,message);
+          ThrowMagickCacheException(exception);
+        }
+      return(0);
     }
   if (i == (argc-1))
     MagickCacheUsage(argc,argv);

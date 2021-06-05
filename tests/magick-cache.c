@@ -50,6 +50,7 @@
 #include <ctype.h>
 #include <math.h>
 #include "MagickCache/MagickCache.h"
+#include "MagickCache/magick-cache-private.h"
 
 /*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,6 +69,24 @@
 static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionInfo *exception)
 {
+  const char
+    *path = "magick-cache-tests";
+
+  MagickBooleanType
+    status;
+
+  size_t
+    fail = 0,
+    tests = 0;
+
+  tests++;
+  remove_utf8(path);
+  status=CreateMagickCache(path);
+  if (status == MagickFalse)
+    fail++;
+  (void) FormatLocaleFile(stdout,
+    "validation suite: %.20g tests; %.20g passed; %.20g failed.\n",
+    (double) tests,(double) (tests-fail),(double) fail);
   return(MagickTrue);
 }
 

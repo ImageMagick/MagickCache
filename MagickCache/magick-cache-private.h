@@ -38,7 +38,8 @@ extern "C" {
 #endif
 #endif
 
-static unsigned int CRC32(const unsigned char *message,const size_t length)
+static inline unsigned int CRC32(const unsigned char *message,
+  const size_t length)
 {
   ssize_t
     i;

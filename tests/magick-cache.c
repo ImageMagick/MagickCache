@@ -95,10 +95,14 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   const Image
     *image = (const Image *) NULL;
 
+  double
+    distortion = 0.0;
+
   ExceptionType
     severity = UndefinedException;
 
   Image
+    *difference = (Image *) NULL,
     *rose = (Image *) NULL;
 
   ImageInfo
@@ -173,9 +177,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) FormatLocaleFile(stdout,"%g: get magick cache (image)\n",(double)
      tests);
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL) && (rose != (Image *) NULL))
+      (resource != (MagickCacheResource *) NULL))
     image=GetMagickCacheResourceImage(cache,resource,(const char *) NULL);
-  if (image == (Image *) NULL)
+  if ((image != (const Image *) NULL) && (rose != (Image *) NULL))
+    difference=CompareImages(rose,image,RootMeanSquaredErrorMetric,
+      &distortion,exception);
+  if ((image == (Image *) NULL) || (distortion >= MagickEpsilon))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
@@ -198,6 +205,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   /*
     Free memory.
   */
+  if (difference != (Image *) NULL)
+    difference=DestroyImageList(difference);
   if (rose != (Image *) NULL)
     rose=DestroyImageList(rose);
   if (image_info != (ImageInfo *) NULL)

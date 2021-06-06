@@ -1827,7 +1827,7 @@ MagickExport const time_t GetMagickCacheTimestamp(const MagickCache *cache)
 %                                                                             %
 %                                                                             %
 %                                                                             %
-%   E x p i r e M a g i c k C a c h e R e s o u r c e                         %
+%   I d e n t i f y M a g i c k C a c h e R e s o u r c e                     %
 %                                                                             %
 %                                                                             %
 %                                                                             %
@@ -1847,7 +1847,7 @@ MagickExport const time_t GetMagickCacheTimestamp(const MagickCache *cache)
 %
 %    o iri: the IRI.
 %
-%    o file: the fil.
+%    o file: the file.
 %
 */
 MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
@@ -1856,7 +1856,8 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
   char
     extent[MagickPathExtent],
     iso8601[sizeof("9999-99-99T99:99:99Z")],
-    *path;
+    *path,
+    size[MagickPathExtent];
 
   int
     expired;
@@ -1875,18 +1876,19 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->id);
   status=GetMagickCacheResource(cache,resource);
+  *size='\0';
+  if (resource->resource_type == ImageResourceType)
+    (void) snprintf(size,MagickPathExtent,"[%gx%g]",(double) resource->columns,
+      (double) resource->rows);
   (void) FormatMagickSize(GetMagickCacheResourceExtent(resource),MagickTrue,
     "B",MagickPathExtent,extent);
-  if (resource->resource_type == ImageResourceType)
-    (void) snprintf(extent,MagickPathExtent,"%gx%g",(double) resource->columns,
-      (double) resource->rows);
   (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
     gmtime(&resource->timestamp));
   expired=' ';
   if ((resource->ttl != 0) && ((resource->ttl+resource->timestamp) < time(0)))
     expired='*';
-  (void) fprintf(file,"%s %s %g:%g:%g:%g%c %s\n",
-    GetMagickCacheResourceIRI(resource),extent,(double) (resource->ttl/
+  (void) fprintf(file,"%s%s %s %g:%g:%g:%g%c %s\n",
+    GetMagickCacheResourceIRI(resource),size,extent,(double) (resource->ttl/
       (3600*24)),(double) ((resource->ttl % (24*3600))/3600),(double)
       ((resource->ttl % 3600)/60),(double) ((resource->ttl % 3600) % 60),
       expired,iso8601);
@@ -2035,6 +2037,149 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
     node=(struct ResourceNode *) RelinquishMagickMemory(node);
   }
   return(status);
+}
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%   L i s t M a g i c k C a c h e                                             %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  ListMagickCache() list all content in the magick cache.
+%
+%  The format of the ListMagickCache method is:
+%
+%      MagickBooleanType ListMagickCache(MagickCache *cache,FILE *file)
+%
+%  A description of each parameter follows:
+%
+%    o cache: the magick cache.
+%
+%    o file: the file.
+%
+*/
+
+static MagickBooleanType ListMagickCacheContent(MagickCache *cache,FILE *file)
+{
+  char
+    *path;
+
+  DIR
+    *directory;
+
+  MagickBooleanType
+    status;
+
+  struct dirent
+    *entry;
+
+  struct ResourceNode
+    *head,
+    *node,
+    *p,
+    *q;
+
+  struct stat
+    attributes;
+
+  /*
+    Check that resource id exists in magick cache.
+  */
+  assert(cache != (MagickCache *) NULL);
+  assert(cache->signature == MagickCacheSignature);
+  status=MagickTrue;
+  head=AcquireCriticalMemory(sizeof(struct ResourceNode));
+  head->path=AcquireString(cache->path);
+  head->next=(struct ResourceNode *) NULL;
+  q=head;
+  for (p=head; p != (struct ResourceNode *) NULL; p=p->next)
+  {
+    directory=opendir(p->path);
+    if (directory == (DIR *) NULL)
+      return(MagickFalse);
+    while ((entry=readdir(directory)) != (struct dirent *) NULL)
+    {
+      path=AcquireString(p->path);
+      (void) ConcatenateString(&path,"/");
+      (void) ConcatenateString(&path,entry->d_name);
+      if (GetPathAttributes(path,&attributes) <= 0)
+        {
+          path=DestroyString(path);
+          break;
+        }
+      if ((strcmp(entry->d_name, ".") == 0) ||
+          (strcmp(entry->d_name, "..") == 0))
+        {
+          path=DestroyString(path);
+          continue;
+        }
+      if (S_ISDIR(attributes.st_mode) != 0)
+        {
+          node=AcquireCriticalMemory(sizeof(struct ResourceNode));
+          node->path=path;
+          node->next=(struct ResourceNode *) NULL;
+          node->previous=q;
+          q->next=node;
+          q=q->next;
+        }
+      else
+        if (S_ISREG(attributes.st_mode) != 0)
+          {
+            (void) fprintf(file,"%s\n",path);
+            path=DestroyString(path);
+          }
+    }
+    (void) closedir(directory);
+  }
+  /*
+    Free resources.
+  */
+  for ( ; q != (struct ResourceNode *) NULL; )
+  {
+    node=q;
+    q=q->previous;
+    node->path=DestroyString(node->path);
+    node=(struct ResourceNode *) RelinquishMagickMemory(node);
+  }
+  (void) remove_utf8(cache->path);
+  return(status);
+}
+
+MagickExport MagickBooleanType ListMagickCache(MagickCache *cache,FILE *file)
+{
+  char
+    *digest;
+
+  StringInfo
+    *passkey;
+
+  /*
+    Check that magick cache exists.
+  */
+  assert(cache != (MagickCache *) NULL);
+  assert(cache->signature == MagickCacheSignature);
+  passkey=StringToStringInfo(cache->path);
+  ConcatenateStringInfo(passkey,cache->key);
+  ConcatenateStringInfo(passkey,cache->nonce);
+  digest=StringInfoToDigest(passkey);
+  passkey=DestroyStringInfo(passkey);
+  if (strcmp(cache->digest,digest) != 0)
+    {
+      digest=DestroyString(digest);
+      (void) ThrowMagickException(cache->exception,GetMagickModule(),
+        CacheError,"authentication failure","`%s'",cache->path);
+      return(MagickFalse);
+    }
+  digest=DestroyString(digest);
+  /*
+    List all content in the magick cache.
+  */
+  return(ListMagickCacheContent(cache,file));
 }
 
 /*

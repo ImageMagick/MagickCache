@@ -92,13 +92,19 @@ Perhaps you want to audit all the content you own:
 
 ```
 $ magick-cache -cache-key passkey.txt identify /opt/magick-cache movies/image/mission-impossible/cast
-movies/image/mission-impossible/cast/rebecca-ferguson 1368x912 1:0:0:0 2021-05-30T17:41:42Z
+movies/image/mission-impossible/cast/rebecca-ferguson[1368x912] 406B  1:0:0:0 2021-05-30T17:41:42Z
 identified 1 resources
 ```
 
 Each entry includes the IRI, image dimensions, time to live, whether the resource is expired (denoted with a `*`), and the creation date.  For meta and blob content, the extent in bytes is listed.
 
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get it, delete it, or identify it.
+
+The magick cache onwer can view all the content, including content you own, with this command:
+
+```
+$ magick-cache -cache-key passkey.txt list /opt/magick-cache
+```
 
 ## Magick Cache is not just for images
 

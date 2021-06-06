@@ -85,13 +85,14 @@ static void MagickCacheUsage(int argc,char **argv)
 {
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [create delete] path\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [create | delete | "
+    "list] path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] "
     "[delete | expire | identify] path iri\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename -cipher-key filename"
-    "-extract geometry -ttl seconds] get path iri filename\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename -cipher-key filename"
-    "-ttl seconds] put path iri filename\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [-cipher-key filename]"
+    " [-extract geometry] [-ttl seconds] get path iri filename\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [-cipher-key filename]"
+    " [-ttl seconds] put path iri filename\n",*argv);
   exit(0);
 }
 
@@ -271,6 +272,18 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       return(0);
     }
+  if (LocaleCompare(function,"list") == 0)
+    {
+      status=ListMagickCache(cache,stdout);
+      if (status == MagickFalse)
+        {
+          message=GetExceptionMessage(errno);
+          (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
+            "unable to delete magick cache","`%s': %s",path,message);
+          ThrowMagickCacheException(cache);
+        }
+      return(0);
+    }
   if (i == (argc-1))
     MagickCacheUsage(argc,argv);
   iri=argv[++i];
@@ -279,7 +292,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   type=GetMagickCacheResourceType(resource);
   if ((LocaleCompare(function,"delete") != 0) &&
       (LocaleCompare(function,"expire") != 0) &&
-      (LocaleCompare(function,"list") != 0))
+      (LocaleCompare(function,"identify") != 0))
     {
       if (type == UndefinedResourceType)
         {

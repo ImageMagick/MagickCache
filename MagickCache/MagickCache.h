@@ -75,6 +75,7 @@ extern MagickExport MagickBooleanType
   IterateMagickCacheResources(MagickCache *,const char *,const void *,
     MagickBooleanType (*callback)(MagickCache *,MagickCacheResource *,
     const void *)),
+  ListMagickCache(MagickCache *,FILE *),
   PutMagickCacheResource(MagickCache *,MagickCacheResource *),
   PutMagickCacheResourceBlob(MagickCache *,MagickCacheResource *,const size_t,
     const void *),

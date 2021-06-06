@@ -82,6 +82,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 #define MagickCacheResourceIRI  "tests"
 #define MagickCacheResourceBlobIRI  "tests/blob/rose"
 #define MagickCacheResourceImageIRI  "tests/image/rose"
+#define MagickCacheResourceTTL  75
 #define MagickCacheResourceMeta  "a woody perennial flowering plant of the " \
   "genus Rosa, in the family Rosaceae, or the flower it bears"
 #define MagickCacheResourceMetaIRI  "tests/meta/rose"
@@ -133,7 +134,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     *cache = (MagickCache *) NULL;
 
   MagickCacheResource
-    *resource = (MagickCacheResource *) NULL;
+    *blob_resource = (MagickCacheResource *) NULL,
+    *image_resource = (MagickCacheResource *) NULL,
+    *meta_resource = (MagickCacheResource *) NULL;
 
   size_t
     columns = 0,
@@ -145,7 +148,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   StringInfo
     *cache_key = StringToStringInfo(MagickCacheKey);
 
-  unsigned int
+  unsigned long
     signature = MagickCoreSignature;
 
   (void) FormatLocaleFile(stdout,"%g: create magick cache\n",(double) tests);
@@ -172,8 +175,17 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     tests);
   tests++;
   if (cache != (MagickCache *) NULL)
-    resource=AcquireMagickCacheResource(cache,MagickCacheResourceImageIRI);
-  if (resource == (MagickCacheResource *) NULL)
+    {
+      blob_resource=AcquireMagickCacheResource(cache,
+        MagickCacheResourceBlobIRI);
+      image_resource=AcquireMagickCacheResource(cache,
+        MagickCacheResourceImageIRI);
+      meta_resource=AcquireMagickCacheResource(cache,
+        MagickCacheResourceMetaIRI);
+    }
+  if ((blob_resource == (MagickCacheResource *) NULL) &&
+      (image_resource == (MagickCacheResource *) NULL) &&
+      (meta_resource == (MagickCacheResource *) NULL))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
@@ -181,81 +193,81 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       fail++;
     }
 
+  (void) FormatLocaleFile(stdout,"%g: put magick cache (image)\n",(double)
+     tests);
+  tests++;
+  (void) strcpy(image_info->filename,"rose:");
+  if (cache != (MagickCache *) NULL)
+    rose=ReadImage(image_info,exception);
+  if ((cache != (MagickCache *) NULL) &&
+      (image_resource != (MagickCacheResource *) NULL) &&
+      (rose != (Image *) NULL))
+    {
+      SetMagickCacheResourceTTL(image_resource,MagickCacheResourceTTL);
+      status=PutMagickCacheResourceImage(cache,image_resource,rose);
+    }
+  if (status == MagickFalse)
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheResourceException(image_resource);
+      fail++;
+    }
+
   (void) FormatLocaleFile(stdout,"%g: put/get magick cache (blob)\n",(double)
      tests);
-  if (resource != (MagickCacheResource *) NULL)
-    resource=DestroyMagickCacheResource(resource);
-  if (cache != (MagickCache *) NULL)
-    resource=AcquireMagickCacheResource(cache,MagickCacheResourceBlobIRI);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
-    status=PutMagickCacheResourceBlob(cache,resource,sizeof(signature),
-      &signature);
-  if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL) && (status != MagickFalse))
+      (image_resource != (MagickCacheResource *) NULL))
     {
-      blob=GetMagickCacheResourceBlob(cache,resource);
-      extent=GetMagickCacheResourceExtent(resource);
+      SetMagickCacheResourceTTL(blob_resource,2*MagickCacheResourceTTL);
+      status=PutMagickCacheResourceBlob(cache,blob_resource,sizeof(signature),
+        &signature);
+    }
+  if ((cache != (MagickCache *) NULL) &&
+      (blob_resource != (MagickCacheResource *) NULL) &&
+      (status != MagickFalse))
+    {
+      blob=GetMagickCacheResourceBlob(cache,blob_resource);
+      extent=GetMagickCacheResourceExtent(blob_resource);
     }
   if ((status == MagickFalse) || (blob == (const void *) NULL) ||
       (extent != sizeof(signature)) || (memcmp(blob,&signature,extent)))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
-      ThrowMagickCacheResourceException(resource);
+      ThrowMagickCacheResourceException(blob_resource);
       fail++;
     }
 
   (void) FormatLocaleFile(stdout,"%g: put/get magick cache (meta)\n",(double)
      tests);
-  if (resource != (MagickCacheResource *) NULL)
-    resource=DestroyMagickCacheResource(resource);
-  if (cache != (MagickCache *) NULL)
-    resource=AcquireMagickCacheResource(cache,MagickCacheResourceMetaIRI);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
-    status=PutMagickCacheResourceMeta(cache,resource,MagickCacheResourceMeta);
+      (meta_resource != (MagickCacheResource *) NULL))
+    {
+      SetMagickCacheResourceTTL(meta_resource,3*MagickCacheResourceTTL);
+      status=PutMagickCacheResourceMeta(cache,meta_resource,
+        MagickCacheResourceMeta);
+    }
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL) && (status != MagickFalse))
-    meta=GetMagickCacheResourceMeta(cache,resource);
+      (meta_resource != (MagickCacheResource *) NULL) &&
+      (status != MagickFalse))
+    meta=GetMagickCacheResourceMeta(cache,meta_resource);
   if ((status == MagickFalse) || (meta == (const char *) NULL) ||
       (strlen(meta) != strlen(MagickCacheResourceMeta)) ||
       (memcmp(meta,MagickCacheResourceMeta,strlen(meta))))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
-      ThrowMagickCacheResourceException(resource);
+      ThrowMagickCacheResourceException(meta_resource);
       fail++;
     }
 
-  (void) FormatLocaleFile(stdout,"%g: put magick cache (image)\n",(double)
-     tests);
-  tests++;
-  if (resource != (MagickCacheResource *) NULL)
-    resource=DestroyMagickCacheResource(resource);
-  if (cache != (MagickCache *) NULL)
-    resource=AcquireMagickCacheResource(cache,MagickCacheResourceImageIRI);
-  (void) strcpy(image_info->filename,"rose:");
-  if (cache != (MagickCache *) NULL)
-    rose=ReadImage(image_info,exception);
-  if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL) && (rose != (Image *) NULL))
-    status=PutMagickCacheResourceImage(cache,resource,rose);
-  if (status == MagickFalse)
-    {
-      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
-        GetMagickModule());
-      ThrowMagickCacheResourceException(resource);
-      fail++;
-    }
-
-  (void) FormatLocaleFile(stdout,"%g: identify magick cache resource\n",
+  (void) FormatLocaleFile(stdout,"%g: identify magick cache resources\n",
     (double) tests);
   tests++;
-  if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
+  if (cache != (MagickCache *) NULL)
     {
       ssize_t count = 0;
       status=IterateMagickCacheResources(cache,MagickCacheResourceIRI,&count,
@@ -274,8 +286,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
      tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
-    image=GetMagickCacheResourceImage(cache,resource,(const char *) NULL);
+      (image_resource != (MagickCacheResource *) NULL))
+    image=GetMagickCacheResourceImage(cache,image_resource,(const char *) NULL);
   if ((image != (const Image *) NULL) && (rose != (Image *) NULL))
     difference=CompareImages(rose,image,RootMeanSquaredErrorMetric,
       &distortion,exception);
@@ -283,7 +295,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
-      ThrowMagickCacheResourceException(resource);
+      ThrowMagickCacheResourceException(image_resource);
       fail++;
     }
 
@@ -291,15 +303,15 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
      tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
-    image=GetMagickCacheResourceImage(cache,resource,"35x23+0+0");
+      (image_resource != (MagickCacheResource *) NULL))
+    image=GetMagickCacheResourceImage(cache,image_resource,"35x23+0+0");
   if (image != (const Image *) NULL)
-    GetMagickCacheResourceSize(resource,&columns,&rows);
+    GetMagickCacheResourceSize(image_resource,&columns,&rows);
   if ((image == (Image *) NULL) || (columns != 35) || (rows != 23))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
-      ThrowMagickCacheResourceException(resource);
+      ThrowMagickCacheResourceException(image_resource);
       fail++;
     }
 
@@ -307,15 +319,15 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     (double) tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
-    image=GetMagickCacheResourceImage(cache,resource,"35x23");
+      (image_resource != (MagickCacheResource *) NULL))
+    image=GetMagickCacheResourceImage(cache,image_resource,"35x23");
   if (image != (const Image *) NULL)
-    GetMagickCacheResourceSize(resource,&columns,&rows);
+    GetMagickCacheResourceSize(image_resource,&columns,&rows);
   if ((image == (Image *) NULL) || (columns != 35) || (rows != 23))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
-      ThrowMagickCacheResourceException(resource);
+      ThrowMagickCacheResourceException(image_resource);
       fail++;
     }
 
@@ -323,8 +335,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
-    status=ExpireMagickCacheResource(cache,resource);
+      (image_resource != (MagickCacheResource *) NULL))
+    status=ExpireMagickCacheResource(cache,image_resource);
   if (status == MagickFalse)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
@@ -337,8 +349,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
-      (resource != (MagickCacheResource *) NULL))
-    status=DeleteMagickCacheResource(cache,resource);
+      (image_resource != (MagickCacheResource *) NULL))
+    status=DeleteMagickCacheResource(cache,image_resource);
   if (status == MagickFalse)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
@@ -368,8 +380,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     rose=DestroyImageList(rose);
   if (image_info != (ImageInfo *) NULL)
     image_info=DestroyImageInfo(image_info);
-  if (resource != (MagickCacheResource *) NULL)
-    resource=DestroyMagickCacheResource(resource);
+  if (meta_resource != (MagickCacheResource *) NULL)
+    meta_resource=DestroyMagickCacheResource(meta_resource);
+  if (image_resource != (MagickCacheResource *) NULL)
+    image_resource=DestroyMagickCacheResource(image_resource);
+  if (blob_resource != (MagickCacheResource *) NULL)
+    blob_resource=DestroyMagickCacheResource(blob_resource);
   if (cache != (MagickCache *) NULL)
     cache=DestroyMagickCache(cache);
 

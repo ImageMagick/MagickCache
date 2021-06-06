@@ -1821,6 +1821,78 @@ MagickExport const time_t GetMagickCacheTimestamp(const MagickCache *cache)
 %                                                                             %
 %                                                                             %
 %                                                                             %
+%   E x p i r e M a g i c k C a c h e R e s o u r c e                         %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  IdentifyMagickCacheResource() identifies a resource within the magick
+%  cache.
+%
+%  The format of the IdentifyMagickCacheResource method is:
+%
+%      MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
+%        MagickCacheResource *resource,FILE *file)
+%
+%  A description of each parameter follows:
+%
+%    o cache: the magick cache.
+%
+%    o iri: the IRI.
+%
+%    o file: the fil.
+%
+*/
+MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
+  MagickCacheResource *resource,FILE *file)
+{
+  char
+    extent[MagickPathExtent],
+    iso8601[sizeof("9999-99-99T99:99:99Z")],
+    *path;
+
+  int
+    expired;
+
+  MagickBooleanType
+    status;
+
+  /*
+    If the resource ID exists and has expired, delete it.
+  */
+  assert(cache != (MagickCache *) NULL);
+  assert(cache->signature == MagickCacheSignature);
+  path=AcquireString(cache->path);
+  (void) ConcatenateString(&path,"/");
+  (void) ConcatenateString(&path,resource->iri);
+  (void) ConcatenateString(&path,"/");
+  (void) ConcatenateString(&path,resource->id);
+  status=GetMagickCacheResource(cache,resource);
+  (void) FormatMagickSize(GetMagickCacheResourceExtent(resource),MagickTrue,
+    "B",MagickPathExtent,extent);
+  if (resource->resource_type == ImageResourceType)
+    (void) snprintf(extent,MagickPathExtent,"%gx%g",(double) resource->columns,
+      (double) resource->rows);
+  (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
+    gmtime(&resource->timestamp));
+  expired=' ';
+  if ((resource->ttl != 0) && ((resource->ttl+resource->timestamp) < time(0)))
+    expired='*';
+  (void) fprintf(file,"%s %s %g:%g:%g:%g%c %s\n",
+    GetMagickCacheResourceIRI(resource),extent,(double) (resource->ttl/
+      (3600*24)),(double) ((resource->ttl % (24*3600))/3600),(double)
+      ((resource->ttl % 3600)/60),(double) ((resource->ttl % 3600) % 60),
+      expired,iso8601);
+  path=DestroyString(path);
+  return(status);
+}
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
 %   I t e r a t e M a g i c k C a c h e R e s o u r c e s                     %
 %                                                                             %
 %                                                                             %

@@ -73,49 +73,12 @@ static MagickBooleanType ExpireResources(MagickCache *cache,
   return(ExpireMagickCacheResource(cache,resource));
 }
 
-static MagickBooleanType ListResources(MagickCache *cache,
+static MagickBooleanType IdentifyResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
-  char
-    extent[MagickPathExtent],
-    iso8601[sizeof("9999-99-99T99:99:99Z")];
-
-  int
-    expired;
-
-  ssize_t
-    *count = (ssize_t *) context;
-
-  size_t
-    ttl;
-
-  time_t
-    epoch;
-
-  (void) FormatMagickSize(GetMagickCacheResourceExtent(resource),MagickTrue,
-    "B",MagickPathExtent,extent);
-  if (GetMagickCacheResourceType(resource) == ImageResourceType)
-    {
-      size_t
-        columns,
-        rows;
-
-      GetMagickCacheResourceSize(resource,&columns,&rows);
-      (void) snprintf(extent,MagickPathExtent,"%gx%g",(double) columns,(double)
-        rows);
-    }
-  epoch=GetMagickCacheResourceTimestamp(resource);
-  (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",gmtime(&epoch));
-  ttl=GetMagickCacheResourceTTL(resource);
-  expired=' ';
-  if ((ttl != 0) && ((ttl+epoch) < time(0)))
-    expired='*';
-  (void) fprintf(stderr,"%s %s %g:%g:%g:%g%c %s\n",
-    GetMagickCacheResourceIRI(resource),extent,(double) (ttl/(3600*24)),
-      (double) ((ttl % (24*3600))/3600),(double) ((ttl % 3600)/60),
-      (double) ((ttl % 3600) % 60),expired,iso8601);
+  ssize_t *count = (ssize_t *) context;
   (*count)++;
-  return(MagickTrue);
+  return(IdentifyMagickCacheResource(cache,resource,stdout));
 }
 
 static void MagickCacheUsage(int argc,char **argv)
@@ -124,7 +87,7 @@ static void MagickCacheUsage(int argc,char **argv)
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] [create delete] path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] "
-    "[delete | expire | list] path iri\n",*argv);
+    "[delete | expire | identify] path iri\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename -cipher-key filename"
     "-extract geometry -ttl seconds] get path iri filename\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename -cipher-key filename"
@@ -422,13 +385,14 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         "unrecognized magick cache function","`%s'",filename);
       MagickCacheExit(exception);
     }
-    case 'l':
+    case 'i':
     {
-      if (LocaleCompare(function,"list") == 0)
+      if (LocaleCompare(function,"identify") == 0)
         {
           ssize_t count = 0;
-          status=IterateMagickCacheResources(cache,iri,&count,ListResources);
-          (void) fprintf(stderr,"listed %g resources\n",(double) count);
+          status=IterateMagickCacheResources(cache,iri,&count,
+            IdentifyResources);
+          (void) fprintf(stderr,"identified %g resources\n",(double) count);
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,

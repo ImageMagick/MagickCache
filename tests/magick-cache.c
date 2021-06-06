@@ -190,6 +190,34 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       fail++;
     }
 
+  (void) FormatLocaleFile(stdout,"%g: expire magick cache resource\n",(double)
+    tests);
+  tests++;
+  if ((cache != (MagickCache *) NULL) &&
+      (resource != (MagickCacheResource *) NULL))
+    status=ExpireMagickCacheResource(cache,resource);
+  if (status == MagickFalse)
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheException(cache);
+      fail++;
+    }
+
+  (void) FormatLocaleFile(stdout,"%g: delete magick cache resource\n",(double)
+    tests);
+  tests++;
+  if ((cache != (MagickCache *) NULL) &&
+      (resource != (MagickCacheResource *) NULL))
+    status=DeleteMagickCacheResource(cache,resource);
+  if (status == MagickFalse)
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheException(cache);
+      fail++;
+    }
+
   (void) FormatLocaleFile(stdout,"%g: delete magick cache\n",(double) tests);
   tests++;
   if (cache != (MagickCache *) NULL)

@@ -71,6 +71,7 @@ extern MagickExport MagickBooleanType
   ExpireMagickCacheResource(MagickCache *,MagickCacheResource *),
   GetMagickCacheResource(MagickCache *,MagickCacheResource *),
   GetMagickCacheResourceID(MagickCache *,const size_t,char *),
+  IdentifyMagickCacheResource(MagickCache *,MagickCacheResource *,FILE *),
   IterateMagickCacheResources(MagickCache *,const char *,const void *,
     MagickBooleanType (*callback)(MagickCache *,MagickCacheResource *,
     const void *)),

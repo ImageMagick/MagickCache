@@ -192,6 +192,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 
   (void) FormatLocaleFile(stdout,"%g: get magick cache (image)\n",(double)
      tests);
+  tests++;
   if ((cache != (MagickCache *) NULL) &&
       (resource != (MagickCacheResource *) NULL))
     image=GetMagickCacheResourceImage(cache,resource,(const char *) NULL);
@@ -208,12 +209,29 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 
   (void) FormatLocaleFile(stdout,"%g: get magick cache (image tile)\n",(double)
      tests);
+  tests++;
   if ((cache != (MagickCache *) NULL) &&
       (resource != (MagickCacheResource *) NULL))
-    image=GetMagickCacheResourceImage(cache,resource,"10x10+0+0");
+    image=GetMagickCacheResourceImage(cache,resource,"35x23+0+0");
   if (image != (const Image *) NULL)
     GetMagickCacheResourceSize(resource,&columns,&rows);
-  if ((image == (Image *) NULL) || (columns != 10) || (rows != 10))
+  if ((image == (Image *) NULL) || (columns != 35) || (rows != 23))
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheResourceException(resource);
+      fail++;
+    }
+
+  (void) FormatLocaleFile(stdout,"%g: get magick cache (image resize)\n",
+    (double) tests);
+  tests++;
+  if ((cache != (MagickCache *) NULL) &&
+      (resource != (MagickCacheResource *) NULL))
+    image=GetMagickCacheResourceImage(cache,resource,"35x23");
+  if (image != (const Image *) NULL)
+    GetMagickCacheResourceSize(resource,&columns,&rows);
+  if ((image == (Image *) NULL) || (columns != 35) || (rows != 23))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());

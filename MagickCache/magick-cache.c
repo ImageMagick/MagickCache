@@ -463,7 +463,8 @@ static StringInfo *SetMagickCacheSentinel(const char *path,
   (void) memcpy(p,GetStringInfoDatum(key_info),MagickCacheNonceExtent);
   p+=MagickCacheNonceExtent;
   passkey=StringToStringInfo(path);
-  ConcatenateStringInfo(passkey,cache_key);
+  if (cache_key != (const StringInfo *) NULL)
+    ConcatenateStringInfo(passkey,cache_key);
   ConcatenateStringInfo(passkey,key_info);
   digest=StringInfoToDigest(passkey);
   passkey=DestroyStringInfo(passkey);

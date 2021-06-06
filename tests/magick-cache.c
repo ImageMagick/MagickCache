@@ -118,7 +118,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     *resource = (MagickCacheResource *) NULL;
 
   size_t
+    columns = 0,
     fail = 0,
+    rows = 0,
     tests = 0;
 
   StringInfo
@@ -197,6 +199,21 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     difference=CompareImages(rose,image,RootMeanSquaredErrorMetric,
       &distortion,exception);
   if ((image == (Image *) NULL) || (distortion >= MagickEpsilon))
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheResourceException(resource);
+      fail++;
+    }
+
+  (void) FormatLocaleFile(stdout,"%g: get magick cache (image tile)\n",(double)
+     tests);
+  if ((cache != (MagickCache *) NULL) &&
+      (resource != (MagickCacheResource *) NULL))
+    image=GetMagickCacheResourceImage(cache,resource,"10x10+0+0");
+  if (image != (const Image *) NULL)
+    GetMagickCacheResourceSize(resource,&columns,&rows);
+  if ((image == (Image *) NULL) || (columns != 10) || (rows != 10))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());

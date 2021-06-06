@@ -1530,6 +1530,12 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
   if (resource->blob == (void *) NULL)
     (void) ThrowMagickException(resource->exception,GetMagickModule(),
       CacheError,"cannot get resource","`%s'",resource->iri);
+  else
+    {
+       const Image *image=(const Image *) resource->blob;
+       resource->columns=image->columns;
+       resource->rows=image->rows;
+    }
   path=DestroyString(path);
   image_info=DestroyImageInfo(image_info);
   return((const Image *) resource->blob);

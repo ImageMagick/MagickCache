@@ -92,6 +92,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   const char
     *path = "./magick-cache-repo";
 
+  const Image
+    *image = (const Image *) NULL;
+
   ExceptionType
     severity = UndefinedException;
 
@@ -156,7 +159,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) strcpy(image_info->filename,"rose:");
   if (cache != (MagickCache *) NULL)
     rose=ReadImage(image_info,exception);
-  resource=AcquireMagickCacheResource(cache,MagickCacheResourceImageIRI);
   if ((cache != (MagickCache *) NULL) &&
       (resource != (MagickCacheResource *) NULL) && (rose != (Image *) NULL))
     status=PutMagickCacheResourceImage(cache,resource,rose);
@@ -164,7 +166,20 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
-      ThrowMagickCacheException(cache);
+      ThrowMagickCacheResourceException(resource);
+      fail++;
+    }
+
+  (void) FormatLocaleFile(stdout,"%g: get magick cache (image)\n",(double)
+     tests);
+  if ((cache != (MagickCache *) NULL) &&
+      (resource != (MagickCacheResource *) NULL) && (rose != (Image *) NULL))
+    image=GetMagickCacheResourceImage(cache,resource,(const char *) NULL);
+  if (image == (Image *) NULL)
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheResourceException(resource);
       fail++;
     }
 

@@ -157,7 +157,7 @@ CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
-	ChangeLog INSTALL NEWS compile depcomp install-sh missing
+	ChangeLog NEWS compile depcomp install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -324,6 +324,7 @@ SUBDIRS = \
 
 TOP_EXTRA_DIST = \
 	ChangeLog \
+	INSTALL.md \
 	LICENSE \
 	README.md \
 	SECURITY.md

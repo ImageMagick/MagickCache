@@ -7,6 +7,7 @@ SUBDIRS = \
 
 TOP_EXTRA_DIST = \
 	ChangeLog \
+	INSTALL.md \
 	LICENSE \
 	README.md \
 	SECURITY.md

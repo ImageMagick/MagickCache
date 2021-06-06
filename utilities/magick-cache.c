@@ -127,8 +127,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   description=(char *) DestroyString(description); \
   MagickCacheExit(exception); \
 }
-#define ThrowMagickCacheResourceException(resource) \
+#define ThrowMagickCacheResourceException(cache,resource) \
 { \
+  ThrowMagickCacheException(cache); \
   description=GetMagickCacheResourceException(resource,&severity); \
   (void) FormatLocaleFile(stderr,"%s %s %lu %s\n",GetMagickModule(), \
     description); \
@@ -266,7 +267,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           message=GetExceptionMessage(errno);
           (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
             "unable to delete magick cache","`%s': %s",path,message);
-          MagickCacheExit(exception);
+          ThrowMagickCacheException(cache);
         }
       return(0);
     }
@@ -284,7 +285,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         {
           (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
             "unrecognized resource type","`%s'",iri);
-          MagickCacheExit(exception);
+          ThrowMagickCacheResourceException(cache,resource);
         }
       if (i == (argc-1))
         MagickCacheUsage(argc,argv);
@@ -302,7 +303,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unrecognized magick cache function","`%s'",filename);
-      MagickCacheExit(exception);
+      ThrowMagickCacheResourceException(cache,resource);
     }
     case 'e':
     {
@@ -315,7 +316,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
         "unrecognized magick cache function","`%s'",filename);
-      MagickCacheExit(exception);
+      ThrowMagickCacheResourceException(cache,resource);
     }
     case 'g':
     {
@@ -377,7 +378,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             {
               (void) ThrowMagickException(exception,GetMagickModule(),
                 OptionError,"unable to get resource","`%s'",filename);
-              MagickCacheExit(exception);
+              ThrowMagickCacheResourceException(cache,resource);
             }
           break;
         }
@@ -393,6 +394,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           status=IterateMagickCacheResources(cache,iri,&count,
             IdentifyResources);
           (void) fprintf(stderr,"identified %g resources\n",(double) count);
+          if (status == MagickFalse)
+            {
+              (void) ThrowMagickException(exception,GetMagickModule(),
+                OptionError,"unable to identify resource","`%s'",filename);
+              ThrowMagickCacheResourceException(cache,resource);
+            }
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
@@ -460,7 +467,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             {
               (void) ThrowMagickException(exception,GetMagickModule(),
                 OptionError,"unable to put resource","`%s'",filename);
-              MagickCacheExit(exception);
+              ThrowMagickCacheResourceException(cache,resource);
             }
           break;
         }

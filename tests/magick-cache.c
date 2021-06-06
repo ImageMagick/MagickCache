@@ -174,6 +174,20 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       fail++;
     }
 
+  (void) FormatLocaleFile(stdout,"%g: identify magick cache resource\n",
+    (double) tests);
+  tests++;
+  if ((cache != (MagickCache *) NULL) &&
+      (resource != (MagickCacheResource *) NULL))
+    status=IdentifyMagickCacheResource(cache,resource,stdout);
+  if (status == MagickFalse)
+    {
+      (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
+        GetMagickModule());
+      ThrowMagickCacheException(cache);
+      fail++;
+    }
+
   (void) FormatLocaleFile(stdout,"%g: get magick cache (image)\n",(double)
      tests);
   if ((cache != (MagickCache *) NULL) &&

@@ -66,11 +66,20 @@
 %
 */
 
+static MagickBooleanType IdentifyResources(MagickCache *cache,
+  MagickCacheResource *resource,const void *context)
+{
+  ssize_t *count = (ssize_t *) context;
+  (*count)++;
+  return(IdentifyMagickCacheResource(cache,resource,stdout));
+}
+
 static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionInfo *exception)
 {
 #define MagickCacheKey  "5u[Jz,3!"
 #define MagickCacheRepo  "./magick-cache-repo"
+#define MagickCacheResourceIRI  "tests"
 #define MagickCacheResourceBlobIRI  "tests/blob/rose"
 #define MagickCacheResourceImageIRI  "tests/image/rose"
 #define MagickCacheResourceMeta  "a woody perennial flowering plant of the " \
@@ -194,7 +203,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   tests++;
   if ((cache != (MagickCache *) NULL) &&
       (resource != (MagickCacheResource *) NULL))
-    status=IdentifyMagickCacheResource(cache,resource,stdout);
+    {
+      ssize_t count = 0;
+      status=IterateMagickCacheResources(cache,MagickCacheResourceIRI,&count,
+        IdentifyResources);
+      (void) fprintf(stderr,"identified %g resources\n",(double) count);
+    }
   if (status == MagickFalse)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",

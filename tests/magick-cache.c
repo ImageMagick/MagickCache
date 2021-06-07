@@ -146,14 +146,14 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     tests = 0;
 
   StringInfo
-    *cache_key = StringToStringInfo(MagickCacheKey);
+    *passkey = StringToStringInfo(MagickCacheKey);
 
   unsigned long
     signature = MagickCoreSignature;
 
   (void) FormatLocaleFile(stdout,"%g: create magick cache\n",(double) tests);
   tests++;
-  status=CreateMagickCache(path,cache_key);
+  status=CreateMagickCache(path,passkey);
   if (status == MagickFalse)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
@@ -163,7 +163,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 
   (void) FormatLocaleFile(stdout,"%g: acquire magick cache\n",(double) tests);
   tests++;
-  cache=AcquireMagickCache(path,cache_key);
+  cache=AcquireMagickCache(path,passkey);
   if (cache == (MagickCache *) NULL)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",

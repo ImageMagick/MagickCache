@@ -423,18 +423,18 @@ MagickExport const size_t GetMagickCacheResourceExtent(
 %  The format of the CreateMagickCache method is:
 %
 %      MagickBooleanType CreateMagickCache(const char *path,
-%        const StringInfo *cache_key)
+%        const StringInfo *passkey)
 %
 %  A description of each parameter follows:
 %
 %    o path: the magick cache directory path, absolute (e.g. /myrepo) or
 %      relative (e.g. ./myrepo).
 %
-%    o cache_key: the magick cache key.
+%    o passkey: the magick cache key.
 */
 
 static StringInfo *SetMagickCacheSentinel(const char *path,
-  const StringInfo *cache_key)
+  const StringInfo *passkey)
 {
   char
     *digest;
@@ -444,7 +444,7 @@ static StringInfo *SetMagickCacheSentinel(const char *path,
 
   StringInfo
     *key_info,
-    *passkey,
+    *cache_key,
     *sentinel;
 
   unsigned char
@@ -462,12 +462,12 @@ static StringInfo *SetMagickCacheSentinel(const char *path,
   p+=sizeof(signature);
   (void) memcpy(p,GetStringInfoDatum(key_info),MagickCacheNonceExtent);
   p+=MagickCacheNonceExtent;
-  passkey=StringToStringInfo(path);
-  if (cache_key != (const StringInfo *) NULL)
-    ConcatenateStringInfo(passkey,cache_key);
-  ConcatenateStringInfo(passkey,key_info);
-  digest=StringInfoToDigest(passkey);
-  passkey=DestroyStringInfo(passkey);
+  cache_key=StringToStringInfo(path);
+  if (passkey != (const StringInfo *) NULL)
+    ConcatenateStringInfo(cache_key,passkey);
+  ConcatenateStringInfo(cache_key,key_info);
+  digest=StringInfoToDigest(cache_key);
+  cache_key=DestroyStringInfo(cache_key);
   (void) memcpy(p,digest,strlen(digest));
   p+=strlen(digest);
   SetStringInfoLength(sentinel,(size_t) (p-GetStringInfoDatum(sentinel)));
@@ -478,7 +478,7 @@ static StringInfo *SetMagickCacheSentinel(const char *path,
 }
 
 MagickExport MagickBooleanType CreateMagickCache(const char *path,
-  const StringInfo *cache_key)
+  const StringInfo *passkey)
 {
   char
     *sentinel_path;
@@ -509,7 +509,7 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
       errno=EEXIST;
       return(MagickFalse);
     }
-  meta=SetMagickCacheSentinel(path,cache_key);
+  meta=SetMagickCacheSentinel(path,passkey);
   exception=AcquireExceptionInfo();
   status=BlobToFile(sentinel_path,GetStringInfoDatum(meta),
     GetStringInfoLength(meta),exception);

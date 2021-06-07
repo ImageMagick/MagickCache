@@ -85,13 +85,13 @@ static void MagickCacheUsage(int argc,char **argv)
 {
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [create | delete] "
+  (void) fprintf(stdout,"Usage: %s [-passkey filename] [create | delete] "
     "path\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename] "
+  (void) fprintf(stdout,"Usage: %s [-passkey filename] "
     "[delete | expire | identify | list] path iri\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [-cipher-key filename]"
+  (void) fprintf(stdout,"Usage: %s [-passkey filename] [-cipher-key filename]"
     " [-extract geometry] [-ttl seconds] get path iri filename\n",*argv);
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [-cipher-key filename]"
+  (void) fprintf(stdout,"Usage: %s [-passkey filename] [-cipher-key filename]"
     " [-ttl seconds] put path iri filename\n",*argv);
   exit(0);
 }
@@ -110,8 +110,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   CatchException(exception); \
   if (cipher_key != (StringInfo *) NULL) \
     cipher_key=DestroyStringInfo(cipher_key); \
-  if (cache_key != (StringInfo *) NULL) \
-    cache_key=DestroyStringInfo(cache_key); \
+  if (passkey != (StringInfo *) NULL) \
+    passkey=DestroyStringInfo(passkey); \
   if (resource != (MagickCacheResource *) NULL) \
     resource=DestroyMagickCacheResource(resource); \
   if (cache != (MagickCache *) NULL) \
@@ -182,7 +182,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     ttl = 0;
 
   StringInfo
-    *cache_key = (StringInfo *) NULL,
+    *passkey = (StringInfo *) NULL,
     *cipher_key = (StringInfo *) NULL;
 
   if (argc < 2)
@@ -191,10 +191,10 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   {
     if (*argv[i] != '-')
       break;
-    if (LocaleCompare(argv[i],"-cache-key") == 0)
+    if (LocaleCompare(argv[i],"-passkey") == 0)
       {
-        cache_key=FileToStringInfo(argv[++i],~0UL,exception);
-        if (cache_key == (StringInfo *) NULL)
+        passkey=FileToStringInfo(argv[++i],~0UL,exception);
+        if (passkey == (StringInfo *) NULL)
           {
             message=GetExceptionMessage(errno);
             (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
@@ -242,7 +242,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   path=argv[++i];
   if (LocaleCompare(function,"create") == 0)
     {
-      status=CreateMagickCache(path,cache_key);
+      status=CreateMagickCache(path,passkey);
       if (status == MagickFalse)
         {
           message=GetExceptionMessage(errno);
@@ -252,7 +252,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       return(0);
     }
-  cache=AcquireMagickCache(path,cache_key);
+  cache=AcquireMagickCache(path,passkey);
   if (cache == (MagickCache *) NULL)
     {
       message=GetExceptionMessage(errno);
@@ -497,8 +497,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   }
   if (cipher_key != (StringInfo *) NULL)
     cipher_key=DestroyStringInfo(cipher_key);
-  if (cache_key != (StringInfo *) NULL)
-    cache_key=DestroyStringInfo(cache_key);
+  if (passkey != (StringInfo *) NULL)
+    passkey=DestroyStringInfo(passkey);
   resource=DestroyMagickCacheResource(resource);
   cache=DestroyMagickCache(cache);
   return(0);

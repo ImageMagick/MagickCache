@@ -2143,12 +2143,39 @@ static MagickBooleanType ListMagickCacheContent(MagickCache *cache,
               iso8601[sizeof("9999-99-99T99:99:99Z")],
               tail[MagickPathExtent];
 
+            int
+              expired;
+
             GetPathComponent(path,TailPath,tail);
             (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
               gmtime(&attributes.st_ctime));
+            expired=' ';
+            if (LocaleCompare(tail,MagickCacheResourceSentinel) == 0)
+              {
+                MagickCacheResource
+                  *resource;
+
+                size_t
+                  extent;
+
+                void
+                  *sentinel;
+
+                sentinel=FileToBlob(path,~0UL,&extent,cache->exception);
+                if (sentinel != NULL)
+                  {
+                    resource=AcquireMagickCacheResource(cache,iri);
+                    GetMagickCacheResourceSentinel(resource,sentinel);
+                    if ((resource->ttl != 0) &&
+                        ((resource->ttl+attributes.st_ctime) < time(0)))
+                      expired='*';
+                    resource=DestroyMagickCacheResource(resource);
+                    sentinel=RelinquishMagickMemory(sentinel);
+                  }
+              }
             (void) FormatMagickSize(attributes.st_size,MagickTrue,"B",
               MagickPathExtent,extent);
-            (void) fprintf(file,"%s %s %s\n",path,extent,iso8601);
+            (void) fprintf(file,"%s%c %s %s\n",path,expired,extent,iso8601);
             path=DestroyString(path);
           }
     }

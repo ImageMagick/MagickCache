@@ -106,6 +106,8 @@ The magick cache onwer can view all the content, including content you own, with
 $ magick-cache -cache-key passkey.txt list /opt/magick-cache  movies
 ```
 
+Note, expired resources are annotated with an asterisks.
+
 ## Magick Cache is not just for images
 
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:

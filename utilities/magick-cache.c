@@ -85,10 +85,10 @@ static void MagickCacheUsage(int argc,char **argv)
 {
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
-  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [create | delete | "
-    "list] path\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-cache-key filename] [create | delete] "
+    "path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] "
-    "[delete | expire | identify] path iri\n",*argv);
+    "[delete | expire | identify | list] path iri\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] [-cipher-key filename]"
     " [-extract geometry] [-ttl seconds] get path iri filename\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-cache-key filename] [-cipher-key filename]"
@@ -272,9 +272,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       return(0);
     }
+  if (i == (argc-1))
+    MagickCacheUsage(argc,argv);
+  iri=argv[++i];
   if (LocaleCompare(function,"list") == 0)
     {
-      status=ListMagickCache(cache,stdout);
+      status=ListMagickCache(cache,iri,stdout);
       if (status == MagickFalse)
         {
           message=GetExceptionMessage(errno);
@@ -284,9 +287,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         }
       return(0);
     }
-  if (i == (argc-1))
-    MagickCacheUsage(argc,argv);
-  iri=argv[++i];
   resource=AcquireMagickCacheResource(cache,iri);
   SetMagickCacheResourceTTL(resource,ttl);
   type=GetMagickCacheResourceType(resource);

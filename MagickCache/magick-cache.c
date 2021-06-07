@@ -1867,7 +1867,7 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
     status;
 
   /*
-    If the resource ID exists and has expired, delete it.
+    If the resource ID exists, identify it.
   */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
@@ -2055,17 +2055,21 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
 %
 %  The format of the ListMagickCache method is:
 %
-%      MagickBooleanType ListMagickCache(MagickCache *cache,FILE *file)
+%      MagickBooleanType ListMagickCache(MagickCache *cache,
+%        const char *iri,FILE *file)
 %
 %  A description of each parameter follows:
 %
 %    o cache: the magick cache.
 %
+%    o iri: the IRI.
+%
 %    o file: the file.
 %
 */
 
-static MagickBooleanType ListMagickCacheContent(MagickCache *cache,FILE *file)
+static MagickBooleanType ListMagickCacheContent(MagickCache *cache,
+  const char *iri,FILE *file)
 {
   char
     *path;
@@ -2095,7 +2099,10 @@ static MagickBooleanType ListMagickCacheContent(MagickCache *cache,FILE *file)
   assert(cache->signature == MagickCacheSignature);
   status=MagickTrue;
   head=AcquireCriticalMemory(sizeof(struct ResourceNode));
-  head->path=AcquireString(cache->path);
+  path=AcquireString(cache->path);
+  (void) ConcatenateString(&path,"/");
+  (void) ConcatenateString(&path,iri);
+  head->path=path;
   head->next=(struct ResourceNode *) NULL;
   q=head;
   for (p=head; p != (struct ResourceNode *) NULL; p=p->next)
@@ -2131,7 +2138,17 @@ static MagickBooleanType ListMagickCacheContent(MagickCache *cache,FILE *file)
       else
         if (S_ISREG(attributes.st_mode) != 0)
           {
-            (void) fprintf(file,"%s\n",path);
+            char
+              extent[MagickPathExtent],
+              iso8601[sizeof("9999-99-99T99:99:99Z")],
+              tail[MagickPathExtent];
+
+            GetPathComponent(path,TailPath,tail);
+            (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
+              gmtime(&attributes.st_ctime));
+            (void) FormatMagickSize(attributes.st_size,MagickTrue,"B",
+              MagickPathExtent,extent);
+            (void) fprintf(file,"%s %s %s\n",path,extent,iso8601);
             path=DestroyString(path);
           }
     }
@@ -2151,7 +2168,8 @@ static MagickBooleanType ListMagickCacheContent(MagickCache *cache,FILE *file)
   return(status);
 }
 
-MagickExport MagickBooleanType ListMagickCache(MagickCache *cache,FILE *file)
+MagickExport MagickBooleanType ListMagickCache(MagickCache *cache,
+  const char *iri,FILE *file)
 {
   char
     *digest;
@@ -2180,7 +2198,7 @@ MagickExport MagickBooleanType ListMagickCache(MagickCache *cache,FILE *file)
   /*
     List all content in the magick cache.
   */
-  return(ListMagickCacheContent(cache,file));
+  return(ListMagickCacheContent(cache,iri,file));
 }
 
 /*

@@ -103,7 +103,7 @@ Others can store content in the cache along side your content.  However, their c
 The magick cache onwer can view all the content, including content you own, with this command:
 
 ```
-$ magick-cache -cache-key passkey.txt list /opt/magick-cache
+$ magick-cache -cache-key passkey.txt list /opt/magick-cache  movies
 ```
 
 ## Magick Cache is not just for images

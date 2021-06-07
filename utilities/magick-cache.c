@@ -198,6 +198,17 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           {
             message=GetExceptionMessage(errno);
             (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
+              "unable to read passkey","`%s': %s",argv[i],message);
+            MagickCacheExit(exception);
+          }
+      }
+    if (LocaleCompare(argv[i],"-passphrase") == 0)
+      {
+        passphrase=FileToStringInfo(argv[++i],~0UL,exception);
+        if (passphrase == (StringInfo *) NULL)
+          {
+            message=GetExceptionMessage(errno);
+            (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
               "unable to read passphrase","`%s': %s",argv[i],message);
             MagickCacheExit(exception);
           }

@@ -23,15 +23,15 @@ Once its created, you will want to populate it with content that includes images
 Let's add a movie cast image to our newly created cache:</p>
 
 ```
-$ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
+$ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Note, the image identifier is an IRI composed of `project/type/resource-path`. In this example, the project is `movies`, type is `image`, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/200508-rebecca-ferguson` and `mission-impossible/cast/200513-rebecca-ferguson`.
+Note, the image identifier is an IRI composed of `project/type/resource-path`. In this example, the project is `movies`, type is `image`, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
 
 Now, set a resource key and the time to live to 2 days. Anytime after 1 day, the image will automatically expire with the `expire` function. To get, expire, or delete the image, you will need to use the same cache key.
 
 ```
-$ magick-cache -passkey passkey.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
+$ magick-cache -passkey passkey.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
 Where `passkey.txt` contains your resource key. Don't forget your resource key. Without it, you will not be able to get, list, delete or expire your content.
@@ -39,7 +39,7 @@ Where `passkey.txt` contains your resource key. Don't forget your resource key. 
 The resource key ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with:
 
 ```
-$ magick-cache -passkey passkey.txt -cipher-key passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.jpg
+$ magick-cache -passkey passkey.txt -cipher-key passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
 Note, blobs and metadata are stored in the cache in plaintext.
@@ -113,13 +113,13 @@ Note, expired resources are annotated with an asterisks.
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:
 
 ```
-$ magick-cache -passkey passkey.txt put /opt/magick-cache movies/blob/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.mp4
+$ magick-cache -passkey passkey.txt put /opt/magick-cache movies/blob/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.mp4
 ```
 
 or
 
 ```
-$ magick-cache -passkey passkey.txt put /opt/magick-cache movies/meta/mission-impossible/cast/rebecca-ferguson 0200508-rebecca-ferguson.txt
+$ magick-cache -passkey passkey.txt put /opt/magick-cache movies/meta/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.txt
 ```
 
 Images must be in a format that ImageMagick understands.  Metadata must be text.  Blobs can be any content including images, video, audio, or binary files.

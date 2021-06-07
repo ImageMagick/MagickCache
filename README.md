@@ -103,7 +103,7 @@ Others can store content in the cache along side your content.  However, their c
 The magick cache onwer can view all the content, including content you own, with this command:
 
 ```
-$ magick-cache -passkey passkey.txt list /opt/magick-cache  movies
+$ magick-cache -passkey passkey.txt list /opt/magick-cache movies
 ```
 
 Note, expired resources are annotated with an asterisks.

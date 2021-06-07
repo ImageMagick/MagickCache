@@ -5,8 +5,8 @@ magick-cache \- The Magick Cache stores and retrieves images efficiently within 
 .TP
 \fBmagick-cache\fP [\fI-passkey filename\fP] [\fIcreate\fP | \fIdelete\fP] \fIpath\fP
 \fBmagick-cache\fP [\fI-passkey filename\fP] [\fIdelete | expire | identify | list\fP] [\fIpath\fP] \fIiri\fP
-\fBmagick-cache\fP [\fI-passkey filename\fP] [\fI-cipher-key filename\fP] [\fI-ttl time\fP] [\fI-extract geometry\fP] get [\fIpath\fP] \fIiri\fP \fIfilename\fP
-\fBmagick-cache\fP [\fI-passkey filename\fP] [\fI-cipher-key filename\fP] [\fI-ttl time\fP put \fIpath\fP \fIiri\fP \fIfilename\fP
+\fBmagick-cache\fP [\fI-passkey filename\fP] [\fI-passphrase filename\fP] [\fI-ttl time\fP] [\fI-extract geometry\fP] get [\fIpath\fP] \fIiri\fP \fIfilename\fP
+\fBmagick-cache\fP [\fI-passkey filename\fP] [\fI-passphrase filename\fP] [\fI-ttl time\fP put \fIpath\fP \fIiri\fP \fIfilename\fP
 .SH OVERVIEW
 magick-cache \- store and retrieve images efficiently within milliseconds with a small memory footprint. In addition to images, you can store video, audio, and associated properties. The cache supports virtually unlimited content upwards of billions of images making it suitable as a web image service.
 

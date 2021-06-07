@@ -39,7 +39,7 @@ Where `passkey.txt` contains your resource key. Don't forget your resource key. 
 The resource key ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with:
 
 ```
-$ magick-cache -passkey passkey.txt -cipher-key passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
+$ magick-cache -passkey passkey.txt -passphrase passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
 Note, blobs and metadata are stored in the cache in plaintext.
@@ -66,10 +66,10 @@ To resize instead, do not specify the offset:
 $ magick-cache -passkey passkey.txt -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
-If your image is scrambled, provide the cipher key to descrample it:
+If your image is scrambled, provide the passphrase to descrample it:
 
 ```
-$ magick-cache -passkey passkey.txt -cipher-key passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -passkey passkey.txt -passphrase passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 ## Delete content from the Magick Cache

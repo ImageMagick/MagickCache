@@ -2140,39 +2140,38 @@ static MagickBooleanType ListMagickCacheContent(MagickCache *cache,
           {
             char
               extent[MagickPathExtent],
-              iso8601[sizeof("9999-99-99T99:99:99Z")],
-              tail[MagickPathExtent];
+              head[MagickPathExtent],
+              iso8601[sizeof("9999-99-99T99:99:99Z")];
 
             int
               expired;
 
-            GetPathComponent(path,TailPath,tail);
-            (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
-              gmtime(&attributes.st_ctime));
+            size_t
+              length;
+
+            void
+              *sentinel;
+
+            GetPathComponent(path,HeadPath,head);
+            (void) ConcatenateString(&path,"/");
+            (void) ConcatenateString(&path,MagickCacheResourceSentinel);
             expired=' ';
-            if (LocaleCompare(tail,MagickCacheResourceSentinel) == 0)
+            sentinel=FileToBlob(path,~0UL,&length,cache->exception);
+            if (sentinel != NULL)
               {
                 MagickCacheResource
                   *resource;
 
-                size_t
-                  extent;
-
-                void
-                  *sentinel;
-
-                sentinel=FileToBlob(path,~0UL,&extent,cache->exception);
-                if (sentinel != NULL)
-                  {
-                    resource=AcquireMagickCacheResource(cache,iri);
-                    GetMagickCacheResourceSentinel(resource,sentinel);
-                    if ((resource->ttl != 0) &&
-                        ((resource->ttl+attributes.st_ctime) < time(0)))
-                      expired='*';
-                    resource=DestroyMagickCacheResource(resource);
-                    sentinel=RelinquishMagickMemory(sentinel);
-                  }
+                resource=AcquireMagickCacheResource(cache,iri);
+                GetMagickCacheResourceSentinel(resource,sentinel);
+                if ((resource->ttl != 0) &&
+                    ((resource->ttl+attributes.st_ctime) < time(0)))
+                  expired='*';
+                resource=DestroyMagickCacheResource(resource);
+                sentinel=RelinquishMagickMemory(sentinel);
               }
+            (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
+              gmtime(&attributes.st_ctime));
             (void) FormatMagickSize(attributes.st_size,MagickTrue,"B",
               MagickPathExtent,extent);
             (void) fprintf(file,"%s%c %s %s\n",path,expired,extent,iso8601);

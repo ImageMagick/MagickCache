@@ -210,7 +210,7 @@ AUTOMAKE = ${SHELL} /home/cristy/MagickCache-0.9.2/missing automake-1.16
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g
+CFLAGS = 
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -231,7 +231,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAGICKCACHE_GIT_REVISION = 71:c757151:20210606
+MAGICKCACHE_GIT_REVISION = 89:423b531:20210608
 MAGICKCACHE_LIBRARY_AGE = 0
 MAGICKCACHE_LIBRARY_CURRENT = 0
 MAGICKCACHE_LIBRARY_CURRENT_MIN = 0
@@ -267,7 +267,7 @@ PACKAGE_VERSION_ADDENDUM = -0
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = /usr/local//lib/pkgconfig
+PKG_CONFIG_PATH = /usr/local/lib/pkgconfig
 RANLIB = ranlib
 SET_MAKE = 
 SHELL = /bin/sh
@@ -319,6 +319,7 @@ top_srcdir = .
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
 					MagickCache \
+          config \
           utilities \
           tests
 

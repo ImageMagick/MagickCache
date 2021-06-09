@@ -96,7 +96,7 @@ struct _MagickCache
 
   StringInfo
     *nonce,
-    *key;
+    *passkey;
 
   char
     *digest;
@@ -173,14 +173,15 @@ struct ResourceNode
 %
 %  The format of the AcquireMagickCache method is:
 %
-%      MagickCache *AcquireMagickCache(const char *path,const StringInfo *key)
+%      MagickCache *AcquireMagickCache(const char *path,
+%        const StringInfo *passkey)
 %
 %  A description of each parameter follows:
 %
 %    o path: the magick cache path, absolute (e.g. /myrepo) or relative (e.g.
 %      ./myrepo).
 %
-%    o key: the magick cache key.
+%    o passkey: the magick cache passkey.
 %
 */
 
@@ -233,7 +234,7 @@ static inline unsigned int GetMagickCacheSignature(const StringInfo *nonce)
 }
 
 MagickExport MagickCache *AcquireMagickCache(const char *path,
-  const StringInfo *key)
+  const StringInfo *passkey)
 {
   char
     *sentinel_path;
@@ -269,11 +270,11 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
   cache->timestamp=(time_t) attributes.st_ctime;
   cache->random_info=AcquireRandomInfo();
   cache->nonce=AcquireStringInfo(MagickCacheNonceExtent);
-  if (key == (StringInfo *) NULL)
-    cache->key=AcquireStringInfo(0);
+  if (passkey == (StringInfo *) NULL)
+    cache->passkey=AcquireStringInfo(0);
   else
-    cache->key=CloneStringInfo(key);
-  cache->digest=StringInfoToDigest(cache->key);
+    cache->passkey=CloneStringInfo(passkey);
+  cache->digest=StringInfoToDigest(cache->passkey);
   cache->exception=AcquireExceptionInfo();
   cache->debug=IsEventLogging();
   cache->signature=MagickCacheSignature;
@@ -430,7 +431,7 @@ MagickExport const size_t GetMagickCacheResourceExtent(
 %    o path: the magick cache directory path, absolute (e.g. /myrepo) or
 %      relative (e.g. ./myrepo).
 %
-%    o passkey: the magick cache key.
+%    o passkey: the magick cache passkey.
 */
 
 static StringInfo *SetMagickCacheSentinel(const char *path,
@@ -643,7 +644,7 @@ MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache)
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   passkey=StringToStringInfo(cache->path);
-  ConcatenateStringInfo(passkey,cache->key);
+  ConcatenateStringInfo(passkey,cache->passkey);
   ConcatenateStringInfo(passkey,cache->nonce);
   digest=StringInfoToDigest(passkey);
   passkey=DestroyStringInfo(passkey);
@@ -790,8 +791,8 @@ MagickExport MagickCache *DestroyMagickCache(MagickCache *cache)
     cache->nonce=DestroyStringInfo(cache->nonce);
   if (cache->random_info != (RandomInfo *) NULL)
     cache->random_info=DestroyRandomInfo(cache->random_info);
-  if (cache->key != (StringInfo *) NULL )
-    cache->key=DestroyStringInfo(cache->key);
+  if (cache->passkey != (StringInfo *) NULL )
+    cache->passkey=DestroyStringInfo(cache->passkey);
   if (cache->exception != (ExceptionInfo *) NULL)
     cache->exception=DestroyExceptionInfo(cache->exception);
   cache->signature=(~MagickCacheSignature);
@@ -1054,7 +1055,7 @@ static void SetMagickCacheResourceID(MagickCache *cache,
 
   signature=StringToStringInfo(resource->iri);
   ConcatenateStringInfo(signature,resource->nonce);
-  ConcatenateStringInfo(signature,cache->key);
+  ConcatenateStringInfo(signature,cache->passkey);
   ConcatenateStringInfo(signature,cache->nonce);
   digest=StringInfoToDigest(signature);
   signature=DestroyStringInfo(signature);
@@ -1426,7 +1427,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
     j;
 
   StringInfo
-    *key;
+    *passkey;
 
   unsigned char
     *code;
@@ -1435,10 +1436,10 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
   assert(cache->signature == MagickCacheSignature);
   for (j=0; j < (ssize_t) length; j++)
   {
-    key=GetRandomKey(cache->random_info,length);
-    if (key == (StringInfo *) NULL)
+    passkey=GetRandomKey(cache->random_info,length);
+    if (passkey == (StringInfo *) NULL)
       return(MagickFalse);
-    code=GetStringInfoDatum(key);
+    code=GetStringInfoDatum(passkey);
     for (i=0; i < (ssize_t) length; i++)
     {
       if ((code[i] <= 32) || ((code[i] <= 0x9f && code[i] > 0x7F)))
@@ -1447,7 +1448,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
       if (j == (ssize_t) length)
         break;
     }
-    key=DestroyStringInfo(key);
+    passkey=DestroyStringInfo(passkey);
   }
   return(MagickTrue);
 }
@@ -2209,7 +2210,7 @@ MagickExport MagickBooleanType ListMagickCache(MagickCache *cache,
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   passkey=StringToStringInfo(cache->path);
-  ConcatenateStringInfo(passkey,cache->key);
+  ConcatenateStringInfo(passkey,cache->passkey);
   ConcatenateStringInfo(passkey,cache->nonce);
   digest=StringInfoToDigest(passkey);
   passkey=DestroyStringInfo(passkey);
@@ -2279,9 +2280,9 @@ static StringInfo *SetMagickCacheResourceSentinel(
   (void) memcpy(p,&resource->ttl,sizeof(resource->ttl));
   p+=sizeof(resource->ttl);
   (void) memcpy(p,&resource->columns,sizeof(resource->columns));
-  p+=sizeof(resource->ttl);
+  p+=sizeof(resource->columns);
   (void) memcpy(p,&resource->rows,sizeof(resource->rows));
-  p+=sizeof(resource->ttl);
+  p+=sizeof(resource->rows);
   SetStringInfoLength(meta,(size_t) (p-GetStringInfoDatum(meta)));
   return(meta);
 }

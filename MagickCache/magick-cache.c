@@ -63,6 +63,7 @@
 #define MagickCacheAPIVersion  1
 #define MagickCacheMax(x,y)  (((x) > (y)) ? (x) : (y))
 #define MagickCacheMin(x,y)  (((x) < (y)) ? (x) : (y))
+#define MagickCacheDigestExtent  64
 #define MagickCacheNonce  "MagickCache"
 #define MagickCacheNonceExtent  8
 #define MagickCacheSignature  0xabacadabU
@@ -525,148 +526,6 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
 %                                                                             %
 %                                                                             %
 %                                                                             %
-%   D e l e t e M a g i c k C a c h e                                         %
-%                                                                             %
-%                                                                             %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  DeleteMagickCache() deletes a magick cache.
-%
-%  The format of the DeleteMagickCache method is:
-%
-%      MagickBooleanType DeleteMagickCache(MagickCache *cache)
-%
-%  A description of each parameter follows:
-%
-%    o cache: the magick cache.
-%
-*/
-
-static MagickBooleanType DeleteMagickCacheContent(MagickCache *cache)
-{
-  char
-    *path;
-
-  DIR
-    *directory;
-
-  MagickBooleanType
-    status;
-
-  struct dirent
-    *entry;
-
-  struct ResourceNode
-    *head,
-    *node,
-    *p,
-    *q;
-
-  struct stat
-    attributes;
-
-  /*
-    Check that resource id exists in magick cache.
-  */
-  assert(cache != (MagickCache *) NULL);
-  assert(cache->signature == MagickCacheSignature);
-  status=MagickTrue;
-  head=AcquireCriticalMemory(sizeof(struct ResourceNode));
-  head->path=AcquireString(cache->path);
-  head->next=(struct ResourceNode *) NULL;
-  q=head;
-  for (p=head; p != (struct ResourceNode *) NULL; p=p->next)
-  {
-    directory=opendir(p->path);
-    if (directory == (DIR *) NULL)
-      return(MagickFalse);
-    while ((entry=readdir(directory)) != (struct dirent *) NULL)
-    {
-      path=AcquireString(p->path);
-      (void) ConcatenateString(&path,"/");
-      (void) ConcatenateString(&path,entry->d_name);
-      if (GetPathAttributes(path,&attributes) <= 0)
-        {
-          path=DestroyString(path);
-          break;
-        }
-      if ((strcmp(entry->d_name, ".") == 0) ||
-          (strcmp(entry->d_name, "..") == 0))
-        {
-          path=DestroyString(path);
-          continue;
-        }
-      if (S_ISDIR(attributes.st_mode) != 0)
-        {
-          node=AcquireCriticalMemory(sizeof(struct ResourceNode));
-          node->path=path;
-          node->next=(struct ResourceNode *) NULL;
-          node->previous=q;
-          q->next=node;
-          q=q->next;
-        }
-      else
-        if (S_ISREG(attributes.st_mode) != 0)
-          {
-            (void) remove_utf8(path);
-            path=DestroyString(path);
-          }
-    }
-    (void) closedir(directory);
-  }
-  /*
-    Free resources.
-  */
-  for ( ; q != (struct ResourceNode *) NULL; )
-  {
-    node=q;
-    q=q->previous;
-    (void) remove_utf8(node->path);
-    node->path=DestroyString(node->path);
-    node=(struct ResourceNode *) RelinquishMagickMemory(node);
-  }
-  (void) remove_utf8(cache->path);
-  return(status);
-}
-
-MagickExport MagickBooleanType DeleteMagickCache(MagickCache *cache)
-{
-  char
-    *digest;
-
-  StringInfo
-    *passkey;
-
-  /*
-    Check that magick cache exists.
-  */
-  assert(cache != (MagickCache *) NULL);
-  assert(cache->signature == MagickCacheSignature);
-  passkey=StringToStringInfo(cache->path);
-  ConcatenateStringInfo(passkey,cache->passkey);
-  ConcatenateStringInfo(passkey,cache->nonce);
-  digest=StringInfoToDigest(passkey);
-  passkey=DestroyStringInfo(passkey);
-  if (strcmp(cache->digest,digest) != 0)
-    {
-      digest=DestroyString(digest);
-      (void) ThrowMagickException(cache->exception,GetMagickModule(),
-        CacheError,"authentication failure","`%s'",cache->path);
-      return(MagickFalse);
-    }
-  digest=DestroyString(digest);
-  /*
-    Delete magick cache.
-  */
-  return(DeleteMagickCacheContent(cache));
-}
-
-/*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-%                                                                             %
-%                                                                             %
 %   D e l e t e M a g i c k C a c h e R e s o u r c e                         %
 %                                                                             %
 %                                                                             %
@@ -1042,6 +901,9 @@ static void GetMagickCacheResourceSentinel(MagickCacheResource *resource,
   p+=sizeof(resource->columns);
   (void) memcpy(&resource->rows,p,sizeof(resource->rows));
   p+=sizeof(resource->rows);
+  resource->id=StringInfoToDigest(resource->nonce);
+  (void) memcpy(resource->id,p,strlen(resource->id));
+  p+=strlen(resource->id);
 }
 
 static void SetMagickCacheResourceID(MagickCache *cache,
@@ -1059,23 +921,23 @@ static void SetMagickCacheResourceID(MagickCache *cache,
   ConcatenateStringInfo(signature,cache->nonce);
   digest=StringInfoToDigest(signature);
   signature=DestroyStringInfo(signature);
-  if (digest != (char *) NULL)
-    {
-      if (resource->id != (char *) NULL)
-        resource->id=DestroyString(resource->id);
-      resource->id=ConstantString(digest);
-      digest=DestroyString(digest);
-    }
+  if (resource->id != (char *) NULL)
+    resource->id=DestroyString(resource->id);
+  resource->id=digest;
 }
 
 MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
   MagickCacheResource *resource)
 {
   char
+    *digest,
     *path;
 
   size_t
     extent;
+
+  StringInfo
+    *passkey;
 
   struct stat
     attributes;
@@ -1103,8 +965,10 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
   if (sentinel == NULL)
     return(MagickFalse);
   GetMagickCacheResourceSentinel(resource,sentinel);
-  SetMagickCacheResourceID(cache,resource);
   signature=GetMagickCacheSignature(resource->nonce);
+  /*
+    If not cache passkey, generate the resource ID.
+  */
   if (memcmp(&signature,sentinel,sizeof(signature)) != 0)
     {
       sentinel=RelinquishMagickMemory(sentinel);
@@ -1113,6 +977,13 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
       return(MagickFalse);
     }
   sentinel=RelinquishMagickMemory(sentinel);
+  passkey=StringToStringInfo(cache->path);
+  ConcatenateStringInfo(passkey,cache->passkey);
+  ConcatenateStringInfo(passkey,cache->nonce);
+  digest=StringInfoToDigest(passkey);
+  passkey=DestroyStringInfo(passkey);
+  if (strcmp(cache->digest,digest) != 0)
+    SetMagickCacheResourceID(cache,resource);
   /*
     Verify resource exists.
   */
@@ -2046,193 +1917,6 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
 %                                                                             %
 %                                                                             %
 %                                                                             %
-%   L i s t M a g i c k C a c h e                                             %
-%                                                                             %
-%                                                                             %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  ListMagickCache() list all content in the magick cache.
-%
-%  The format of the ListMagickCache method is:
-%
-%      MagickBooleanType ListMagickCache(MagickCache *cache,
-%        const char *iri,FILE *file)
-%
-%  A description of each parameter follows:
-%
-%    o cache: the magick cache.
-%
-%    o iri: the IRI.
-%
-%    o file: the file.
-%
-*/
-
-static MagickBooleanType ListMagickCacheContent(MagickCache *cache,
-  const char *iri,FILE *file)
-{
-  char
-    *path;
-
-  DIR
-    *directory;
-
-  MagickBooleanType
-    status;
-
-  struct dirent
-    *entry;
-
-  struct ResourceNode
-    *head,
-    *node,
-    *p,
-    *q;
-
-  struct stat
-    attributes;
-
-  /*
-    Check that resource id exists in magick cache.
-  */
-  assert(cache != (MagickCache *) NULL);
-  assert(cache->signature == MagickCacheSignature);
-  status=MagickTrue;
-  head=AcquireCriticalMemory(sizeof(struct ResourceNode));
-  path=AcquireString(cache->path);
-  (void) ConcatenateString(&path,"/");
-  (void) ConcatenateString(&path,iri);
-  head->path=path;
-  head->next=(struct ResourceNode *) NULL;
-  q=head;
-  for (p=head; p != (struct ResourceNode *) NULL; p=p->next)
-  {
-    directory=opendir(p->path);
-    if (directory == (DIR *) NULL)
-      return(MagickFalse);
-    while ((entry=readdir(directory)) != (struct dirent *) NULL)
-    {
-      path=AcquireString(p->path);
-      (void) ConcatenateString(&path,"/");
-      (void) ConcatenateString(&path,entry->d_name);
-      if (GetPathAttributes(path,&attributes) <= 0)
-        {
-          path=DestroyString(path);
-          break;
-        }
-      if ((strcmp(entry->d_name, ".") == 0) ||
-          (strcmp(entry->d_name, "..") == 0))
-        {
-          path=DestroyString(path);
-          continue;
-        }
-      if (S_ISDIR(attributes.st_mode) != 0)
-        {
-          node=AcquireCriticalMemory(sizeof(struct ResourceNode));
-          node->path=path;
-          node->next=(struct ResourceNode *) NULL;
-          node->previous=q;
-          q->next=node;
-          q=q->next;
-        }
-      else
-        if (S_ISREG(attributes.st_mode) != 0)
-          {
-            char
-              extent[MagickPathExtent],
-              head[MagickPathExtent],
-              iso8601[sizeof("9999-99-99T99:99:99Z")];
-
-            int
-              expired;
-
-            size_t
-              length;
-
-            void
-              *sentinel;
-
-            GetPathComponent(path,HeadPath,head);
-            (void) ConcatenateString(&path,"/");
-            (void) ConcatenateString(&path,MagickCacheResourceSentinel);
-            expired=' ';
-            sentinel=FileToBlob(path,~0UL,&length,cache->exception);
-            if (sentinel != NULL)
-              {
-                MagickCacheResource
-                  *resource;
-
-                resource=AcquireMagickCacheResource(cache,iri);
-                GetMagickCacheResourceSentinel(resource,sentinel);
-                if ((resource->ttl != 0) &&
-                    ((resource->ttl+attributes.st_ctime) < time(0)))
-                  expired='*';
-                resource=DestroyMagickCacheResource(resource);
-                sentinel=RelinquishMagickMemory(sentinel);
-              }
-            (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
-              gmtime(&attributes.st_ctime));
-            (void) FormatMagickSize(attributes.st_size,MagickTrue,"B",
-              MagickPathExtent,extent);
-            (void) fprintf(file,"%s%c %s %s\n",path,expired,extent,iso8601);
-            path=DestroyString(path);
-          }
-    }
-    (void) closedir(directory);
-  }
-  /*
-    Free resources.
-  */
-  for ( ; q != (struct ResourceNode *) NULL; )
-  {
-    node=q;
-    q=q->previous;
-    node->path=DestroyString(node->path);
-    node=(struct ResourceNode *) RelinquishMagickMemory(node);
-  }
-  (void) remove_utf8(cache->path);
-  return(status);
-}
-
-MagickExport MagickBooleanType ListMagickCache(MagickCache *cache,
-  const char *iri,FILE *file)
-{
-  char
-    *digest;
-
-  StringInfo
-    *passkey;
-
-  /*
-    Check that magick cache exists.
-  */
-  assert(cache != (MagickCache *) NULL);
-  assert(cache->signature == MagickCacheSignature);
-  passkey=StringToStringInfo(cache->path);
-  ConcatenateStringInfo(passkey,cache->passkey);
-  ConcatenateStringInfo(passkey,cache->nonce);
-  digest=StringInfoToDigest(passkey);
-  passkey=DestroyStringInfo(passkey);
-  if (strcmp(cache->digest,digest) != 0)
-    {
-      digest=DestroyString(digest);
-      (void) ThrowMagickException(cache->exception,GetMagickModule(),
-        CacheError,"authentication failure","`%s'",cache->path);
-      return(MagickFalse);
-    }
-  digest=DestroyString(digest);
-  /*
-    List all content in the magick cache.
-  */
-  return(ListMagickCacheContent(cache,iri,file));
-}
-
-/*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-%                                                                             %
-%                                                                             %
 %   P u t M a g i c k C a c h e R e s o u r c e                               %
 %                                                                             %
 %                                                                             %
@@ -2283,6 +1967,8 @@ static StringInfo *SetMagickCacheResourceSentinel(
   p+=sizeof(resource->columns);
   (void) memcpy(p,&resource->rows,sizeof(resource->rows));
   p+=sizeof(resource->rows);
+  (void) memcpy(p,resource->id,MagickCacheDigestExtent);
+  p+=MagickCacheDigestExtent;
   SetStringInfoLength(meta,(size_t) (p-GetStringInfoDatum(meta)));
   return(meta);
 }
@@ -2334,8 +2020,8 @@ MagickExport MagickBooleanType PutMagickCacheResource(MagickCache *cache,
       errno=EEXIST;
       return(MagickFalse);
     }
-  meta=SetMagickCacheResourceSentinel(resource);
   SetMagickCacheResourceID(cache,resource);
+  meta=SetMagickCacheResourceSentinel(resource);
   status=BlobToFile(path,GetStringInfoDatum(meta),GetStringInfoLength(meta),
     resource->exception);
   meta=DestroyStringInfo(meta);

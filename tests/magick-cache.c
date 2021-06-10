@@ -135,6 +135,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 
   MagickCacheResource
     *blob_resource = (MagickCacheResource *) NULL,
+    *delete_resource = (MagickCacheResource *) NULL,
     *image_resource = (MagickCacheResource *) NULL,
     *meta_resource = (MagickCacheResource *) NULL;
 
@@ -176,6 +177,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   tests++;
   if (cache != (MagickCache *) NULL)
     {
+      delete_resource=AcquireMagickCacheResource(cache,"/");
       blob_resource=AcquireMagickCacheResource(cache,
         MagickCacheResourceBlobIRI);
       image_resource=AcquireMagickCacheResource(cache,
@@ -362,7 +364,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) FormatLocaleFile(stdout,"%g: delete magick cache\n",(double) tests);
   tests++;
   if (cache != (MagickCache *) NULL)
-    status=DeleteMagickCache(cache);
+    status=DeleteMagickCacheResource(cache,delete_resource);
   if (status == MagickFalse)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
@@ -386,6 +388,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     image_resource=DestroyMagickCacheResource(image_resource);
   if (blob_resource != (MagickCacheResource *) NULL)
     blob_resource=DestroyMagickCacheResource(blob_resource);
+  if (delete_resource != (MagickCacheResource *) NULL)
+    delete_resource=DestroyMagickCacheResource(delete_resource);
   if (cache != (MagickCache *) NULL)
     cache=DestroyMagickCache(cache);
 

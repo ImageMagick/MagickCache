@@ -100,10 +100,10 @@ Each entry includes the IRI, image dimensions, time to live, whether the resourc
 
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get it, delete it, or identify it.
 
-The magick cache onwer can view all the content, including content you own, with this command:
+The magick cache owner can view all the content, including content you own, with this command:
 
 ```
-$ magick-cache -passkey passkey.txt list /opt/magick-cache movies
+$ magick-cache -passkey passkey.txt identify /opt/magick-cache /
 ```
 
 Note, expired resources are annotated with an asterisks.
@@ -129,7 +129,7 @@ Images must be in a format that ImageMagick understands.  Metadata must be text.
 To completely delete all the content within a cache and the cache itself:
 
 ```
-$ magick-cache -passkey passkey.txt delete /opt/magick-cache
+$ magick-cache -passkey passkey.txt delete /opt/magick-cache /
 ```
 
 Be careful, after this command, your cache content is irrevocably lost.

@@ -85,10 +85,9 @@ static void MagickCacheUsage(int argc,char **argv)
 {
   (void) fprintf(stdout,"Version: %s\n",GetMagickCacheVersion((size_t *) NULL));
   (void) fprintf(stdout,"Copyright: %s\n\n",GetMagickCacheCopyright());
-  (void) fprintf(stdout,"Usage: %s [-passkey filename] [create | delete] "
-    "path\n",*argv);
+  (void) fprintf(stdout,"Usage: %s [-passkey filename] create path\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-passkey filename] "
-    "[delete | expire | identify | list] path iri\n",*argv);
+    "[delete | expire | identify] path iri\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-passkey filename] [-passphrase filename]"
     " [-extract geometry] [-ttl seconds] get path iri filename\n",*argv);
   (void) fprintf(stdout,"Usage: %s [-passkey filename] [-passphrase filename]"
@@ -271,33 +270,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         "unable to open magick cache","`%s': %s",path,message);
       MagickCacheExit(exception);
     }
-  if (LocaleCompare(function,"delete") == 0)
-    {
-      status=DeleteMagickCache(cache);
-      if (status == MagickFalse)
-        {
-          message=GetExceptionMessage(errno);
-          (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
-            "unable to delete magick cache","`%s': %s",path,message);
-          ThrowMagickCacheException(cache);
-        }
-      return(0);
-    }
   if (i == (argc-1))
     MagickCacheUsage(argc,argv);
   iri=argv[++i];
-  if (LocaleCompare(function,"list") == 0)
-    {
-      status=ListMagickCache(cache,iri,stdout);
-      if (status == MagickFalse)
-        {
-          message=GetExceptionMessage(errno);
-          (void) ThrowMagickException(exception,GetMagickModule(),OptionError,
-            "unable to delete magick cache","`%s': %s",path,message);
-          ThrowMagickCacheException(cache);
-        }
-      return(0);
-    }
   resource=AcquireMagickCacheResource(cache,iri);
   SetMagickCacheResourceTTL(resource,ttl);
   type=GetMagickCacheResourceType(resource);

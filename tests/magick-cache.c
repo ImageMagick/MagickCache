@@ -69,25 +69,46 @@
 static MagickBooleanType DeleteResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
-  ssize_t *count = (ssize_t *) context;
-  (*count)++;
-  return(DeleteMagickCacheResource(cache,resource));
+  MagickBooleanType
+    status;
+
+  ssize_t
+    *count = (ssize_t *) context;
+
+  status=DeleteMagickCacheResource(cache,resource);
+  if (status != MagickFalse)
+    (*count)++;
+  return(status);
 }
 
 static MagickBooleanType ExpireResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
-  ssize_t *count = (ssize_t *) context;
-  (*count)++;
-  return(ExpireMagickCacheResource(cache,resource));
+  MagickBooleanType
+    status;
+
+  ssize_t
+    *count = (ssize_t *) context;
+
+  status=ExpireMagickCacheResource(cache,resource);
+  if (status != MagickFalse)
+    (*count)++;
+  return(status);
 }
 
 static MagickBooleanType IdentifyResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
-  ssize_t *count = (ssize_t *) context;
-  (*count)++;
-  return(IdentifyMagickCacheResource(cache,resource,stdout));
+  MagickBooleanType
+    status;
+
+  ssize_t
+    *count = (ssize_t *) context;
+
+  status=IdentifyMagickCacheResource(cache,resource,stdout);
+  if (status != MagickFalse)
+    (*count)++;
+  return(status);
 }
 
 static MagickBooleanType MagickCacheCLI(int argc,char **argv,

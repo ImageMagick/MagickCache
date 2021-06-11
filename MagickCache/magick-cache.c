@@ -59,7 +59,6 @@
 /*
   MagickCache defines.
 */
-#define MagickCacheSentinel  ".magick-cache"
 #define MagickCacheAPIVersion  1
 #define MagickCacheMax(x,y)  (((x) > (y)) ? (x) : (y))
 #define MagickCacheMin(x,y)  (((x) < (y)) ? (x) : (y))
@@ -67,7 +66,6 @@
 #define MagickCacheNonce  "MagickCache"
 #define MagickCacheNonceExtent  8
 #define MagickCacheSignature  0xabacadabU
-#define MagickCacheResourceSentinel  ".magick-cache-resource"
 #define ThrowMagickCacheException(severity,tag,context) \
 { \
   (void) ThrowMagickException(cache->exception,GetMagickModule(),severity,tag, \
@@ -2135,8 +2133,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceImage(MagickCache *cache,
   status=PutMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(status);
-  path=AcquireString("mpc:");
-  (void) ConcatenateString(&path,cache->path);
+  path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->iri);
   if (MagickCreatePath(path) == MagickFalse)
@@ -2145,7 +2142,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceImage(MagickCache *cache,
   images=CloneImageList(image,resource->exception);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->id);
-  (void) strcpy(images->filename,path);
+  (void) FormatLocaleString(images->filename,MagickPathExtent,"mpc:%s",path);
   path=DestroyString(path);
   status=WriteImages(image_info,images,images->filename,resource->exception);
   images=DestroyImageList(images);

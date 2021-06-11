@@ -14,9 +14,9 @@ You'll need a place to store and retrieve your content.  Let's create a cache on
 $ magick-cache -passkey passkey.txt create /opt/magick-cache
 ```
 
-Where `passkey.txt` contains your cache key. Don't forget your cache key. Without it, you will not be able to list content in your cache or delete it.
+Where `passkey.txt` contains your cache passkey. Don't forget your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
 
-Once its created, you will want to populate it with content that includes images, video, audio, or metadata.
+Once its created, you will want to populate the cache with content that includes images, video, audio, or metadata.
 
 ## Put content in the Magick Cache
 
@@ -28,21 +28,21 @@ $ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecc
 
 Note, the image identifier is an IRI composed of `project/type/resource-path`. In this example, the project is `movies`, type is `image`, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
 
-Now, set a resource key and the time to live to 2 days. Anytime after 1 day, the image will automatically expire with the `expire` function. To get, expire, or delete the image, you will need to use the same cache key.
+Now, set a resource passkey and the time to live to 2 days. Anytime after 1 day, the image will automatically expire with the `expire` function. To get, expire, or delete the image, you will need to use the same resource passkey.
 
 ```
 $ magick-cache -passkey passkey.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Where `passkey.txt` contains your resource key. Don't forget your resource key. Without it, you will not be able to get, list, delete or expire your content.
+Where `passkey.txt` contains your resource key. Don't forget your resource passkey. Without it, you will be unable to get, identify, expire, or delete your content.
 
-The resource key ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with:
+The resource passkey ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with:
 
 ```
 $ magick-cache -passkey passkey.txt -passphrase passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Note, blobs and metadata are stored in the cache in plaintext.
+Note, blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble its content before you store it in the cache.
 
 ## Get content from the Magick Cache
 
@@ -52,7 +52,7 @@ Eventually you will want retrieve your content, let's get our cast image from th
 $ magick-cache -passkey passkey.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
-Notice the original image was put in the Magick Cache in the JPEG format. Here we conveniently convert it to the PNG image format.
+Notice the original image was put in the cache in the JPEG format. Here we conveniently convert it to the PNG image format.
 
 The `-extract` option is useful when retrieving an image.  To extract a portion of the image, specify tile width, height, and offset:
 
@@ -88,7 +88,7 @@ $ magick-cache -passkey passkey.txt expire /opt/magick-cache movies/image/missio
 
 ## Identify the Magick Cache content
 
-Perhaps you want to audit all the content you own:
+Perhaps you want to identify all the content you own:
 
 ```
 $ magick-cache -passkey passkey.txt identify /opt/magick-cache movies/image/mission-impossible/cast
@@ -96,11 +96,11 @@ movies/image/mission-impossible/cast/rebecca-ferguson[1368x912] 406B  1:0:0:0 20
 identified 1 resources
 ```
 
-Each entry includes the IRI, image dimensions, time to live, whether the resource is expired (denoted with a `*`), and the creation date.  For meta and blob content, the extent in bytes is listed.
+Each entry includes the IRI, image dimensions for images, the content extent in bytes, time to live, whether the resource is expired (denoted with a `*`), and the creation date.
 
-Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get it, delete it, or identify it.
+Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get, identify, expire or delete content that you do not own as determined by your secret passkey.
 
-The magick cache owner can view all the content, including content you own, with this command:
+The magick cache owner can get, identify, expire, or delete all the content, including content you own, with this command, for example:
 
 ```
 $ magick-cache -passkey passkey.txt identify /opt/magick-cache /
@@ -108,7 +108,7 @@ $ magick-cache -passkey passkey.txt identify /opt/magick-cache /
 
 Note, expired resources are annotated with an asterisks.
 
-## Magick Cache is not just for images
+## Magick Cache is not just for Images
 
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:
 
@@ -126,7 +126,7 @@ Images must be in a format that ImageMagick understands.  Metadata must be text.
 
 ## Delete a Magick Cache
 
-To completely delete all the content within a cache and the cache itself:
+To completely delete all the content within a cache:
 
 ```
 $ magick-cache -passkey passkey.txt delete /opt/magick-cache /

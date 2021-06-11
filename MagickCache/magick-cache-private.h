@@ -26,6 +26,8 @@ extern "C" {
 #include <fcntl.h>
 #include <dirent.h>
 
+#define MagickCacheSentinel  ".magick-cache-sentinel"
+#define MagickCacheResourceSentinel  ".magick-cache-resource-sentinel"
 #define MagickCacheMin(x,y)  (((x) < (y)) ? (x) : (y))
 
 #if !defined(O_BINARY)

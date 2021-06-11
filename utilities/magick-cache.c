@@ -65,6 +65,14 @@
 %
 */
 
+static MagickBooleanType DeleteResources(MagickCache *cache,
+  MagickCacheResource *resource,const void *context)
+{
+  ssize_t *count = (ssize_t *) context;
+  (*count)++;
+  return(DeleteMagickCacheResource(cache,resource));
+}
+
 static MagickBooleanType ExpireResources(MagickCache *cache,
   MagickCacheResource *resource,const void *context)
 {
@@ -297,7 +305,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       if (LocaleCompare(function,"delete") == 0)
         {
-          status=DeleteMagickCacheResource(cache,resource);
+          ssize_t count = 0;
+          status=IterateMagickCacheResources(cache,iri,&count,DeleteResources);
+          (void) fprintf(stderr,"deleted %g resources\n",(double) count);
           break;
         }
       (void) ThrowMagickException(exception,GetMagickModule(),OptionError,

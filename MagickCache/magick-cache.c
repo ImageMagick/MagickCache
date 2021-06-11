@@ -330,7 +330,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o iri: the IRI.
 %
@@ -370,7 +370,7 @@ MagickExport MagickCacheResource *AcquireMagickCacheResource(
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 */
 MagickExport MagickBooleanType ClearMagickCacheException(MagickCache *cache)
@@ -463,7 +463,8 @@ MagickExport const size_t GetMagickCacheResourceExtent(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  CreateMagickCache() creates a MagickCache repository suitably prepared for
-%  storing and retrieving blob, image, and metadata resources.
+%  storing and retrieving images, image sequences, video, and metadata
+%  resources.
 %
 %  The format of the CreateMagickCache method is:
 %
@@ -575,7 +576,7 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  DeleteMagickCacheResource() deletes a resource within the MagickCache.
+%  DeleteMagickCacheResource() deletes a resource within the cache repository.
 %
 %  The format of the DeleteMagickCacheResource method is:
 %
@@ -584,7 +585,7 @@ MagickExport MagickBooleanType CreateMagickCache(const char *path,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the MagickCache resource.
 %
@@ -680,7 +681,7 @@ MagickExport MagickBooleanType DeleteMagickCacheResource(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 */
 MagickExport MagickCache *DestroyMagickCache(MagickCache *cache)
@@ -713,17 +714,16 @@ MagickExport MagickCache *DestroyMagickCache(MagickCache *cache)
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  DestroyMagickCacheResource() deallocates memory associated with an
-%  MagickCacheResource structure.
+%  DestroyMagickCacheResource() deallocates memory associated with a resource.
 %
 %  The format of the DestroyMagickCacheResource method is:
 %
 %      MagickCacheResource *DestroyMagickCacheResource(
-%        MagickCacheResource *resource_info)
+%        MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
-%    o resource_info: the image info.
+%    o resource: the resource.
 %
 */
 
@@ -792,7 +792,7 @@ MagickExport MagickCacheResource *DestroyMagickCacheResource(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheException() returns the severity, reason, and description of
-%  any exception that occurs associated with the MagickCache.
+%  any exception that occurs associated with the cache repository.
 %
 %  The format of the GetMagickCacheException method is:
 %
@@ -801,7 +801,7 @@ MagickExport MagickCacheResource *DestroyMagickCacheResource(
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o severity: the severity of the error is returned here.
 %
@@ -822,7 +822,7 @@ MagickExport char *GetMagickCacheException(const MagickCache *cache,
     sizeof(*description));
   if (description == (char *) NULL)
     {
-      (void) ThrowMagickException(cache->exception,GetMagickModule(),WandError,
+      (void) ThrowMagickException(cache->exception,GetMagickModule(),CacheError,
         "MemoryAllocationFailed","`%s'",cache->path);
       return((char *) NULL);
     }
@@ -863,7 +863,7 @@ MagickExport char *GetMagickCacheException(const MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -1004,9 +1004,8 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceBlob() gets a resource identified by its IRI in the
-%  MagickCacheResource structure.  When you are done with the resource,
-%  free it with RelinquishMagickMemory().
+%  GetMagickCacheResourceBlob() gets a resource identified by its IRI in a
+%  resource.
 %
 %  The format of the GetMagickCacheResourceBlob method is:
 %
@@ -1015,7 +1014,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -1219,7 +1218,7 @@ MagickExport char *GetMagickCacheResourceException(
   if (description == (char *) NULL)
     {
       (void) ThrowMagickException(resource->exception,GetMagickModule(),
-        WandError,"MemoryAllocationFailed","`%s'",resource->iri);
+        CacheError,"MemoryAllocationFailed","`%s'",resource->iri);
       return((char *) NULL);
     }
   *description='\0';
@@ -1258,7 +1257,7 @@ MagickExport char *GetMagickCacheResourceException(
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o length: the length of the ID.
 %
@@ -1323,9 +1322,12 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceImage() gets a resource identified by its IRI in the
-%  MagickCacheResource structure. When you are done with the resource, free it
-%  with DestroyImage().
+%  GetMagickCacheResourceImage() gets an image resource identified by its IRI
+%  in the cache repository. To retrieve the entire image, set the extract
+%  parameter to NULL.  Otherwise specify the size and offset of a portion of
+%  the image, e.g. 100x100+0+1.  If you do not specify the offset, the image
+%  is instead resized, e.g. 100x100 returns the image resized while still
+%  retaining the original aspect ratio.
 %
 %  The format of the GetMagickCacheResourceImage method is:
 %
@@ -1334,7 +1336,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -1413,8 +1415,8 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceIRI() gets a resource identified by its IRI in the
-%  MagickCacheResource structure.
+%  GetMagickCacheResourceIRI() gets a resource identified by its IRI in a
+%  resource.
 %
 %  The format of the GetMagickCacheResourceIRI method is:
 %
@@ -1445,7 +1447,6 @@ MagickExport const char *GetMagickCacheResourceIRI(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceMeta() gets any metadata associated with the resource.
-%  When you are done with the metadata, free it with DestroyString().
 %
 %  The format of the GetMagickCacheResourceMeta method is:
 %
@@ -1453,7 +1454,7 @@ MagickExport const char *GetMagickCacheResourceIRI(
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -1503,8 +1504,8 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceSize() returns the extent of the resource blob,
-%  image, or meta associated with the MagickCacheResource structure.
+%  GetMagickCacheResourceSize() returns the extent of the resource blob, image,
+%  or metadata associated with a resource
 %
 %  The format of the GetMagickCacheResourceSize method is:
 %
@@ -1513,7 +1514,7 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 */
 MagickExport void GetMagickCacheResourceSize(
@@ -1536,7 +1537,7 @@ MagickExport void GetMagickCacheResourceSize(
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceTimestamp() returns the timestamp associated with the
+%  GetMagickCacheResourceTimestamp() returns the timestamp associated with a
 %  resource.
 %
 %  The format of the GetMagickCacheResourceTimestamp method is:
@@ -1546,7 +1547,7 @@ MagickExport void GetMagickCacheResourceSize(
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 */
 MagickExport const time_t GetMagickCacheResourceTimestamp(
@@ -1568,8 +1569,8 @@ MagickExport const time_t GetMagickCacheResourceTimestamp(
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceTTL() returns the time-to-live associated with the
-%  MagickCacheResource structure.
+%  GetMagickCacheResourceTTL() returns the time-to-live associated with a
+%  resource.
 %
 %  The format of the GetMagickCacheResourceTTL method is:
 %
@@ -1578,7 +1579,7 @@ MagickExport const time_t GetMagickCacheResourceTimestamp(
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 */
 MagickExport const size_t GetMagickCacheResourceTTL(
@@ -1600,8 +1601,7 @@ MagickExport const size_t GetMagickCacheResourceTTL(
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceType() returns the type associated with the
-%  MagickCacheResource structure.
+%  GetMagickCacheResourceType() returns the type associated with a resource.
 %
 %  The format of the GetMagickCacheResourceType method is:
 %
@@ -1610,7 +1610,7 @@ MagickExport const size_t GetMagickCacheResourceTTL(
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 */
 MagickExport const MagickCacheResourceType GetMagickCacheResourceType(
@@ -1632,8 +1632,8 @@ MagickExport const MagickCacheResourceType GetMagickCacheResourceType(
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceVersion() returns the version associated with the
-%  MagickCacheResource structure.
+%  GetMagickCacheResourceVersion() returns the version associated with a
+%  resource.
 %
 %  The format of the GetMagickCacheResourceVersion method is:
 %
@@ -1642,7 +1642,7 @@ MagickExport const MagickCacheResourceType GetMagickCacheResourceType(
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 */
 MagickExport const size_t GetMagickCacheResourceVersion(
@@ -1664,8 +1664,8 @@ MagickExport const size_t GetMagickCacheResourceVersion(
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheTimestamp() returns the timestamp associated with the magick
-%  cache.
+%  GetMagickCacheTimestamp() returns the timestamp associated with the cache
+%  repository.
 %
 %  The format of the GetMagickCacheResource method is:
 %
@@ -1673,7 +1673,7 @@ MagickExport const size_t GetMagickCacheResourceVersion(
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 */
 MagickExport const time_t GetMagickCacheTimestamp(const MagickCache *cache)
@@ -1694,8 +1694,8 @@ MagickExport const time_t GetMagickCacheTimestamp(const MagickCache *cache)
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  IdentifyMagickCacheResource() identifies a resource within the magick
-%  cache.
+%  IdentifyMagickCacheResource() identifies a resource within the cache
+%  repository.
 %
 %  The format of the IdentifyMagickCacheResource method is:
 %
@@ -1704,7 +1704,7 @@ MagickExport const time_t GetMagickCacheTimestamp(const MagickCache *cache)
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o iri: the IRI.
 %
@@ -1779,7 +1779,7 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o iri: the IRI.
 %
@@ -1811,11 +1811,12 @@ MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  IterateMagickCacheResources() iterates over all the resources in the magick
-%  cache and calls callback() once for each resource with three arguments: the
-%  MagickCache, the current resource, and a user context.  Use the resource
-%  `get` methods to retrieve any associate metadata such as the IRI or
-%  time-to-live.  To terminate the iterating, callback() can return MagickFalse.
+%  IterateMagickCacheResources() iterates over all the resources in the
+%  MagickCache and calls the callback() method once for each resource
+%  discovered with three arguments: the MagickCache, the current resource, and
+%  a user context.  Use the resource `get` methods to retrieve any associate
+%  metadata such as the IRI or time-to-live.  To terminate the iteration, have
+%  callback() return MagickFalse.
 %
 %  The format of the IterateMagickCacheResources method is:
 %
@@ -1825,14 +1826,14 @@ MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o iri: the IRI.
 %
 */
 MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   const char *iri,const void *context,MagickBooleanType (*callback)(
-    MagickCache *cache,MagickCacheResource *resource,const void *context))
+  MagickCache *cache,MagickCacheResource *resource,const void *context))
 {
   char
     *path;
@@ -1954,8 +1955,9 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  PutMagickCacheResource() puts a resource in the MagickCache identified by
-%  its IRI.  If the IRI already exists, the previous one is replaced.
+%  PutMagickCacheResource() puts a image, image sequence, video, or metadata
+%  resource in the MagickCache identified by its IRI.  If the IRI already
+%  exists, the previous one is replaced.
 %
 %  The format of the PutMagickCacheResource method is:
 %
@@ -1964,7 +1966,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -2082,7 +2084,7 @@ MagickExport MagickBooleanType PutMagickCacheResource(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -2136,7 +2138,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceBlob(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -2194,7 +2196,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceImage(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  PutMagickCacheResourceMeta() puts resource meta in the MagickCache
+%  PutMagickCacheResourceMeta() puts resource metadata in the MagickCache
 %  identified by its IRI.  If the IRI already exists, the previous one is
 %  replaced.
 %
@@ -2205,7 +2207,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceImage(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o cache: the MagickCache.
+%    o cache: the cache repository.
 %
 %    o resource: the resource.
 %
@@ -2248,7 +2250,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceMeta(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  SetMagickCacheResourceIRI() associates the IRI with the resource.
+%  SetMagickCacheResourceIRI() associates an IRI with a resource.
 %
 %  The format of the SetMagickCacheResourceIRI method is:
 %
@@ -2257,7 +2259,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceMeta(MagickCache *cache,
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 %    o iri: the IRI.
 %
@@ -2319,15 +2321,16 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  SetMagickCacheResourceTTL() associates the time to live with the resource.
+%  SetMagickCacheResourceTTL() associates the time to live with a resource.
 %
 %  The format of the SetMagickCacheResourceTTL method is:
 %
-%      SetMagickCacheResourceTTL(MagickCacheResource *resource,const size_t ttl)
+%      void SetMagickCacheResourceTTL(MagickCacheResource *resource,
+%        const size_t ttl)
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 %    o ttl: the time to live.
 %
@@ -2351,7 +2354,7 @@ MagickExport void SetMagickCacheResourceTTL(MagickCacheResource *resource,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  SetMagickCacheResourceVersion() associates the version with the resource.
+%  SetMagickCacheResourceVersion() associates the API version with a resource.
 %
 %  The format of the SetMagickCacheResourceVersion method is:
 %
@@ -2360,7 +2363,7 @@ MagickExport void SetMagickCacheResourceTTL(MagickCacheResource *resource,
 %
 %  A description of each parameter follows:
 %
-%    o resource: a pointer to a MagickCacheResource structure.
+%    o resource: the resource.
 %
 %    o version: the version.
 %

@@ -766,9 +766,6 @@ MagickExport MagickCacheResource *DestroyMagickCacheResource(
 MagickExport MagickBooleanType ExpireMagickCacheResource(MagickCache *cache,
   MagickCacheResource *resource)
 {
-  char
-    *path;
-
   MagickBooleanType
     status;
 
@@ -777,17 +774,12 @@ MagickExport MagickBooleanType ExpireMagickCacheResource(MagickCache *cache,
   */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
-  path=AcquireString(cache->path);
-  (void) ConcatenateString(&path,"/");
-  (void) ConcatenateString(&path,resource->iri);
-  (void) ConcatenateString(&path,"/");
-  (void) ConcatenateString(&path,resource->id);
   status=GetMagickCacheResource(cache,resource);
-  if ((status != MagickFalse) && (resource->ttl != 0) &&
-      ((resource->timestamp+resource->ttl) < time(0)))
-    status=DeleteMagickCacheResource(cache,resource);
-  path=DestroyString(path);
-  return(status);
+  if (status == MagickFalse)
+    return(MagickFalse);
+  if ((resource->ttl == 0) || ((resource->timestamp+resource->ttl) >= time(0)))
+    return(MagickTrue);
+  return(DeleteMagickCacheResource(cache,resource));
 }
 
 /*

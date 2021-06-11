@@ -45,6 +45,7 @@
 */
 
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <strings.h>
 #include <ctype.h>
@@ -180,6 +181,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
 
   size_t
     columns = 0,
+    count = 0,
     extent = 0,
     fail = 0,
     rows = 0,
@@ -243,7 +245,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       (image_resource != (MagickCacheResource *) NULL) &&
       (rose != (Image *) NULL))
     {
-      SetMagickCacheResourceTTL(image_resource,MagickCacheResourceTTL);
+      SetMagickCacheResourceTTL(image_resource,1);
       status=PutMagickCacheResourceImage(cache,image_resource,rose);
     }
   if (status == MagickFalse)
@@ -253,6 +255,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       ThrowMagickCacheResourceException(image_resource);
       fail++;
     }
+  (void) sleep(1);
 
   (void) FormatLocaleFile(stdout,"%g: put/get magick cache (blob)\n",(double)
      tests);
@@ -260,7 +263,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   if ((cache != (MagickCache *) NULL) &&
       (image_resource != (MagickCacheResource *) NULL))
     {
-      SetMagickCacheResourceTTL(blob_resource,2*MagickCacheResourceTTL);
+      SetMagickCacheResourceTTL(blob_resource,MagickCacheResourceTTL);
       status=PutMagickCacheResourceBlob(cache,blob_resource,sizeof(signature),
         &signature);
     }
@@ -279,6 +282,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       ThrowMagickCacheResourceException(blob_resource);
       fail++;
     }
+  (void) sleep(1);
 
   (void) FormatLocaleFile(stdout,"%g: put/get magick cache (meta)\n",(double)
      tests);
@@ -286,7 +290,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   if ((cache != (MagickCache *) NULL) &&
       (meta_resource != (MagickCacheResource *) NULL))
     {
-      SetMagickCacheResourceTTL(meta_resource,3*MagickCacheResourceTTL);
+      SetMagickCacheResourceTTL(meta_resource,MagickCacheResourceTTL);
       status=PutMagickCacheResourceMeta(cache,meta_resource,
         MagickCacheResourceMeta);
     }
@@ -309,12 +313,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   tests++;
   if (cache != (MagickCache *) NULL)
     {
-      ssize_t count = 0;
+      count=0;
       status=IterateMagickCacheResources(cache,MagickCacheResourceIRI,&count,
         IdentifyResources);
       (void) fprintf(stderr,"identified %g resources\n",(double) count);
     }
-  if (status == MagickFalse)
+  if ((status == MagickFalse) || (count != 3))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
@@ -377,12 +381,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   if ((cache != (MagickCache *) NULL) &&
       (image_resource != (MagickCacheResource *) NULL))
     {
-      ssize_t count = 0;
+      count=0;
       status=IterateMagickCacheResources(cache,MagickCacheResourceIRI,&count,
         ExpireResources);
       (void) fprintf(stderr,"expired %g resources\n",(double) count);
     }
-  if (status == MagickFalse)
+  if ((status == MagickFalse) || (count != 1))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());
@@ -396,12 +400,12 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   if ((cache != (MagickCache *) NULL) &&
       (image_resource != (MagickCacheResource *) NULL))
     {
-      ssize_t count = 0;
+      count=0;
       status=IterateMagickCacheResources(cache,MagickCacheResourceIRI,&count,
         DeleteResources);
       (void) fprintf(stderr,"deleted %g resources\n",(double) count);
     }
-  if (status == MagickFalse)
+  if ((status == MagickFalse) || (count != 2))
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",
         GetMagickModule());

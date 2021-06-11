@@ -90,10 +90,13 @@ static MagickBooleanType ExpireResources(MagickCache *cache,
   ssize_t
     *count = (ssize_t *) context;
 
-  status=ExpireMagickCacheResource(cache,resource);
+  status=IsMagickCacheResourceExpired(cache,resource);
   if (status != MagickFalse)
-    (*count)++;
-  return(status);
+    { 
+      (*count)++;
+      return(DeleteMagickCacheResource(cache,resource));
+    }
+  return(MagickTrue);
 }
 
 static MagickBooleanType IdentifyResources(MagickCache *cache,

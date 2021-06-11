@@ -740,53 +740,6 @@ MagickExport MagickCacheResource *DestroyMagickCacheResource(
 %                                                                             %
 %                                                                             %
 %                                                                             %
-%   E x p i r e M a g i c k C a c h e R e s o u r c e                         %
-%                                                                             %
-%                                                                             %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%  ExpireMagickCacheResource() deletes a resource within the magick
-%  cache if it has expired, i.e. the resource creation date plus the time
-%  to live is less than the current time.  Note, a resource with a time to
-%  live of zero never expires.
-%
-%  The format of the ExpireMagickCacheResource method is:
-%
-%      MagickBooleanType ExpireMagickCacheResource(MagickCache *cache,
-%        MagickCacheResource *resource)
-%
-%  A description of each parameter follows:
-%
-%    o cache: the magick cache.
-%
-%    o iri: the IRI.
-%
-*/
-MagickExport MagickBooleanType ExpireMagickCacheResource(MagickCache *cache,
-  MagickCacheResource *resource)
-{
-  MagickBooleanType
-    status;
-
-  /*
-    If the resource ID exists and has expired, delete it.
-  */
-  assert(cache != (MagickCache *) NULL);
-  assert(cache->signature == MagickCacheSignature);
-  status=GetMagickCacheResource(cache,resource);
-  if (status == MagickFalse)
-    return(MagickFalse);
-  if ((resource->ttl == 0) || ((resource->timestamp+resource->ttl) >= time(0)))
-    return(MagickTrue);
-  return(DeleteMagickCacheResource(cache,resource));
-}
-
-/*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-%                                                                             %
-%                                                                             %
 %   G e t M a g i c k C a c h e E x c e p t i o n                             %
 %                                                                             %
 %                                                                             %
@@ -1757,6 +1710,49 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
       expired,iso8601);
   path=DestroyString(path);
   return(status);
+}
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%   I s M a g i c k C a c h e R e s o u r c e E x p i r e d                   %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  IsMagickCacheResourceExpired() returns MagickTrue if the resource creation
+%  date plus the time to live is greater than or equal to the current time.
+%  Note, a resource with a time to live of zero never expires.
+%
+%  The format of the IsMagickCacheResourceExpired method is:
+%
+%      MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
+%        MagickCacheResource *resource)
+%
+%  A description of each parameter follows:
+%
+%    o cache: the magick cache.
+%
+%    o iri: the IRI.
+%
+*/
+MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
+  MagickCacheResource *resource)
+{
+  MagickBooleanType
+    status;
+
+  assert(cache != (MagickCache *) NULL);
+  assert(cache->signature == MagickCacheSignature);
+  status=GetMagickCacheResource(cache,resource);
+  if (status == MagickFalse)
+    return(status);
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+    return(MagickTrue);
+  return(MagickFalse);
 }
 
 /*

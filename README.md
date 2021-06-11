@@ -2,7 +2,13 @@
 
 `The Magick cache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The Magick Cache requires ImageMagick version 7.0.11-14 or above.`
 
-The Magick Cache stores and retrieves images (and other content) efficiently within milliseconds with a small memory footprint. In addition to images, you can store video, audio, and associated properties. The cache supports virtually unlimited content upwards of billions of images making it suitable as a web image service.
+The MagickCache provides methods and tools to cache images, image sequences,
+video, audio or metadata in a local folder. Any content is memory-mapped for
+efficient retrieval.  Additional efficiences are possible by retrieving a
+portion of an image.  Content can persist or you can assign a time-to-live
+(TTL) to automatically expire content when the TTL is exceeded. MagickCache
+supports virtually unlimited content upwards of billions of images making it
+suitable as a web image service.
 
 The Magick Cache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You'll now want to create the cache and populate it with images, video, and associated metadata.
 
@@ -100,7 +106,7 @@ Each entry includes the IRI, image dimensions for images, the content extent in 
 
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get, identify, expire or delete content that you do not own as determined by your secret passkey.
 
-The magick cache owner can get, identify, expire, or delete all the content, including content you own, with this command, for example:
+The MagickCache owner can get, identify, expire, or delete all the content, including content you own, with this command, for example:
 
 ```
 $ magick-cache -passkey passkey.txt identify /opt/magick-cache /
@@ -133,3 +139,7 @@ $ magick-cache -passkey passkey.txt delete /opt/magick-cache /
 ```
 
 Be careful, after this command, your cache content is irrevocably lost.
+
+## Security
+
+MagickCache security is not crytographically strong.  Instead it generates a unique hash for each resource ensuring the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner.  They are also accessible to anyone with sufficient privileges to access the MagickCache  disk path.

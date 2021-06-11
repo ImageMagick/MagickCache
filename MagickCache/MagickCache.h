@@ -65,6 +65,8 @@ extern MagickExport const Image
     const char *);
 
 extern MagickExport MagickBooleanType
+  ClearMagickCacheException(MagickCache *),
+  ClearMagickCacheResource(MagickCacheResource *),
   CreateMagickCache(const char *,const StringInfo *),
   DeleteMagickCacheResource(MagickCache *,MagickCacheResource *),
   GetMagickCacheResource(MagickCache *,MagickCacheResource *),

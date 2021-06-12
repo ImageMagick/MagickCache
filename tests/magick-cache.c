@@ -243,7 +243,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     }
 
   (void) FormatLocaleFile(stdout,"%g: put magick cache (image)\n",(double)
-     tests);
+    tests);
   tests++;
   (void) strcpy(image_info->filename,"rose:");
   if (cache != (MagickCache *) NULL)
@@ -265,7 +265,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) sleep(1);
 
   (void) FormatLocaleFile(stdout,"%g: put/get magick cache (blob)\n",(double)
-     tests);
+    tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
       (image_resource != (MagickCacheResource *) NULL))
@@ -292,7 +292,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) sleep(1);
 
   (void) FormatLocaleFile(stdout,"%g: put/get magick cache (meta)\n",(double)
-     tests);
+    tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
       (meta_resource != (MagickCacheResource *) NULL))
@@ -334,7 +334,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     }
 
   (void) FormatLocaleFile(stdout,"%g: get magick cache (image)\n",(double)
-     tests);
+    tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
       (image_resource != (MagickCacheResource *) NULL))
@@ -351,7 +351,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     }
 
   (void) FormatLocaleFile(stdout,"%g: get magick cache (image tile)\n",(double)
-     tests);
+    tests);
   tests++;
   if ((cache != (MagickCache *) NULL) &&
       (image_resource != (MagickCacheResource *) NULL))

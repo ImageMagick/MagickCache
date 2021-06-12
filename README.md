@@ -1,19 +1,19 @@
-# Magick Cache: an Efficient Image Cache
+# MagickCache: an Efficient Image Cache
 
-`The Magick cache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The Magick Cache requires ImageMagick version 7.1.0-0 or above.`
+`The MagickCache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The MagickCache requires ImageMagick version 7.1.0-0 or above.`
 
 The MagickCache provides methods and tools to cache images, image sequences,
 video, audio or metadata in a local folder. Any content is memory-mapped for
-efficient retrieval.  Additional efficiences are possible by retrieving a
+efficient retrieval.  Additional efficiencies are possible by retrieving a
 portion of an image.  Content can persist or you can assign a time-to-live
 (TTL) to automatically expire content when the TTL is exceeded. MagickCache
 supports virtually unlimited content upwards of billions of images making it
 suitable as a web image service.
 
-The Magick Cache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You'll now want to create the cache and populate it with images, video, and associated metadata.
+The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You'll now want to create the cache and populate it with images, video, and associated metadata.
 
-## Create a Magick Cache
-
+## Create a MagickCache
+The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You'll now want to create the cache and populate it with images, video, and associated metadata.
 You'll need a place to store and retrieve your content.  Let's create a cache on our local filesystem:
 
 ```
@@ -24,7 +24,7 @@ Where `passkey.txt` contains your cache passkey. Don't forget your passkey. With
 
 Once its created, you will want to populate the cache with content that includes images, video, audio, or metadata.
 
-## Put content in the Magick Cache
+## Put content in the MagickCache
 
 Let's add a movie cast image to our newly created cache:</p>
 
@@ -50,7 +50,7 @@ $ magick-cache -passkey passkey.txt -passphrase passphrase.txt -ttl "2 days" put
 
 Note, blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble its content before you store it in the cache.
 
-## Get content from the Magick Cache
+## Get content from the MagickCache
 
 Eventually you will want retrieve your content, let's get our cast image from the cache:
 
@@ -78,7 +78,7 @@ If your image is scrambled, provide the passphrase to descrample it:
 $ magick-cache -passkey passkey.txt -passphrase passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
-## Delete content from the Magick Cache
+## Delete content from the MagickCache
 
 We can explicitedly delete content:
 
@@ -92,7 +92,7 @@ or we can delete cast images that have expired (exceeded their respective time t
 $ magick-cache -passkey passkey.txt expire /opt/magick-cache movies/image/mission-impossible/cast
 ```
 
-## Identify the Magick Cache content
+## Identify the MagickCache content
 
 Perhaps you want to identify all the content you own:
 
@@ -114,7 +114,7 @@ $ magick-cache -passkey passkey.txt identify /opt/magick-cache /
 
 Note, expired resources are annotated with an asterisks.
 
-## Magick Cache is not just for Images
+## MagickCache is not just for Images
 
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:
 
@@ -130,7 +130,7 @@ $ magick-cache -passkey passkey.txt put /opt/magick-cache movies/meta/mission-im
 
 Images must be in a format that ImageMagick understands.  Metadata must be text.  Blobs can be any content including images, video, audio, or binary files.
 
-## Delete a Magick Cache
+## Delete a MagickCache
 
 To completely delete all the content within a cache:
 

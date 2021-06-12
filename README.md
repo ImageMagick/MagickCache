@@ -34,7 +34,7 @@ $ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecc
 
 Note, the image identifier is an IRI composed of `project/type/resource-path`. In this example, the project is `movies`, type is `image`, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
 
-Now, let's set a resource passkey and the time to live to 2 days. Anytime after the second day, the image is automatically deleted with the `expire` function. To get, expire, or delete the image, you will need to use the same resource passkey.
+Now, let's set a resource passkey and the time to live to 2 days. Anytime after the second day, the image is automatically deleted with the `expire` function. To get, expire, or delete the image, you will need to use the same resource passkey:
 
 ```
 $ magick-cache -passkey passkey.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
@@ -48,17 +48,17 @@ The resource passkey ensures only you and the cache owner can access your image.
 $ magick-cache -passkey passkey.txt -passphrase passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Note, blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble its content before you store it in the cache.
+Note, blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble the content before you store it in the cache.
 
 ## Get content from the MagickCache
 
-Eventually you will want retrieve your content, let's get our cast image from the cache:
+Eventually you will want retrieve your content, let's get our original cast image from the cache:
 
 ```
 $ magick-cache -passkey passkey.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
-Notice the original image was put in the cache in the JPEG format. Here we conveniently convert it to the PNG image format.
+Notice the original image was put in the cache in the JPEG format. Here we conveniently convert it to the PNG format as we extract the image.
 
 The `-extract` option is useful when retrieving an image.  To extract a portion of the image, specify tile width, height, and offset:
 
@@ -72,7 +72,7 @@ To resize instead, do not specify the offset:
 $ magick-cache -passkey passkey.txt -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
-If your image is scrambled, provide the passphrase to descrample it:
+If your image is scrambled, provide the passphrase to descramble it:
 
 ```
 $ magick-cache -passkey passkey.txt -passphrase passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
@@ -86,7 +86,7 @@ We can explicitedly delete content:
 $ magick-cache -passkey passkey.txt delete /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 
 ```
 
-or we can delete cast images that have expired (exceeded their respective time to live), try this comand:
+or we can delete all cast images that have expired (exceeded their respective time to live), try this comand:
 
 ```
 $ magick-cache -passkey passkey.txt expire /opt/magick-cache movies/image/mission-impossible/cast
@@ -132,7 +132,7 @@ Images must be in a format that ImageMagick understands.  Metadata must be text.
 
 ## Delete a MagickCache
 
-To completely delete all the content within a cache:
+The MagickCache owner can completely delete all the content within a cache:
 
 ```
 $ magick-cache -passkey passkey.txt delete /opt/magick-cache /

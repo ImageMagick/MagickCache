@@ -15,7 +15,7 @@
 %                     C      A   A  C      H   H  E                           %
 %                      CCCC  A   A   CCCC  H   H  EEEEE                       %
 %                                                                             %
-%                     Magick Image Cache CRUD Unit Tests                      %
+%                     MagickCache Repository Unit Tests                       %
 %                                                                             %
 %                             Software Design                                 %
 %                                 Cristy                                      %
@@ -38,9 +38,13 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  The Magick image cache stores and retrieves images efficiently within
-%  milliseconds with a small memory footprint making it suitable as a web
-%  image service.
+%  The MagickCache provides methods and tools to cache images, image sequences,
+%  video, audio or metadata in a local folder. Any content is memory-mapped for
+%  efficient retrieval.  Additional efficiences are possible by retrieving a
+%  portion of an image.  Content can persist or you can assign a time-to-live
+%  (TTL) to automatically expire content when the TTL is exceeded. MagickCache
+%  supports virtually unlimited content upwards of billions of images making it
+%  suitable as a web image service.
 %
 */
 
@@ -193,6 +197,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   unsigned long
     signature = MagickCoreSignature;
 
+  /*
+    Run the unit tests to exercise the MagickCache repository methods.
+  */
   (void) FormatLocaleFile(stdout,"%g: create magick cache\n",(double) tests);
   tests++;
   status=CreateMagickCache(path,passkey);

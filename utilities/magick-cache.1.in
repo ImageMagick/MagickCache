@@ -8,9 +8,15 @@ magick-cache \- The Magick Cache stores and retrieves images efficiently within 
 \fBmagick-cache\fP [\fI-passkey filename\fP] [\fI-passphrase filename\fP] [\fI-ttl time\fP] [\fI-extract geometry\fP] get [\fIpath\fP] \fIiri\fP \fIfilename\fP
 \fBmagick-cache\fP [\fI-passkey filename\fP] [\fI-passphrase filename\fP] [\fI-ttl time\fP put \fIpath\fP \fIiri\fP \fIfilename\fP
 .SH OVERVIEW
-magick-cache \- store and retrieve images efficiently within milliseconds with a small memory footprint. In addition to images, you can store video, audio, and associated properties. The cache supports virtually unlimited content upwards of billions of images making it suitable as a web image service.
+magick-cache \- is a tool to cache images, image sequences,
+video, audio or metadata in a local folder. Any content is memory-mapped for
+efficient retrieval.  Additional efficiences are possible by retrieving a
+portion of an image.  Content can persist or you can assign a time-to-live
+(TTL) to automatically expire content when the TTL is exceeded. MagickCache
+supports virtually unlimited content upwards of billions of images making it
+suitable as a web image service.
 
-For more information about the magick command, point your browser to file://@DOCUMENTATION_PATH@/www/magick-cache.html or http://imagemagick.org/script/magick-cache.php.
+For more information about the magick-cache command, point your browser to file://@DOCUMENTATION_PATH@/www/magick-cache.html or http://imagemagick.org/script/magick-cache.php.
 .SH DESCRIPTION
   \-passkey passkey       passkey file
   \-passphrase passphrase passphrase file

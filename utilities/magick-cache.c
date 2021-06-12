@@ -15,7 +15,7 @@
 %                     C      A   A  C      H   H  E                           %
 %                      CCCC  A   A   CCCC  H   H  EEEEE                       %
 %                                                                             %
-%               CLI Interface to the Magick Image Cache CRUD                  %
+%                 CLI Interface to the MagickCache Repository                 %
 %                                                                             %
 %                             Software Design                                 %
 %                                 Cristy                                      %
@@ -38,9 +38,13 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  The Magick image cache stores and retrieves images efficiently within
-%  milliseconds with a small memory footprint making it suitable as a web
-%  image service.
+%  The MagickCache provides methods and tools to cache images, image sequences,
+%  video, audio or metadata in a local folder. Any content is memory-mapped for
+%  efficient retrieval.  Additional efficiences are possible by retrieving a
+%  portion of an image.  Content can persist or you can assign a time-to-live
+%  (TTL) to automatically expire content when the TTL is exceeded. MagickCache
+%  supports virtually unlimited content upwards of billions of images making it
+%  suitable as a web image service.
 %
 */
 
@@ -224,6 +228,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       break;
     if (LocaleCompare(argv[i],"-passkey") == 0)
       {
+        /*
+          Protect your cache repository and its resources with a passkey.
+        */
         passkey=FileToStringInfo(argv[++i],~0UL,exception);
         if (passkey == (StringInfo *) NULL)
           {
@@ -235,6 +242,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       }
     if (LocaleCompare(argv[i],"-passphrase") == 0)
       {
+        /*
+          Protect your image by scrambling its content.
+        */
         passphrase=FileToStringInfo(argv[++i],~0UL,exception);
         if (passphrase == (StringInfo *) NULL)
           {
@@ -284,6 +294,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   path=argv[++i];
   if (LocaleCompare(function,"create") == 0)
     {
+      /*
+        Create a new cache repository.
+      */
       status=CreateMagickCache(path,passkey);
       if (status == MagickFalse)
         {
@@ -329,6 +342,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       if (LocaleCompare(function,"delete") == 0)
         {
+          /*
+            Delete one or more resources in the cache repository.
+          */
           ssize_t count = 0;
           status=IterateMagickCacheResources(cache,iri,&count,DeleteResources);
           (void) fprintf(stderr,"deleted %g resources\n",(double) count);
@@ -342,6 +358,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       if (LocaleCompare(function,"expire") == 0)
         {
+          /*
+            Expire one or more resources in the cache repository.
+          */
           ssize_t count = 0;
           status=IterateMagickCacheResources(cache,iri,&count,ExpireResources);
           (void) fprintf(stderr,"expired %g resources\n",(double) count);
@@ -355,6 +374,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       if (LocaleCompare(function,"get") == 0)
         {
+          /*
+            Get a resource from the cache repository.
+          */
           switch (type)
           {
             case BlobResourceType:
@@ -423,6 +445,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       if (LocaleCompare(function,"identify") == 0)
         {
+          /*
+            Identify one or more resources in the cache repository.
+          */
           ssize_t count = 0;
           status=IterateMagickCacheResources(cache,iri,&count,
             IdentifyResources);
@@ -443,6 +468,9 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     {
       if (LocaleCompare(function,"put") == 0)
         {
+          /*
+            Put a resource in the cache repository.
+          */
           switch (type)
           {
             case BlobResourceType:

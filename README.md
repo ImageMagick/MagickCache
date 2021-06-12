@@ -1,6 +1,6 @@
 # Magick Cache: an Efficient Image Cache
 
-`The Magick cache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The Magick Cache requires ImageMagick version 7.0.11-14 or above.`
+`The Magick cache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The Magick Cache requires ImageMagick version 7.1.0-0 or above.`
 
 The MagickCache provides methods and tools to cache images, image sequences,
 video, audio or metadata in a local folder. Any content is memory-mapped for

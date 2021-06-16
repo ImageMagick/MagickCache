@@ -1726,6 +1726,9 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
   MagickBooleanType
     status;
 
+  struct tm
+    timestamp;
+
   /*
     If the resource ID exists, identify it.
   */
@@ -1743,8 +1746,8 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
       (double) resource->rows);
   (void) FormatMagickSize(GetMagickCacheResourceExtent(resource),MagickTrue,
     "B",MagickPathExtent,extent);
-  (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",
-    gmtime(&resource->timestamp));
+  (void) GetMagickUTCTime(&resource->timestamp,&timestamp);
+  (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",&timestamp);
   expired=' ';
   if ((resource->ttl != 0) && ((resource->ttl+resource->timestamp) < time(0)))
     expired='*';

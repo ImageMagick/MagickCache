@@ -84,6 +84,24 @@ static inline unsigned int CRC32(const unsigned char *message,
   return(crc ^ 0xFFFFFFFF);
 }
 
+static inline const struct tm *GetMagickUTCTime(const time_t *timep,
+  struct tm *result)
+{
+#if defined(MAGICKCORE_HAVE_GMTIME_R)
+  (void) gmtime_r(timep,result);
+#else
+  {
+    struct tm
+      *my_time;
+
+    my_time=gmtime(timep);
+    if (my_time != (struct tm *) NULL)
+      (void) memcpy(result,my_time,sizeof(*my_time));
+  }
+#endif
+  return(result);
+}
+
 #if defined(MAGICKCORE_WINDOWS_SUPPORT)
 static inline wchar_t *CreateWidePath(const char *path)
 {

@@ -30,7 +30,7 @@ extern "C" {
 #define MagickCacheLibVersion  0x10A
 #define MagickCacheLibVersionText  "0.9.2"
 #define MagickCacheLibVersionNumber  0,0,0
-#define MagickCacheLibAddendum  "-0"
+#define MagickCacheLibAddendum  "-1"
 #define MagickCacheLibInterface  0
 #define MagickCacheLibMinInterface  0
 #define MagickCacheReleaseDate  "2021-06-04"

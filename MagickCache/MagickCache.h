@@ -12,9 +12,18 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
-  MagickCache image cache methods.
 */
+
+/*
+  The MagickCache provides secure methods and tools to cache images, image
+  sequences, video, audio or metadata in a local folder. Any content is
+  memory-mapped for efficient retrieval.  Additional efficiences are possible
+  by retrieving a portion of an image.  Content can persist or you can assign
+  a time-to-live (TTL) to automatically expire content when the TTL is
+  exceeded. MagickCache supports virtually unlimited content upwards of
+  billions of images making it suitable as a web image service.
+*/
+
 #ifndef MAGICKCACHE_MAGICKCACHE_H
 #define MAGICKCACHE_MAGICKCACHE_H
 

@@ -2,13 +2,13 @@
 
 `The MagickCache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The MagickCache requires ImageMagick version 7.1.0-0 or above.`
 
-The MagickCache provides methods and tools to cache images, image sequences,
-video, audio or metadata in a local folder. Any content is memory-mapped for
-efficient retrieval.  Additional efficiencies are possible by retrieving a
-portion of an image.  Content can persist or you can assign a time-to-live
-(TTL) to automatically expire content when the TTL is exceeded. MagickCache
-supports virtually unlimited content upwards of billions of images making it
-suitable as a web image service.
+The MagickCache provides secure methods and tools to cache images, image
+sequences, video, audio or metadata in a local folder. Any content is
+memory-mapped for efficient retrieval.  Additional efficiencies are possible by
+retrieving a portion of an image.  Content can persist or you can assign a
+time-to-live (TTL) to automatically expire content when the TTL is exceeded.
+MagickCache supports virtually unlimited content upwards of billions of images
+making it suitable as a web image service.
 
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, and associated metadata.
 

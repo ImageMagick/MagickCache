@@ -38,13 +38,13 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  The MagickCache provides methods and tools to cache images, image sequences,
-%  video, audio or metadata in a local folder. Any content is memory-mapped for
-%  efficient retrieval.  Additional efficiences are possible by retrieving a
-%  portion of an image.  Content can persist or you can assign a time-to-live
-%  (TTL) to automatically expire content when the TTL is exceeded. MagickCache
-%  supports virtually unlimited content upwards of billions of images making it
-%  suitable as a web image service.
+%  The MagickCache provides secure methods and tools to cache images, image
+%  sequences, video, audio or metadata in a local folder. Any content is
+%  memory-mapped for efficient retrieval.  Additional efficiences are possible
+%  by retrieving a portion of an image.  Content can persist or you can assign
+%  a time-to-live (TTL) to automatically expire content when the TTL is
+%  exceeded. MagickCache supports virtually unlimited content upwards of
+%  billions of images making it suitable as a web image service.
 %
 */
 

@@ -15,7 +15,7 @@
 %                     C      A   A  C      H   H  E                           %
 %                      CCCC  A   A   CCCC  H   H  EEEEE                       %
 %                                                                             %
-%                       Magick Image Cache CRUD Methods                       %
+%                         MagickCache CRUD Methods                            %
 %                                                                             %
 %                            Software Design                                  %
 %                                Cristy                                       %
@@ -85,18 +85,6 @@ struct _MagickCache
   char
     *path;
 
-  time_t
-    timestamp;
-
-  RandomInfo
-    *random_info;
-
-  MagickBooleanType
-    debug;
-
-  ExceptionInfo
-    *exception;
-
   StringInfo
     *nonce,
     *passkey;
@@ -104,30 +92,32 @@ struct _MagickCache
   char
     *digest;
 
+  time_t
+    timestamp;
+
+  ExceptionInfo
+    *exception;
+
+  RandomInfo
+    *random_info;
+
+  MagickBooleanType
+    debug;
+
   size_t
     signature;
 };
 
 struct _MagickCacheResource
 {
+  MagickCacheResourceType
+    resource_type;
+
   char
     *iri,
     *project,
     *type,
     *id;
-
-  MagickCacheResourceType
-    resource_type;
-
-  void
-    *blob;
-
-  MagickBooleanType
-    memory_mapped;
-
-  time_t
-    timestamp,
-    ttl;
 
   size_t
     columns,
@@ -138,11 +128,21 @@ struct _MagickCacheResource
   StringInfo
     *nonce;
 
+  time_t
+    timestamp,
+    ttl;
+
+  void
+    *blob;
+
   MagickBooleanType
-    debug;
+    memory_mapped;
 
   ExceptionInfo
     *exception;
+
+  MagickBooleanType
+    debug;
 
   size_t
     signature;
@@ -169,8 +169,8 @@ struct ResourceNode
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  AcquireMagickCache() creates a cache structure for getting or putting
-%  resources from or to the MagickCache repository.  NULL is returned if the
+%  AcquireMagickCache() creates a MagickCache structure for getting or putting
+%  resources, from or to the MagickCache repository.  NULL is returned if the
 %  MagickCache repo is not found or if the repo is not compatible with the
 %  current API version.
 %
@@ -197,7 +197,7 @@ static void GetMagickCacheSentinel(MagickCache *cache,unsigned char *sentinel)
     signature;
 
   /*
-    Retrieve the MagickCache properties.
+    Retrieve the MagickCache sentinel.
   */
   p=sentinel;
   p+=sizeof(signature);
@@ -220,7 +220,7 @@ static inline unsigned int GetMagickCacheSignature(const StringInfo *nonce)
     signature;
 
   /*
-    Generate a MagickCache signature based on the cache properties.
+    Generate a MagickCache signature based on the MagickCache properties.
   */
   version=AcquireStringInfo(MagickPathExtent);
   p=GetStringInfoDatum(version);
@@ -268,7 +268,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
   if (GetPathAttributes(path,&attributes) <= 0)
     return((MagickCache *) NULL);
   /*
-    Basic sanity check passes, allocate a MagickCache struture.
+    Basic sanity check passes, allocate & initialize a MagickCache struture.
   */
   cache=(MagickCache *) AcquireCriticalMemory(sizeof(*cache));
   (void) memset(cache,0,sizeof(*cache));
@@ -321,7 +321,8 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  AcquireMagickCacheResource() allocates the MagickCacheResource structure.
-%  It is required to get and put metadata associated with resource content.
+%  It is required before you can get and put metadata associated with resource
+%  content.
 %
 %  The format of the AcquireMagickCacheResource method is:
 %
@@ -432,7 +433,7 @@ MagickExport MagickBooleanType ClearMagickCacheResourceException(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceExtent() returns the resource extent associated with
-%  the resource.
+%  the resource.  That is, the number of bytes the resource consumes on disk.
 %
 %  The format of the GetMagickCacheResourceTTL method is:
 %
@@ -611,7 +612,7 @@ MagickExport MagickBooleanType DeleteMagickCacheResource(MagickCache *cache,
   if (status == MagickFalse)
     return(MagickFalse);
   /*
-    Delete resource id in MagickCache.
+    Delete resource ID in MagickCache.
   */
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
@@ -633,7 +634,7 @@ MagickExport MagickBooleanType DeleteMagickCacheResource(MagickCache *cache,
     }
   path=DestroyString(path);
   /*
-    Delete resource id sentinel in MagickCache.
+    Delete resource sentinel in MagickCache.
   */
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
@@ -647,7 +648,7 @@ MagickExport MagickBooleanType DeleteMagickCacheResource(MagickCache *cache,
     }
   path=DestroyString(path);
   /*
-    Delete resource id IRI in MagickCache.
+    Delete resource IRI in MagickCache.
   */
   iri=AcquireString(resource->iri);
   for ( ; *iri != '\0'; GetPathComponent(iri,HeadPath,iri))
@@ -955,7 +956,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
   GetMagickCacheResourceSentinel(resource,sentinel);
   signature=GetMagickCacheSignature(resource->nonce);
   /*
-    If not cache passkey, generate the resource ID.
+    If no cache passkey, generate the resource ID.
   */
   if (memcmp(&signature,sentinel,sizeof(signature)) != 0)
     {
@@ -1004,8 +1005,8 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceBlob() gets a resource identified by its IRI in a
-%  resource.
+%  GetMagickCacheResourceBlob() gets a blob associated with a resource
+%  identified by its IRI./
 %
 %  The format of the GetMagickCacheResourceBlob method is:
 %
@@ -1156,6 +1157,9 @@ MagickExport const void *GetMagickCacheResourceBlob(MagickCache *cache,
   MagickBooleanType
     status;
 
+  /*
+    Get the blob associated with a resource identified by its IRI.
+  */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   assert(resource != (MagickCacheResource *) NULL);
@@ -1322,12 +1326,12 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceImage() gets an image resource identified by its IRI
-%  in the cache repository. To retrieve the entire image, set the extract
-%  parameter to NULL.  Otherwise specify the size and offset of a portion of
-%  the image, e.g. 100x100+0+1.  If you do not specify the offset, the image
-%  is instead resized, e.g. 100x100 returns the image resized while still
-%  retaining the original aspect ratio.
+%  GetMagickCacheResourceImage() gets an image associated with a resource
+%  identified by its IRI in the cache repository. To retrieve the entire image,
+%  set the extract parameter to NULL.  Otherwise specify the size and offset of
+%  a portion of the image, e.g. 100x100+0+1.  If you do not specify the offset,
+%  the image is instead resized, e.g. 100x100 returns the image resized while
+%  still retaining the original aspect ratio.
 %
 %  The format of the GetMagickCacheResourceImage method is:
 %
@@ -1358,6 +1362,9 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
   MagickBooleanType
     status;
 
+  /*
+    Get the image associated with a resource identified by its IRI.
+  */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   assert(resource != (MagickCacheResource *) NULL);
@@ -1415,8 +1422,8 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceIRI() gets a resource identified by its IRI in a
-%  resource.
+%  GetMagickCacheResourceIRI() gets a resource identified by its IRI in the
+%  cache repository.
 %
 %  The format of the GetMagickCacheResourceIRI method is:
 %
@@ -1446,7 +1453,8 @@ MagickExport const char *GetMagickCacheResourceIRI(
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceMeta() gets any metadata associated with the resource.
+%  GetMagickCacheResourceMeta() gets any metadata associated with the resource
+%  in the cache repository..
 %
 %  The format of the GetMagickCacheResourceMeta method is:
 %
@@ -1468,6 +1476,9 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
   MagickBooleanType
     status;
 
+  /*
+    Get the metadata associated with a resource identified by its IRI.
+  */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   assert(resource != (MagickCacheResource *) NULL);
@@ -1504,8 +1515,8 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceSize() returns the extent of the resource blob, image,
-%  or metadata associated with a resource
+%  GetMagickCacheResourceSize() returns the size of the image associated
+%  with the resource in the cache repository.
 %
 %  The format of the GetMagickCacheResourceSize method is:
 %
@@ -1538,7 +1549,7 @@ MagickExport void GetMagickCacheResourceSize(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceTimestamp() returns the timestamp associated with a
-%  resource.
+%  resource in the cache repository.
 %
 %  The format of the GetMagickCacheResourceTimestamp method is:
 %
@@ -1570,7 +1581,7 @@ MagickExport const time_t GetMagickCacheResourceTimestamp(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceTTL() returns the time-to-live associated with a
-%  resource.
+%  resource in the cache repository.
 %
 %  The format of the GetMagickCacheResourceTTL method is:
 %
@@ -1601,7 +1612,8 @@ MagickExport const size_t GetMagickCacheResourceTTL(
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceType() returns the type associated with a resource.
+%  GetMagickCacheResourceType() returns the type associated with a resource in
+%  the cache respository.
 %
 %  The format of the GetMagickCacheResourceType method is:
 %
@@ -1633,7 +1645,7 @@ MagickExport const MagickCacheResourceType GetMagickCacheResourceType(
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceVersion() returns the version associated with a
-%  resource.
+%  resource in the cache repository.
 %
 %  The format of the GetMagickCacheResourceVersion method is:
 %
@@ -1751,11 +1763,10 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
   expired=' ';
   if ((resource->ttl != 0) && ((resource->ttl+resource->timestamp) < time(0)))
     expired='*';
-  (void) fprintf(file,"%s%s %s %g:%g:%g:%g%c %s\n",
-    GetMagickCacheResourceIRI(resource),size,extent,(double) (resource->ttl/
-      (3600*24)),(double) ((resource->ttl % (24*3600))/3600),(double)
-      ((resource->ttl % 3600)/60),(double) ((resource->ttl % 3600) % 60),
-      expired,iso8601);
+  (void) fprintf(file,"%s%s %s %g:%g:%g:%g%c %s\n",GetMagickCacheResourceIRI(
+    resource),size,extent,(double) (resource->ttl/(3600*24)),(double)
+    ((resource->ttl % (24*3600))/3600),(double) ((resource->ttl % 3600)/60),
+    (double) ((resource->ttl % 3600) % 60),expired,iso8601);
   path=DestroyString(path);
   return(status);
 }
@@ -1773,7 +1784,7 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
 %
 %  IsMagickCacheResourceExpired() returns MagickTrue if the resource creation
 %  date plus the time to live is greater than or equal to the current time.
-%  Note, a resource with a time to live of zero never expires.
+%  Note, a resource with a time to live of zero, never expires.
 %
 %  The format of the IsMagickCacheResourceExpired method is:
 %
@@ -1817,13 +1828,13 @@ MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
 %  IterateMagickCacheResources() iterates over all the resources in the
 %  MagickCache and calls the callback() method once for each resource
 %  discovered with three arguments: the MagickCache, the current resource, and
-%  a user context.  Use the resource `get` methods to retrieve any associate
+%  a user context.  Use the resource `get` methods to retrieve any associated
 %  metadata such as the IRI or time-to-live.  To terminate the iteration, have
 %  callback() return MagickFalse.
 %
 %  The format of the IterateMagickCacheResources method is:
 %
-%      MagickBooleanrType IterateMagickCacheResources(MagickCache *cache,
+%      MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
 %        const char *iri,MagickBooleanType (*callback)(MagickCache *cache,
 %        MagickCacheResource *resource,const void *context))
 %
@@ -1958,9 +1969,9 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  PutMagickCacheResource() puts a image, image sequence, video, or metadata
+%  PutMagickCacheResource() puts an image, image sequence, video, or metadata
 %  resource in the MagickCache identified by its IRI.  If the IRI already
-%  exists, the previous one is replaced.
+%  exists, an exception is returned.
 %
 %  The format of the PutMagickCacheResource method is:
 %
@@ -1989,6 +2000,9 @@ static StringInfo *SetMagickCacheResourceSentinel(
   unsigned int
     signature;
 
+  /*
+    Create the MagickCache resource sentinel.
+  */
   meta=AcquireStringInfo(MagickPathExtent);
   p=GetStringInfoDatum(meta);
   signature=GetMagickCacheSignature(resource->nonce);
@@ -2022,7 +2036,7 @@ MagickExport MagickBooleanType PutMagickCacheResource(MagickCache *cache,
     *meta;
 
   /*
-    reate the path as defined by the IRI.
+    Create the resource path as defined by the IRI.
   */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
@@ -2046,7 +2060,7 @@ MagickExport MagickBooleanType PutMagickCacheResource(MagickCache *cache,
       return(MagickFalse);
     }
   /*
-    Export MagickCache resource meta info.
+    Export the MagickCache resource metadata.
   */
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,MagickCacheResourceSentinel);
@@ -2077,7 +2091,7 @@ MagickExport MagickBooleanType PutMagickCacheResource(MagickCache *cache,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  PutMagickCacheResource() puts a blob resource in the MagickCache identified
-%  by its IRI.  If the IRI already exists, the previous one is replaced.
+%  by its IRI.  If the IRI already exists, an exception is returned.
 %
 %  The format of the PutMagickCacheResource method is:
 %
@@ -2131,8 +2145,7 @@ MagickExport MagickBooleanType PutMagickCacheResourceBlob(MagickCache *cache,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  PutMagickCacheResourceImage() puts an image resource in the MagickCache
-%  identified by its IRI.  If the IRI already exists, the previous one is
-%  replaced.
+%  identified by its IRI.  If the IRI already exists, an exception is returned.
 %
 %  The format of the PutMagickCacheResourceImage method is:
 %
@@ -2199,9 +2212,8 @@ MagickExport MagickBooleanType PutMagickCacheResourceImage(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  PutMagickCacheResourceMeta() puts resource metadata in the MagickCache
-%  identified by its IRI.  If the IRI already exists, the previous one is
-%  replaced.
+%  PutMagickCacheResourceMeta() puts metadata in the MagickCache identified by
+%  its IRI.  If the IRI already exists, an exception is returned.
 %
 %  The format of the PutMagickCacheResourceMeta method is:
 %
@@ -2274,6 +2286,9 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
     *path,
     *p;
 
+  /*
+    Parse the IRI into its components: project / type / resource-path.
+  */
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);
   if (resource->iri != (char *) NULL)
@@ -2324,7 +2339,8 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  SetMagickCacheResourceTTL() associates the time to live with a resource.
+%  SetMagickCacheResourceTTL() associates the time to live with a resource in
+%  the cache respository.
 %
 %  The format of the SetMagickCacheResourceTTL method is:
 %

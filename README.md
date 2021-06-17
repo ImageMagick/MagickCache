@@ -141,4 +141,4 @@ Be careful, after this command, your cache content is irrevocably lost.
 
 ## Security
 
-MagickCache security is not crytographically strong.  Instead it generates a unique hash for each resource ensuring the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner.  They are also accessible to anyone with sufficient privileges to access the MagickCache  disk path.
+MagickCache security is not crytographically strong.  Instead it generates a unique hash for each resource ensuring the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys.  They are also accessible to anyone with sufficient privileges to access the MagickCache  disk path.

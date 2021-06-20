@@ -27,8 +27,8 @@
 #ifndef MAGICKCACHE_MAGICKCACHE_H
 #define MAGICKCACHE_MAGICKCACHE_H
 
-#include <MagickCore/MagickCore.h>
 #include <limits.h>
+#include <MagickCore/MagickCore.h>
 #include <MagickCache/version.h>
 
 #if defined(__cplusplus) || defined(c_plusplus)

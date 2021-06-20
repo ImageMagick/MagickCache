@@ -48,11 +48,7 @@
 %
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <strings.h>
-#include <ctype.h>
-#include <math.h>
+#include "MagickCore/studio.h"
 #include "MagickCache/MagickCache.h"
 
 /*

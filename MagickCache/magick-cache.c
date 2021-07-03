@@ -314,7 +314,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  AcquireMagickCacheResource() allocates the MagickCacheResource structure.
-%  It is required before you can get and put metadata associated with resource
+%  It is required before you can get or put metadata associated with resource
 %  content.
 %
 %  The format of the AcquireMagickCacheResource method is:
@@ -329,8 +329,8 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
 %    o iri: the IRI.
 %
 */
-MagickExport MagickCacheResource *AcquireMagickCacheResource(
-  MagickCache *cache,const char *iri)
+MagickExport MagickCacheResource *AcquireMagickCacheResource(MagickCache *cache,
+  const char *iri)
 {
   MagickCacheResource
     *resource;
@@ -493,6 +493,9 @@ static StringInfo *SetMagickCacheSentinel(const char *path,
   unsigned int
     signature;
 
+  /*
+    Create a MagickCache sentiinel.
+  */
   sentinel=AcquireStringInfo(MagickPathExtent);
   random_info=AcquireRandomInfo();
   key_info=GetRandomKey(random_info,MagickCacheNonceExtent);
@@ -753,6 +756,9 @@ static void DestroyMagickCacheResourceBlob(MagickCacheResource *resource)
 MagickExport MagickCacheResource *DestroyMagickCacheResource(
   MagickCacheResource *resource)
 {
+  /*
+   Deallocate memory associated with a resource.
+  */
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);
   if (resource->blob != NULL)
@@ -872,6 +878,9 @@ static void GetMagickCacheResourceSentinel(MagickCacheResource *resource,
   unsigned int
     signature;
 
+  /*
+    Get the MagickCache resource sentinel.
+  */
   p=sentinel;
   p+=sizeof(signature);
   (void) memcpy(GetStringInfoDatum(resource->nonce),p,
@@ -897,6 +906,9 @@ static void SetMagickCacheResourceID(MagickCache *cache,
   StringInfo
     *signature;
 
+  /*
+    Set a MagickCache resource ID.
+  */
   signature=StringToStringInfo(resource->iri);
   ConcatenateStringInfo(signature,resource->nonce);
   ConcatenateStringInfo(signature,cache->passkey);
@@ -999,7 +1011,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceBlob() gets a blob associated with a resource
-%  identified by its IRI./
+%  identified by its IRI.
 %
 %  The format of the GetMagickCacheResourceBlob method is:
 %
@@ -1089,6 +1101,9 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
   struct stat
     attributes;
 
+  /*
+    Convert the resource identified by its IRI to a blob.
+  */
   if (GetPathAttributes(path,&attributes) == MagickFalse)
     {
       (void) ThrowMagickException(resource->exception,GetMagickModule(),
@@ -1204,6 +1219,9 @@ MagickExport char *GetMagickCacheResourceException(
   char
     *description;
 
+  /*
+    Get a MagickCache resource exception.
+  */
   assert(resource != (const MagickCacheResource *) NULL);
   assert(resource->signature == MagickCacheSignature);
   if (resource->debug != MagickFalse)
@@ -1261,19 +1279,6 @@ MagickExport char *GetMagickCacheResourceException(
 %    o id: a buffer that is at least `length` bytes long.
 %
 */
-
-static inline MagickBooleanType IsUTFValid(int code)
-{
-  int
-    mask;
-
-  mask=(int) 0x7fffffff;
-  if (((code & ~mask) != 0) && ((code < 0xd800) || (code > 0xdfff)) &&
-      (code != 0xfffe) && (code != 0xffff))
-    return(MagickFalse);
-  return(MagickTrue);
-}
-
 MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
   const size_t length,char *id)
 {
@@ -1287,6 +1292,9 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
   unsigned char
     *code;
 
+  /*
+    Get the MagickCache resource ID.
+  */
   assert(cache != (const MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   for (j=0; j < (ssize_t) length; j++)
@@ -1320,11 +1328,11 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  GetMagickCacheResourceImage() gets an image associated with a resource
-%  identified by its IRI in the cache repository. To retrieve the entire image,
-%  set the extract parameter to NULL.  Otherwise specify the size and offset of
-%  a portion of the image, e.g. 100x100+0+1.  If you do not specify the offset,
-%  the image is instead resized, e.g. 100x100 returns the image resized while
-%  still retaining the original aspect ratio.
+%  identified by its IRI from the cache repository. To retrieve the entire
+%  image, set the extract parameter to NULL.  Otherwise specify the size and
+%  offset of a portion of the image, e.g. 100x100+0+1.  If you do not specify
+%  the offset, the image is instead resized, e.g. 100x100 returns the image
+%  resized while still retaining the original aspect ratio.
 %
 %  The format of the GetMagickCacheResourceImage method is:
 %
@@ -1356,7 +1364,7 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
     status;
 
   /*
-    Get the image associated with a resource identified by its IRI.
+    Return the resource identified by its IRI as an image.
   */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
@@ -1395,9 +1403,9 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
       CacheError,"cannot get resource","`%s'",resource->iri);
   else
     {
-       const Image *image=(const Image *) resource->blob;
-       resource->columns=image->columns;
-       resource->rows=image->rows;
+      const Image *image=(const Image *) resource->blob;
+      resource->columns=image->columns;
+      resource->rows=image->rows;
     }
   path=DestroyString(path);
   image_info=DestroyImageInfo(image_info);
@@ -1470,7 +1478,7 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
     status;
 
   /*
-    Get the metadata associated with a resource identified by its IRI.
+    Return the resource identified by its IRI as metadata.
   */
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
@@ -1508,8 +1516,8 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  GetMagickCacheResourceSize() returns the size of the image associated
-%  with the resource in the cache repository.
+%  GetMagickCacheResourceSize() returns the size of the image associated with
+%  the resource in the cache repository.
 %
 %  The format of the GetMagickCacheResourceSize method is:
 %
@@ -1994,7 +2002,7 @@ static StringInfo *SetMagickCacheResourceSentinel(
     signature;
 
   /*
-    Create the MagickCache resource sentinel.
+    Set the MagickCache resource sentinel.
   */
   meta=AcquireStringInfo(MagickPathExtent);
   p=GetStringInfoDatum(meta);

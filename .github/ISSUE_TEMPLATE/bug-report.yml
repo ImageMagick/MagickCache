@@ -1,19 +1,10 @@
 name: Bug report
 description: Create a report to help us improve
 body:
-- type: checkboxes
-  attributes:
-    label: Prerequisites
-    options:
-    - label: I have written a descriptive issue title
-      required: true
-    - label: I have searched [open](https://github.com/ImageMagick/MagickCache/issues) and [closed](https://github.com/ImageMagick/MagickCache/issues?q=is%3Aissue+is%3Aclosed) issues to ensure it has not already been reported
-      required: true
-    - label: I have verified that I am using the latest version of ImageMagick
 - type: input
   attributes:
     label: MagickCache version
-    placeholder: 1.X.X-X
+    placeholder: 0.X.X-X
   validations:
     required: true
 - type: dropdown

@@ -208,10 +208,10 @@ AUTOCONF = ${SHELL} /home/cristy/MagickCache-0.9.2/missing autoconf
 AUTOHEADER = ${SHELL} /home/cristy/MagickCache-0.9.2/missing autoheader
 AUTOMAKE = ${SHELL} /home/cristy/MagickCache-0.9.2/missing automake-1.16
 AWK = gawk
-CC = gcc
+CC = /usr/bin/afl-clang-fast
 CCDEPMODE = depmode=gcc3
-CFLAGS = 
-CPP = gcc -E
+CFLAGS = -ggdb -fsanitize=memory,undefined -fno-omit-frame-pointer
+CPP = /usr/bin/afl-clang-fast -E
 CPPFLAGS = 
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -227,11 +227,11 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -ggdb -fsanitize=memory,undefined -fno-omit-frame-pointer
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAGICKCACHE_GIT_REVISION = 129:655d393:20211204
+MAGICKCACHE_GIT_REVISION = 130:a4848c8:20220226
 MAGICKCACHE_LIBRARY_AGE = 0
 MAGICKCACHE_LIBRARY_CURRENT = 0
 MAGICKCACHE_LIBRARY_CURRENT_MIN = 0
@@ -258,7 +258,7 @@ PACKAGE_LIB_VERSION = 0x10A
 PACKAGE_LIB_VERSION_NUMBER = 0,9,2,1
 PACKAGE_NAME = MagickCache
 PACKAGE_PATCHLEVEL_VERSION = 1
-PACKAGE_RELEASE_DATE = 2021-06-04
+PACKAGE_RELEASE_DATE = 
 PACKAGE_STRING = MagickCache 0.9.2-1
 PACKAGE_TARNAME = MagickCache
 PACKAGE_URL = https://imagemagick.org
@@ -277,7 +277,7 @@ abs_builddir = /home/cristy/MagickCache-0.9.2
 abs_srcdir = /home/cristy/MagickCache-0.9.2
 abs_top_builddir = /home/cristy/MagickCache-0.9.2
 abs_top_srcdir = /home/cristy/MagickCache-0.9.2
-ac_ct_CC = gcc
+ac_ct_CC = /usr/bin/afl-clang-fast
 am__include = include
 am__leading_dot = .
 am__quote = 
@@ -323,7 +323,7 @@ SUBDIRS = \
           tests
 
 TOP_EXTRA_DIST = \
-	ChangeLog \
+	ChangeLog.md \
 	INSTALL.md \
 	LICENSE \
 	README.md \

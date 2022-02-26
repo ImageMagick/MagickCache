@@ -33,7 +33,7 @@ m4_define([magickcache_git_revision],
           ]))
 m4_define([magickcache_release_date],
           m4_esyscmd([
-            d=$(date +%F -r ./ChangeLog)
+            d=$(date +%F -r ./ChangeLog.md)
             printf %s "$d"
           ]))
 

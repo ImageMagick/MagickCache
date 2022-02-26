@@ -127,12 +127,6 @@ static void MagickCacheUsage(int argc,char **argv)
   exit(0);
 }
 
-static inline unsigned long StringToUnsignedLong(
-  const char *magick_restrict value)
-{
-  return(strtoul(value,(char **) NULL,10));
-}
-
 static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   ExceptionInfo *exception)
 {

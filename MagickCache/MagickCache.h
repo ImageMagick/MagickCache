@@ -102,7 +102,7 @@ extern MagickExport MagickCacheResource
   *AcquireMagickCacheResource(MagickCache *,const char *),
   *DestroyMagickCacheResource(MagickCacheResource *);
 
-extern MagickExport MagickCacheResourceType
+extern MagickExport const MagickCacheResourceType
   GetMagickCacheResourceType(const MagickCacheResource *);
 
 extern MagickExport void

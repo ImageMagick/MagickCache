@@ -208,10 +208,10 @@ AUTOCONF = ${SHELL} /home/cristy/MagickCache-0.9.2/missing autoconf
 AUTOHEADER = ${SHELL} /home/cristy/MagickCache-0.9.2/missing autoheader
 AUTOMAKE = ${SHELL} /home/cristy/MagickCache-0.9.2/missing automake-1.16
 AWK = gawk
-CC = /usr/bin/afl-clang-fast
+CC = c++
 CCDEPMODE = depmode=gcc3
-CFLAGS = -ggdb -fsanitize=memory,undefined -fno-omit-frame-pointer
-CPP = /usr/bin/afl-clang-fast -E
+CFLAGS = 
+CPP = c++ -E
 CPPFLAGS = 
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -227,7 +227,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = -ggdb -fsanitize=memory,undefined -fno-omit-frame-pointer
+LDFLAGS = 
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
@@ -277,7 +277,7 @@ abs_builddir = /home/cristy/MagickCache-0.9.2
 abs_srcdir = /home/cristy/MagickCache-0.9.2
 abs_top_builddir = /home/cristy/MagickCache-0.9.2
 abs_top_srcdir = /home/cristy/MagickCache-0.9.2
-ac_ct_CC = /usr/bin/afl-clang-fast
+ac_ct_CC = c++
 am__include = include
 am__leading_dot = .
 am__quote = 

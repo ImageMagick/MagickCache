@@ -143,7 +143,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     cache=DestroyMagickCache(cache); \
   if (message != (char *) NULL) \
     message=DestroyString(message); \
-  return(-1); \
+  return(MagickFalse); \
 }
 #define ThrowMagickCacheException(cache) \
 { \
@@ -295,7 +295,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             "unable to create magick cache","`%s': %s",path,message);
           MagickCacheExit(exception);
         }
-      return(0);
+      return(MagickTrue);
     }
   cache=AcquireMagickCache(path,passkey);
   if (cache == (MagickCache *) NULL)
@@ -539,7 +539,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     passkey=DestroyStringInfo(passkey);
   resource=DestroyMagickCacheResource(resource);
   cache=DestroyMagickCache(cache);
-  return(0);
+  return(MagickTrue);
 }
 
 static int MagickCacheMain(int argc,char **argv)

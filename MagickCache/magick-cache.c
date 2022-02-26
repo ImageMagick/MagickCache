@@ -290,7 +290,7 @@ MagickExport MagickCache *AcquireMagickCache(const char *path,
       cache=DestroyMagickCache(cache);
       return((MagickCache *) NULL);
     }
-  GetMagickCacheSentinel(cache,sentinel);
+  GetMagickCacheSentinel(cache,(unsigned char *) sentinel);
   signature=GetMagickCacheSignature(cache->nonce);
   if (memcmp(&signature,sentinel,sizeof(signature)) != 0)
     {
@@ -958,7 +958,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
   path=DestroyString(path);
   if (sentinel == NULL)
     return(MagickFalse);
-  GetMagickCacheResourceSentinel(resource,sentinel);
+  GetMagickCacheResourceSentinel(resource,(unsigned char *) sentinel);
   signature=GetMagickCacheSignature(resource->nonce);
   /*
     If no cache passkey, generate the resource ID.
@@ -1129,8 +1129,8 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
     ssize_t
       count;
 
-    count=read(file,resource->blob+i,(size_t) MagickCacheMin(resource->extent-i,
-      (size_t) SSIZE_MAX));
+    count=read(file,(unsigned char *) resource->blob+i,(size_t)
+      MagickCacheMin(resource->extent-i,(size_t) SSIZE_MAX));
     if (count <= 0)
       {
         count=0;
@@ -1877,7 +1877,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   status=MagickTrue;
-  head=AcquireCriticalMemory(sizeof(struct ResourceNode));
+  head=(ResourceNode *) AcquireCriticalMemory(sizeof(*node));
   head->path=AcquireString(cache->path);
   (void) ConcatenateString(&head->path,"/");
   (void) ConcatenateString(&head->path,iri);
@@ -1906,7 +1906,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
         }
       if (S_ISDIR(attributes.st_mode) != 0)
         {
-          node=AcquireCriticalMemory(sizeof(struct ResourceNode));
+          node=(ResourceNode *) AcquireCriticalMemory(sizeof(*node));
           node->path=path;
           node->next=(struct ResourceNode *) NULL;
           node->previous=q;

@@ -3,6 +3,6 @@
   "template": "keepachangelog",
   "unreleased": false,
   "commitLimit": false,
-  "startingVersion": "0.9.2-0",
+  "startingVersion": "0.1.0-0",
   "hideCredit": true
 }

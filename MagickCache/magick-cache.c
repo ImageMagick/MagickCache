@@ -1130,7 +1130,7 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
       count;
 
     count=read(file,(unsigned char *) resource->blob+i,(size_t)
-      MagickCacheMin(resource->extent+i,(size_t) SSIZE_MAX));
+      MagickCacheMin(resource->extent-i,(size_t) SSIZE_MAX));
     if (count <= 0)
       {
         count=0;

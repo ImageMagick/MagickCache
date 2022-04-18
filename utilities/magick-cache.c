@@ -396,7 +396,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
               write_image=CloneImageList(image,exception);
               if (passphrase != (StringInfo *) NULL)
                 status=PasskeyDecipherImage(write_image,passphrase,exception);
-              status=WriteImages(image_info,write_image,filename,exception);
+              if (status != MagickFalse)
+                status=WriteImages(image_info,write_image,filename,exception);
               write_image=DestroyImageList(write_image);
               image_info=DestroyImageInfo(image_info);
               break;
@@ -492,7 +493,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
               read_image=CloneImageList(image,exception);
               if (passphrase != (StringInfo *) NULL)
                 status=PasskeyEncipherImage(read_image,passphrase,exception);
-              status=PutMagickCacheResourceImage(cache,resource,read_image);
+              if (status != MagickFalse)
+                status=PutMagickCacheResourceImage(cache,resource,read_image);
               read_image=DestroyImageList(read_image);
               break;
             }

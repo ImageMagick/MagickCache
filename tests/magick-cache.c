@@ -395,7 +395,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       ThrowMagickCacheException(cache);
       fail++;
     }
-
   (void) FormatLocaleFile(stdout,"%g: delete magick cache resource\n",(double)
     tests);
   tests++;

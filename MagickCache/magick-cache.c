@@ -1877,7 +1877,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);
   status=MagickTrue;
-  head=(ResourceNode *) AcquireCriticalMemory(sizeof(*node));
+  head=(struct ResourceNode *) AcquireCriticalMemory(sizeof(*node));
   head->path=AcquireString(cache->path);
   (void) ConcatenateString(&head->path,"/");
   (void) ConcatenateString(&head->path,iri);
@@ -1906,7 +1906,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
         }
       if (S_ISDIR(attributes.st_mode) != 0)
         {
-          node=(ResourceNode *) AcquireCriticalMemory(sizeof(*node));
+          node=(struct ResourceNode *) AcquireCriticalMemory(sizeof(*node));
           node->path=path;
           node->next=(struct ResourceNode *) NULL;
           node->previous=q;

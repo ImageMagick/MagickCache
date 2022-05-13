@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 
 # ==============================================================================
 # Initialize Automake

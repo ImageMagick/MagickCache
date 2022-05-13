@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-AC_PREREQ(2.69)
+AC_PREREQ([2.71])
 
 # ==============================================================================
 # Initialize Automake
@@ -37,11 +37,7 @@ m4_define([magickcache_release_date],
             printf %s "$d"
           ]))
 
-AC_INIT([magickcache_name],
-        [magickcache_version],
-        [magickcache_bugreport],
-        [magickcache_tarname],
-        [magickcache_url])
+AC_INIT([magickcache_name],[magickcache_version],[magickcache_bugreport],[magickcache_tarname],[magickcache_url])
 
 AC_CONFIG_SRCDIR([utilities/magick-cache.c])
 AC_CONFIG_HEADERS([config.h])
@@ -116,7 +112,6 @@ EXTERNAL_CFLAGS="$CFLAGS"
 
 # Checks for programs. These may set default variables, such as CFLAGS
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_RANLIB
 
 # Reset the externally set CFLAGS after calling AC_PROG*
@@ -130,7 +125,6 @@ PKG_CHECK_MODULES([MAGICKCORE], [MagickCore >= 7.1.0], [have_libMagickCore=yes],
 AM_CONDITIONAL([LIB_MAGICKCORE],  [test "$have_libMagickCore" = "yes"])
 
 # Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS([stdio.h])
 
 # Checks for typedefs, structures, and compiler characteristics.

@@ -19,7 +19,7 @@ You will require a place to store and retrieve your content.  Let's create a cac
 $ magick-cache -passkey passkey.txt create /opt/magick-cache
 ```
 
-Where `passkey.txt` contains your cache passkey. The passkey can be any binary content, from a simple phrase, to an image, or even gibberish.  To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
+Where `passkey.txt` contains your cache passkey. The passkey can be any binary content, from a simple password or phrase, or an image, or even gibberish.  To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
 
 You only need to create a MagickCache once.  You can, however, create more than one MagickCache with different paths.
 

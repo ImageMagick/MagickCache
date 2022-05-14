@@ -418,7 +418,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   tests++;
   if (cache != (MagickCache *) NULL)
     {
-      char *path = MagickCacheRepo "/" MagickCacheSentinel;
+      const char *path = MagickCacheRepo "/" MagickCacheSentinel;
       if (remove_utf8(path) == -1)
         status=MagickFalse;
       if (remove_utf8(MagickCacheRepo) == -1)
@@ -456,7 +456,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) FormatLocaleFile(stdout,
     "validation suite: %.20g tests; %.20g passed; %.20g failed.\n",(double)
      tests,(double) (tests-fail),(double) fail);
-  return(fail == 0 ? 1 : 0);
+  return(fail == 0 ? MagickTrue : MagickFalse);
 }
 
 static int MagickCacheMain(int argc,char **argv)

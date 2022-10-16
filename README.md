@@ -7,19 +7,25 @@ sequences, video, audio or metadata in a local folder. Any content is
 memory-mapped for efficient retrieval.  Additional efficiencies are possible by
 retrieving a portion of an image.  Content can persist or you can assign a
 time-to-live (TTL) to automatically expire content when the TTL is exceeded.
-MagickCache supports virtually unlimited content upwards of billions of images
-making it suitable as a web image service.
+MagickCache supports virtually unlimited content upwards of billions of images,
+videos, metadata, or blobs making it suitable as a web image service.
 
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, and associated metadata.
 
 ## Create a MagickCache
-You will require a place to store and retrieve your content.  Let's create a cache on our local filesystem:
+You will require a place to store and retrieve your content.  Let's create a magick-cache on our local filesystem:
 
 ```
 $ magick-cache -passkey passkey.txt create /opt/magick-cache
 ```
 
-Where `passkey.txt` contains your cache passkey. The passkey can be any binary content, from a simple password or phrase, or an image, or even gibberish.  To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
+Where `passkey.txt` contains your cache passkey. The passkey can be any binary content, from a simple password or phrase, or an image, or even gibberish.  Note, it is sensitive to any carriage return you include in your passkey.  Here is one method to create a passkey:
+
+```
+$ echo -n "_my-passkey_" > passkey.txt
+```
+
+To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
 
 You only need to create a MagickCache once.  You can, however, create more than one MagickCache with different paths.
 
@@ -107,7 +113,7 @@ Each entry includes the IRI, image dimensions for images, the content extent in 
 
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get, identify, expire or delete content that you do not own as determined by your secret passkey.
 
-The MagickCache owner can get, identify, expire, or delete all the content, including content you own, with this command, for example:
+The MagickCache owner can get, identify, delete, or expire all the content, including content you own, with this command, for example:
 
 ```
 $ magick-cache -passkey passkey.txt identify /opt/magick-cache /
@@ -143,4 +149,8 @@ Be careful, after this command, your cache content is irrevocably lost.
 
 ## Security
 
-MagickCache security is not crytographically strong.  Instead it generates a unique hash for each resource ensuring the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys.  They are also accessible to anyone with sufficient privileges to access the MagickCache  disk path.
+MagickCache security is not crytographically strong.  Instead it generates a unique hash for each resource ensuring the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys.  They are also accessible to anyone with sufficient privileges to access the MagickCache path on disk.
+
+## API
+
+You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache).

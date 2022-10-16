@@ -49,13 +49,13 @@ $ magick-cache -passkey passkey.txt -ttl "2 days" put /opt/magick-cache movies/i
 
 Where `passkey.txt` contains your resource key. Don't lose your resource passkey. Without it, you will be unable to get, identify, expire, or delete resource you own.
 
-The resource passkey ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with:
+The resource passkey ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with a passphrase:
 
 ```
 $ magick-cache -passkey passkey.txt -passphrase passphrase.txt -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Note, blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble the content before you store it in the cache.
+Note, only images are scrambled.  Blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble any blobs or metadata *before* you store it in the cache.
 
 ## Get content from the MagickCache
 
@@ -67,7 +67,7 @@ $ magick-cache -passkey passkey.txt get /opt/magick-cache movies/image/mission-i
 
 Notice the original image was put in the cache in the JPEG format. Here we conveniently convert it to the PNG format as we extract the image.
 
-The `-extract` option is useful when retrieving an image.  To extract a portion of the image, specify tile width, height, and offset:
+The `-extract` option is useful when retrieving an image if you want to extract just a portion of the image. Specify the tile width, height, and offset as follows:
 
 ```
 $ magick-cache -passkey passkey.txt -extract 100x100+0+0 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
@@ -79,7 +79,7 @@ To resize instead, do not specify the offset:
 $ magick-cache -passkey passkey.txt -extract 100x100 get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
-If your image is scrambled, provide the passphrase to descramble it:
+If your image is scrambled, provide the passphrase to descramble it first:
 
 ```
 $ magick-cache -passkey passkey.txt -passphrase passphrase.txt get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
@@ -111,7 +111,7 @@ identified 1 resources
 
 Each entry includes the IRI, image dimensions for images, the content extent in bytes, time to live, whether the resource is expired (denoted with a `*`), and the creation date.
 
-Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get, identify, expire or delete content that you do not own as determined by your secret passkey.
+Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get, identify, delete, or expire content that you did not create or does not match your secret passkey.
 
 The MagickCache owner can get, identify, delete, or expire all the content, including content you own, with this command, for example:
 
@@ -135,7 +135,7 @@ or
 $ magick-cache -passkey passkey.txt put /opt/magick-cache movies/meta/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.txt
 ```
 
-Images must be in a format that ImageMagick understands.  Metadata must be text.  Blobs can be any content including images, video, audio, or binary files.
+Images must be in a format that ImageMagick [supports](https://imagemagick.org/script/formats.php).  Metadata should be text.  Blobs can be any content including images, video, audio, or binary files.
 
 ## Delete a MagickCache
 
@@ -145,12 +145,12 @@ The MagickCache owner can completely delete all the content within a cache:
 $ magick-cache -passkey passkey.txt delete /opt/magick-cache /
 ```
 
-Be careful, after this command, your cache content is irrevocably lost.
+Be careful. After this command, your cache content is irrevocably lost.
 
 ## Security
 
-MagickCache security is not crytographically strong.  Instead it generates a unique hash for each resource ensuring the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys.  They are also accessible to anyone with sufficient privileges to access the MagickCache path on disk.
+MagickCache security is *not* crytographically strong.  Instead it generates a unique hash of sufficient quality for each resource to ensure the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys.  They are also accessible to anyone with sufficient privileges to directly access the MagickCache path on disk.
 
 ## API
 
-You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache).
+You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache) to conveniently MagickCache functionality directly in your projects.

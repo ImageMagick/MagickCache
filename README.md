@@ -13,7 +13,7 @@ videos, metadata, or blobs making it suitable as a web image service.
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, audio, and any associated metadata.
 
 ## Create a MagickCache
-You will require a place to store and retrieve your content.  Let's create a magick-cache on our local filesystem:
+You will require a place to store and retrieve your content.  Let's create a MafgickCache on our local filesystem:
 
 ```
 $ magick-cache -passkey ~/.passkey create /opt/magick-cache
@@ -27,7 +27,7 @@ $ echo -n "myPasskey" > ~/.passkey
 
 To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
 
-You only need to create a MagickCache once.  You can, however, create more than one MagickCache with different paths.
+You only need to create a MagickCache once to store upwards of billions of images, video, audio, and metadata.  You can, however, create more than one MagickCache with different paths.
 
 Once the MagickCache is created, you will want to populate the cache with content that includes images, video, audio, or metadata.
 

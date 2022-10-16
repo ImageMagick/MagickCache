@@ -25,7 +25,7 @@ Where `~/.passkey` contains your cache passkey. The passkey can be any binary co
 $ echo -n "myPasskey" > ~/.passkey
 ```
 
-To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.
+To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, delete, or expire content in your cache.
 
 You only need to create a MagickCache once to store upwards of billions of images, video, audio, and metadata.  You can, however, create more than one MagickCache with different paths.
 
@@ -41,13 +41,13 @@ $ magick-cache put /opt/magick-cache movies/image/mission-impossible/cast/rebecc
 
 Note, the image identifier is an IRI composed of `project/type/resource-path`. In this example, the project is `movies`, type is `image`, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a cache resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
 
-Now, let's set a resource passkey and the time to live to 2 days. Anytime after the second day, the image is automatically deleted with the `expire` function. To get, expire, or delete the image, you will need to use the same resource passkey:
+Now, let's set a resource passkey and the time to live to 2 days. Anytime after the second day, the image is automatically deleted with the `expire` function. To get, delete, or expire the image, you will need to use the same resource passkey:
 
 ```
 $ magick-cache -passkey ~/.passkey -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Where `~/.passkey` contains your resource key. Don't lose your resource passkey. Without it, you will be unable to get, identify, expire, or delete resource you own.
+Where `~/.passkey` contains your resource key. Don't lose your resource passkey. Without it, you will be unable to get, identify, delete, or expire resources you created.
 
 The resource passkey ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with a passphrase:
 
@@ -55,11 +55,13 @@ The resource passkey ensures only you and the cache owner can access your image.
 $ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase -ttl "2 days" put /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
+You will need the same passphrase when you retrieve the image to restore it back to its original form.
+
 Note, only images are scrambled.  Blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble any blobs or metadata *before* you store it in the cache.
 
 ## Get content from the MagickCache
 
-Eventually you will want retrieve your content, let's get our original cast image from the cache:
+Eventually you will want retrieve your content from the cache. As an example, let's get our original cast image from the cache:
 
 ```
 $ magick-cache -passkey ~/.passkey get /opt/magick-cache movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png

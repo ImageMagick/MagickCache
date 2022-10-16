@@ -19,10 +19,10 @@ You will require a place to store and retrieve your content.  Let's create a mag
 $ magick-cache -passkey passkey.txt create /opt/magick-cache
 ```
 
-Where `passkey.txt` contains your cache passkey. The passkey can be any binary content, from a simple password or phrase, or an image, or even gibberish.  Note, it is sensitive to any carriage return you include in your passkey.  Here is one method to create a passkey:
+Where `passkey.txt` contains your cache passkey. The passkey can be any binary content, from a simple password or phrase, or an image, or even gibberish.  Note, the passkey is sensitive to any control characters you include in the file.  Here is one method to create a passkey without control characters:
 
 ```
-$ echo -n "_my-passkey_" > passkey.txt
+$ echo -n "myPasskey" > passkey.txt
 ```
 
 To be effective, make your passkey at least 8 characters in length.  Don't lose your passkey. Without it, you will be unable to identify, expire, or delete content in your cache.

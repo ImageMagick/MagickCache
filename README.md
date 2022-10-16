@@ -155,4 +155,4 @@ MagickCache security is *not* crytographically strong.  Instead it generates a u
 
 ## API
 
-You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache) to conveniently MagickCache functionality directly in your projects.
+You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache) to conveniently include MagickCache functionality directly in your projects.

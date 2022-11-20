@@ -166,7 +166,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   char
     *description = (char *) NULL,
     *extract = (char *) NULL,
-    *filename = (char *) NULL,
+    *filename = "not defined",
     *function,
     *iri,
     *message = (char *) NULL,

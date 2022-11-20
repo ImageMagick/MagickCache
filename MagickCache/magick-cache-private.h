@@ -188,19 +188,22 @@ static inline MagickBooleanType MagickCreatePath(const char *path)
   int
     status = 0;
 
+  size_t
+    extent;
+
   struct stat
     attributes;
 
-  directed_walk=(char *) AcquireCriticalMemory((2*strlen(path)+2)*
-    sizeof(*directed_walk));
+  extent=2*strlen(path)+2;
+  directed_walk=(char *) AcquireCriticalMemory(extent*sizeof(*directed_walk));
   *directed_walk='\0';
   if (*path == '/')
-    (void) strcat(directed_walk,"/");
+    (void) ConcatenateMagickString(directed_walk,"/",extent);
   directed_path=ConstantString(path);
   for (p=strtok(directed_path,"/"); p != (char *) NULL; p=strtok(NULL,"/"))
   {
-    (void) strcat(directed_walk,p);
-    (void) strcat(directed_walk,"/");
+    (void) ConcatenateMagickString(directed_walk,p,extent);
+    (void) ConcatenateMagickString(directed_walk,"/",extent);
     if (GetPathAttributes(directed_walk,&attributes) == MagickFalse)
       {
 #if defined(MAGICKCORE_WINDOWS_SUPPORT)

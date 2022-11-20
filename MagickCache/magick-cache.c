@@ -1391,8 +1391,8 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
       return((Image *) NULL);
     }
   image_info=AcquireImageInfo();
-  (void) strcpy(image_info->filename,path);
-  (void) strcpy(image_info->magick,"MPC");
+  (void) CopyMagickString(image_info->filename,path,MagickPathExtent);
+  (void) CopyMagickString(image_info->magick,"MPC",MagickPathExtent);
   exception=AcquireExceptionInfo();
   if (resource->blob != NULL)
     DestroyMagickCacheResourceBlob(resource);

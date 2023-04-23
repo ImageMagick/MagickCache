@@ -652,6 +652,7 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+MAGICKCACHE_PCFLAGS
 DEBUG_FALSE
 DEBUG_TRUE
 LIB_MAGICKCORE_FALSE
@@ -3482,7 +3483,7 @@ MAGICKCACHE_PATCHLEVEL_VERSION=1
 
 MAGICKCACHE_VERSION=0.9.2-1
 
-MAGICKCACHE_GIT_REVISION=155:116693f:20230304
+MAGICKCACHE_GIT_REVISION=156:58b8512:20230423
 
 
 # Substitute library versioning
@@ -3504,7 +3505,7 @@ PACKAGE_LIB_VERSION=0x10A
 
 PACKAGE_LIB_VERSION_NUMBER=0,9,2,1
 
-PACKAGE_RELEASE_DATE=2022-03-24
+PACKAGE_RELEASE_DATE=2023-04-16
 
 
 # versioning of library
@@ -3531,7 +3532,6 @@ MAGICKCACHE_LIB_VERSION_TEXT="${PACKAGE_BASE_VERSION}"
 MAGICKCACHE_LIB_VERSION_NUMBER="${MAGICKCACHE_LIBRARY_CURRENT},${MAGICKCACHE_LIBRARY_AGE},${MAGICKCACHE_LIBRARY_REVISION}"
 
 
-
 # Definition used to define MagickLibVersionText in version.h
 MAGICKPP_LIB_VERSION_TEXT="${PACKAGE_BASE_VERSION}"
 
@@ -3540,6 +3540,7 @@ MAGICKPP_LIB_VERSION_TEXT="${PACKAGE_BASE_VERSION}"
 MAGICKCACHE_LIB_VERSION_NUMBER="${MAGICKCACHE_LIBRARY_CURRENT},${MAGICKCACHE_LIBRARY_AGE},${MAGICKCACHE_LIBRARY_REVISION}"
 
 
+MAGICKCACHE_PCFLAGS=$CPPFLAGS_USER
 
 # Remember externally set CFLAGS
 EXTERNAL_CFLAGS="$CFLAGS"
@@ -5083,9 +5084,9 @@ fi
 
 
 
-# Checks for library functions.
 
-ac_config_files="$ac_config_files Makefile MagickCache/Makefile MagickCache/version.h utilities/Makefile utilities/magick-cache.1 tests/Makefile"
+
+ac_config_files="$ac_config_files Makefile MagickCache/Makefile MagickCache/version.h MagickCache/MagickCache.pc utilities/Makefile utilities/magick-cache.1 tests/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5829,6 +5830,7 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "MagickCache/Makefile") CONFIG_FILES="$CONFIG_FILES MagickCache/Makefile" ;;
     "MagickCache/version.h") CONFIG_FILES="$CONFIG_FILES MagickCache/version.h" ;;
+    "MagickCache/MagickCache.pc") CONFIG_FILES="$CONFIG_FILES MagickCache/MagickCache.pc" ;;
     "utilities/Makefile") CONFIG_FILES="$CONFIG_FILES utilities/Makefile" ;;
     "utilities/magick-cache.1") CONFIG_FILES="$CONFIG_FILES utilities/magick-cache.1" ;;
     "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;

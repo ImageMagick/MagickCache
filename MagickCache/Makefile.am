@@ -15,6 +15,9 @@ include_HEADERS = MagickCache.h \
 
 noinst_HEADERS = magick-cache-private.h
 
+MAGICKCORE_EXTRA_DIST = \
+  MagickCache/MagickCache.pc.in
+
 # The files to add to the library and to the source distribution
 libMagickCache_a_SOURCES = \
 										     MagickCache.h \

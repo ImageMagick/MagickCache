@@ -97,7 +97,6 @@ AC_SUBST([MAGICKCACHE_LIB_VERSION_TEXT])
 MAGICKCACHE_LIB_VERSION_NUMBER="${MAGICKCACHE_LIBRARY_CURRENT},${MAGICKCACHE_LIBRARY_AGE},${MAGICKCACHE_LIBRARY_REVISION}"
 AC_SUBST([MAGICKCACHE_LIB_VERSION_NUMBER])
 
-
 # Definition used to define MagickLibVersionText in version.h
 MAGICKPP_LIB_VERSION_TEXT="${PACKAGE_BASE_VERSION}"
 AC_SUBST([MAGICKPP_LIB_VERSION_TEXT])
@@ -106,6 +105,7 @@ AC_SUBST([MAGICKPP_LIB_VERSION_TEXT])
 MAGICKCACHE_LIB_VERSION_NUMBER="${MAGICKCACHE_LIBRARY_CURRENT},${MAGICKCACHE_LIBRARY_AGE},${MAGICKCACHE_LIBRARY_REVISION}"
 AC_SUBST([MAGICKCACHE_LIB_VERSION_NUMBER])
 
+MAGICKCACHE_PCFLAGS=$CPPFLAGS_USER
 
 # Remember externally set CFLAGS
 EXTERNAL_CFLAGS="$CFLAGS"
@@ -154,11 +154,12 @@ AC_CHECK_FUNCS([sysconf])
 
 dnl ===========================================================================
 
-# Checks for library functions.
+AC_SUBST([MAGICKCACHE_PCFLAGS])
 
 AC_CONFIG_FILES([Makefile
                  MagickCache/Makefile
                  MagickCache/version.h
+                 MagickCache/MagickCache.pc
                  utilities/Makefile
                  utilities/magick-cache.1
                  tests/Makefile])

@@ -7,7 +7,7 @@ endif
 AM_CFLAGS += $(MAGICKCORE_CFLAGS)
 
 # The libraries to build
-lib_LIBRARIES = libMagickCache.a
+lib_LTLIBRARIES = libMagickCache.la
 
 # install headers
 include_HEADERS = MagickCache.h \
@@ -15,11 +15,12 @@ include_HEADERS = MagickCache.h \
 
 noinst_HEADERS = magick-cache-private.h
 
-MAGICKCORE_EXTRA_DIST = \
-  MagickCache/MagickCache.pc.in
+pkgconfigdir = $(libdir)/pkgconfig
+
+pkgconfig_DATA = MagickCache.pc
 
 # The files to add to the library and to the source distribution
-libMagickCache_a_SOURCES = \
+libMagickCache_la_SOURCES = \
 										     MagickCache.h \
 										     magick-cache.c \
 										     version.h \

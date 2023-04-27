@@ -112,7 +112,6 @@ EXTERNAL_CFLAGS="$CFLAGS"
 
 # Checks for programs. These may set default variables, such as CFLAGS
 AC_PROG_CC
-AC_PROG_RANLIB
 
 # Reset the externally set CFLAGS after calling AC_PROG*
 CFLAGS="$EXTERNAL_CFLAGS"
@@ -155,6 +154,8 @@ AC_CHECK_FUNCS([sysconf])
 dnl ===========================================================================
 
 AC_SUBST([MAGICKCACHE_PCFLAGS])
+
+LT_INIT([win32-dll dlopen])
 
 AC_CONFIG_FILES([Makefile
                  MagickCache/Makefile

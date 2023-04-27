@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/MagickCache-@MAGICKCACHE_MAJOR_VERSION@
+includearchdir=@INCLUDEARCH_DIR@/MagickCache-@MAGICKCACHE_MAJOR_VERSION@
+libname=MagickCore-@MAGICKCACHE_MAJOR_VERSION@
+ 
+Name: MagickCache
+Description: MagickCache - C API for MagickCache
+URL: https://github.com/ImageMagick/MagickCache
+Version: @PACKAGE_BASE_VERSION@
+Cflags: -I${includearchdir} -I${includedir} @MAGICKCACHE_PCFLAGS@
+Libs: -L${libdir} -l${libname}
+Libs.private: -L${libdir} -l${libname} @MAGICKCACHE_LIBS@ @MATH_LIBS@

@@ -13,10 +13,10 @@ videos, metadata, or blobs making it suitable as a web image service.
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, audio, and any associated metadata.
 
 ## Create a MagickCache
-You will require a place to store and retrieve your content.  Let's create a digital content repository on your local filesystem:
+You will require a place to store and retrieve your content.  Let's create a digital media repository on your local filesystem:
 
 ```
-$ magick-cache -passkey ~/.passkey create /opt/dcr
+$ magick-cache -passkey ~/.passkey create /opt/dmr
 ```
 
 Where `~/.passkey` contains your cache passkey. The passkey can be any binary content, from a simple password or phrase, or an image, or even gibberish.  Note, the passkey is sensitive to any control characters you include in the file.  Here is one method to create a passkey without control characters:
@@ -36,7 +36,7 @@ Once the MagickCache is created, you will want to populate the cache with conten
 Let's add a movie cast image to our newly created cache:</p>
 
 ```
-$ magick-cache put /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
+$ magick-cache put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
 Note, the image identifier is an IRI composed of `project/type/resource-path`. In this example, the project is `movies`, type is `image`, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a cache resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
@@ -44,7 +44,7 @@ Note, the image identifier is an IRI composed of `project/type/resource-path`. I
 Now, let's set a resource passkey and the time to live to 2 days. Anytime after the second day, the image is automatically deleted with the `expire` function. To get, delete, or expire the image, you will need to use the same resource passkey:
 
 ```
-$ magick-cache -passkey ~/.passkey -ttl "2 days" put /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
+$ magick-cache -passkey ~/.passkey -ttl "2 days" put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
 Where `~/.passkey` contains your resource key. Don't lose your resource passkey. Without it, you will be unable to get, identify, delete, or expire resources you created.
@@ -52,7 +52,7 @@ Where `~/.passkey` contains your resource key. Don't lose your resource passkey.
 The resource passkey ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with a passphrase:
 
 ```
-$ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase -ttl "2 days" put /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
+$ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase -ttl "2 days" put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
 You will need the same passphrase when you retrieve the image to restore it back to its original form.
@@ -64,7 +64,7 @@ Note, only images are scrambled.  Blobs and metadata are stored in the cache in 
 Eventually you will want retrieve your content from the cache. As an example, let's get our original cast image from the cache:
 
 ```
-$ magick-cache -passkey ~/.passkey get /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -passkey ~/.passkey get /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 Notice the original image was put in the cache in the JPEG format. Here we conveniently convert it to the PNG format as we extract the image.
@@ -72,19 +72,19 @@ Notice the original image was put in the cache in the JPEG format. Here we conve
 The `-extract` option is useful when retrieving an image if you want to extract just a portion of the image. Specify the tile width, height, and offset as follows:
 
 ```
-$ magick-cache -passkey ~/.passkey -extract 100x100+0+0 get /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -passkey ~/.passkey -extract 100x100+0+0 get /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 To resize instead, do not specify the offset:
 
 ```
-$ magick-cache -passkey ~/.passkey -extract 100x100 get /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -passkey ~/.passkey -extract 100x100 get /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 If your image is scrambled, provide the passphrase to descramble it first:
 
 ```
-$ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase get /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
+$ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase get /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
 ## Delete content from the MagickCache
@@ -92,13 +92,13 @@ $ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase get /opt/dcr movies
 We can explicitedly delete content:
 
 ```
-$ magick-cache -passkey ~/.passkey delete /opt/dcr movies/image/mission-impossible/cast/rebecca-ferguson 
+$ magick-cache -passkey ~/.passkey delete /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 
 ```
 
 or we can delete all cast images that have expired (exceeded their respective time to live), try this comand:
 
 ```
-$ magick-cache -passkey ~/.passkey expire /opt/dcr movies/image/mission-impossible/cast
+$ magick-cache -passkey ~/.passkey expire /opt/dmr movies/image/mission-impossible/cast
 ```
 
 ## Identify the MagickCache content
@@ -106,7 +106,7 @@ $ magick-cache -passkey ~/.passkey expire /opt/dcr movies/image/mission-impossib
 Perhaps you want to identify all the content you own:
 
 ```
-$ magick-cache -passkey ~/.passkey identify /opt/dcr movies/image/mission-impossible/cast
+$ magick-cache -passkey ~/.passkey identify /opt/dmr movies/image/mission-impossible/cast
 movies/image/mission-impossible/cast/rebecca-ferguson[1368x912] 406B  1:0:0:0 2021-05-30T17:41:42Z
 identified 1 resources
 ```
@@ -118,7 +118,7 @@ Others can store content in the cache along side your content.  However, their c
 The MagickCache owner can get, identify, delete, or expire all the content, including content you own, with this command, for example:
 
 ```
-$ magick-cache -passkey ~/.passkey identify /opt/dcr /
+$ magick-cache -passkey ~/.passkey identify /opt/dmr /
 ```
 
 Note, expired resources are annotated with an asterisks.
@@ -128,13 +128,13 @@ Note, expired resources are annotated with an asterisks.
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:
 
 ```
-$ magick-cache -passkey ~/.passkey put /opt/dcr movies/blob/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.mp4
+$ magick-cache -passkey ~/.passkey put /opt/dmr movies/blob/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.mp4
 ```
 
 or
 
 ```
-$ magick-cache -passkey ~/.passkey put /opt/dcr movies/meta/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.txt
+$ magick-cache -passkey ~/.passkey put /opt/dmr movies/meta/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.txt
 ```
 
 Images must be in a format that ImageMagick [supports](https://imagemagick.org/script/formats.php).  Metadata should be text.  Blobs can be any content including images, video, audio, or binary files.
@@ -144,7 +144,7 @@ Images must be in a format that ImageMagick [supports](https://imagemagick.org/s
 The MagickCache owner can completely delete all the content within a cache:
 
 ```
-$ magick-cache -passkey ~/.passkey delete /opt/dcr /
+$ magick-cache -passkey ~/.passkey delete /opt/dmr /
 ```
 
 Be careful. After this command, your cache content is irrevocably lost.

@@ -158,6 +158,7 @@ AC_SUBST([MAGICKCACHE_PCFLAGS])
 LT_INIT([win32-dll dlopen])
 
 AC_CONFIG_FILES([Makefile
+                 config/configure.xml
                  MagickCache/Makefile
                  MagickCache/version.h
                  MagickCache/MagickCache.pc

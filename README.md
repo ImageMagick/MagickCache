@@ -8,7 +8,7 @@ memory-mapped for efficient retrieval.  Additional efficiencies are possible by
 retrieving a portion of an image.  Content can persist or you can assign a
 time-to-live (TTL) to automatically expire content when the TTL is exceeded.
 MagickCache supports virtually unlimited content upwards of billions of images,
-videos, metadata, or blobs making it suitable as a web image service.
+videos, metadata, or blobs making it suitable as a digital asset repository.
 
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, audio, and any associated metadata.
 

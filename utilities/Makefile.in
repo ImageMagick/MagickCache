@@ -108,7 +108,7 @@ am_magick_cache_OBJECTS = magick-cache.$(OBJEXT)
 magick_cache_OBJECTS = $(am_magick_cache_OBJECTS)
 am__DEPENDENCIES_1 =
 magick_cache_DEPENDENCIES =  \
-	$(top_builddir)/MagickCache/libMagickCache.a \
+	$(top_builddir)/MagickCache/libMagickCache.la \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -191,6 +191,10 @@ CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CSCOPE = @CSCOPE@
 CTAGS = @CTAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -276,6 +280,7 @@ abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -330,7 +335,7 @@ top_srcdir = @top_srcdir@
 @DEBUG_TRUE@	-I$(top_srcdir)/MagickCache -Wall -g -O3 \
 @DEBUG_TRUE@	$(MAGICKCORE_CFLAGS)
 magick_cache_SOURCES = magick-cache.c
-magick_cache_LDADD = $(top_builddir)/MagickCache/libMagickCache.a \
+magick_cache_LDADD = $(top_builddir)/MagickCache/libMagickCache.la \
 	$(AM_LDFLAGS) $(MAGICKCORE_LIBS)
 UTILITIES_MANS = \
 	utilities/magick-cache.1

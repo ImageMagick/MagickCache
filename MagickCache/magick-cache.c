@@ -438,7 +438,7 @@ MagickExport MagickBooleanType ClearMagickCacheResourceException(
 %    o resource: the resource.
 %
 */
-MagickExport const size_t GetMagickCacheResourceExtent(
+MagickExport size_t GetMagickCacheResourceExtent(
   const MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
@@ -1156,7 +1156,7 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
   return(MagickTrue);
 }
 
-MagickExport const void *GetMagickCacheResourceBlob(MagickCache *cache,
+MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
   MagickCacheResource *resource)
 {
   char
@@ -1183,8 +1183,8 @@ MagickExport const void *GetMagickCacheResourceBlob(MagickCache *cache,
   status=ResourceToBlob(resource,path);
   path=DestroyString(path);
   if (status == MagickFalse)
-    return((const void *) NULL);
-  return((const void *) resource->blob);
+    return((void *) NULL);
+  return((void *) resource->blob);
 }
 
 /*
@@ -1348,7 +1348,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %    o extract: the extract geometry.
 %
 */
-MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
+MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
   MagickCacheResource *resource,const char *extract)
 {
   char
@@ -1409,7 +1409,7 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
     }
   path=DestroyString(path);
   image_info=DestroyImageInfo(image_info);
-  return((const Image *) resource->blob);
+  return((Image *) resource->blob);
 }
 
 /*
@@ -1435,7 +1435,7 @@ MagickExport const Image *GetMagickCacheResourceImage(MagickCache *cache,
 %    o resource: the resource.
 %
 */
-MagickExport const char *GetMagickCacheResourceIRI(
+MagickExport char *GetMagickCacheResourceIRI(
   const MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
@@ -1468,7 +1468,7 @@ MagickExport const char *GetMagickCacheResourceIRI(
 %    o resource: the resource.
 %
 */
-MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
+MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
   MagickCacheResource *resource)
 {
   char
@@ -1501,8 +1501,8 @@ MagickExport const char *GetMagickCacheResourceMeta(MagickCache *cache,
   status=ResourceToBlob(resource,path);
   path=DestroyString(path);
   if (status == MagickFalse)
-    return((const char *) NULL);
-  return((const char *) resource->blob);
+    return((char *) NULL);
+  return((char *) resource->blob);
 }
 
 /*
@@ -1562,7 +1562,7 @@ MagickExport void GetMagickCacheResourceSize(
 %    o resource: the resource.
 %
 */
-MagickExport const time_t GetMagickCacheResourceTimestamp(
+MagickExport time_t GetMagickCacheResourceTimestamp(
   const MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
@@ -1594,7 +1594,7 @@ MagickExport const time_t GetMagickCacheResourceTimestamp(
 %    o resource: the resource.
 %
 */
-MagickExport const size_t GetMagickCacheResourceTTL(
+MagickExport size_t GetMagickCacheResourceTTL(
   const MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
@@ -1626,7 +1626,7 @@ MagickExport const size_t GetMagickCacheResourceTTL(
 %    o resource: the resource.
 %
 */
-MagickExport const MagickCacheResourceType GetMagickCacheResourceType(
+MagickExport MagickCacheResourceType GetMagickCacheResourceType(
   const MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
@@ -1658,7 +1658,7 @@ MagickExport const MagickCacheResourceType GetMagickCacheResourceType(
 %    o resource: the resource.
 %
 */
-MagickExport const size_t GetMagickCacheResourceVersion(
+MagickExport size_t GetMagickCacheResourceVersion(
   const MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
@@ -1689,7 +1689,7 @@ MagickExport const size_t GetMagickCacheResourceVersion(
 %    o resource: the resource.
 %
 */
-MagickExport const time_t GetMagickCacheTimestamp(const MagickCache *cache)
+MagickExport time_t GetMagickCacheTimestamp(const MagickCache *cache)
 {
   assert(cache != (MagickCache *) NULL);
   assert(cache->signature == MagickCacheSignature);

@@ -1,4 +1,4 @@
-# MagickCache: an Efficient Image Cache
+# MagickCache: an Efficient Digital Media Repository
 
 `The MagickCache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The MagickCache requires ImageMagick version 7.1.0-0 or above.`
 
@@ -12,7 +12,7 @@ videos, metadata, or blobs making it suitable as a digital media repository.
 
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, audio, and any associated metadata.
 
-## Create a MagickCache
+## Create a Digital Media Repository
 You will require a place to store and retrieve your content.  Let's create a digital media repository on your local filesystem:
 
 ```
@@ -31,9 +31,9 @@ You only need to create a MagickCache once to store upwards of billions of image
 
 Once the MagickCache is created, you will want to populate the cache with content that includes images, video, audio, or metadata.
 
-## Put content in the MagickCache
+## Put content in the Digital Media Repository
 
-Let's add a movie cast image to our newly created cache:</p>
+Let's add a movie cast image to our newly created digital media repository:</p>
 
 ```
 $ magick-cache put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
@@ -59,7 +59,7 @@ You will need the same passphrase when you retrieve the image to restore it back
 
 Note, only images are scrambled.  Blobs and metadata are stored in the cache in plaintext. To prevent snooping, scramble any blobs or metadata *before* you store it in the cache.
 
-## Get content from the MagickCache
+## Get content from the Digital Media Repository
 
 Eventually you will want retrieve your content from the cache. As an example, let's get our original cast image from the cache:
 
@@ -87,7 +87,7 @@ If your image is scrambled, provide the passphrase to descramble it first:
 $ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase get /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson rebecca-ferguson.png
 ```
 
-## Delete content from the MagickCache
+## Delete content from the Digital Media Repository
 
 We can explicitedly delete content:
 
@@ -101,7 +101,7 @@ or we can delete all cast images that have expired (exceeded their respective ti
 $ magick-cache -passkey ~/.passkey expire /opt/dmr movies/image/mission-impossible/cast
 ```
 
-## Identify the MagickCache content
+## Identify the Digital Media Repository Content
 
 Perhaps you want to identify all the content you own:
 
@@ -139,7 +139,7 @@ $ magick-cache -passkey ~/.passkey put /opt/dmr movies/meta/mission-impossible/c
 
 Images must be in a format that ImageMagick [supports](https://imagemagick.org/script/formats.php).  Metadata should be text.  Blobs can be any content including images, video, audio, or binary files.
 
-## Delete a MagickCache
+## Delete a Digital Media Repository
 
 The MagickCache owner can completely delete all the content within a cache:
 
@@ -149,10 +149,10 @@ $ magick-cache -passkey ~/.passkey delete /opt/dmr /
 
 Be careful. After this command, your cache content is irrevocably lost.
 
-## Security
+## Digital Media Repository Security
 
 MagickCache security is *not* crytographically strong.  Instead it generates a unique hash of sufficient quality for each resource to ensure the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys.  They are also accessible to anyone with sufficient privileges to directly access the MagickCache path on disk.
 
-## API
+## MagickCache API
 
 You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache) to conveniently include MagickCache functionality directly in your projects.

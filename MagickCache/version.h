@@ -26,7 +26,7 @@ extern "C" {
   Define declarations.
 */
 #define MagickCachePackageName "MagickCache"
-#define MagickCacheCopyright  "Copyright (C) 1999-2021 ImageMagick Studio LLC"
+#define MagickCacheCopyright  "Copyright @ 1999 ImageMagick Studio LLC"
 #define MagickCacheLibVersion  0x10A
 #define MagickCacheLibVersionText  "0.9.2"
 #define MagickCacheLibVersionNumber  0,0,0

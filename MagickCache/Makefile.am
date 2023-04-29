@@ -10,7 +10,8 @@ AM_CFLAGS += $(MAGICKCORE_CFLAGS)
 lib_LTLIBRARIES = libMagickCache.la
 
 # install headers
-include_HEADERS = MagickCache.h \
+#
+pkginclude_HEADERS = MagickCache.h \
                   version.h
 
 noinst_HEADERS = magick-cache-private.h

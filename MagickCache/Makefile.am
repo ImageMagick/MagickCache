@@ -1,10 +1,4 @@
-if DEBUG
-  AM_CFLAGS =-I$(top_srcdir)/MagickCache -Wall -g -O3
-else
-  AM_CFLAGS =-I$(top_srcdir)/MagickCache -Wall
-endif
-
-AM_CFLAGS += $(MAGICKCORE_CFLAGS)
+AM_CFLAGS = $(MAGICKCORE_CFLAGS)
 
 # The libraries to build
 lib_LTLIBRARIES = libMagickCache.la

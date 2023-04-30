@@ -218,6 +218,7 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CSCOPE = @CSCOPE@
 CTAGS = @CTAGS@
@@ -250,6 +251,7 @@ LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -358,10 +360,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@DEBUG_FALSE@AM_CFLAGS = -I$(top_srcdir)/MagickCache -Wall \
-@DEBUG_FALSE@	$(MAGICKCORE_CFLAGS)
-@DEBUG_TRUE@AM_CFLAGS = -I$(top_srcdir)/MagickCache -Wall -g -O3 \
-@DEBUG_TRUE@	$(MAGICKCORE_CFLAGS)
+AM_CFLAGS = $(MAGICKCORE_CFLAGS)
 
 # The libraries to build
 lib_LTLIBRARIES = libMagickCache.la

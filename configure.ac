@@ -112,9 +112,9 @@ EXTERNAL_CFLAGS="$CFLAGS"
 
 # Checks for programs. These may set default variables, such as CFLAGS
 AC_PROG_CC
-
-# Reset the externally set CFLAGS after calling AC_PROG*
-CFLAGS="$EXTERNAL_CFLAGS"
+AC_PROG_CPP
+AM_PROG_CC_C_O
+AC_PROG_INSTALL
 
 # Use the C language and compiler for the following checks
 AC_LANG([C])
@@ -156,7 +156,8 @@ dnl ===========================================================================
 AC_SUBST([MAGICKCACHE_PCFLAGS])
 
 LT_INIT([win32-dll dlopen])
-AC_PROG_CXX
+LT_LANG([C++])
+AC_SUBST(LIBTOOL_DEPS)
 
 AC_CONFIG_FILES([Makefile
                  config/configure.xml

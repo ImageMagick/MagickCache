@@ -3953,7 +3953,7 @@ MAGICKCACHE_PATCHLEVEL_VERSION=0
 
 MAGICKCACHE_VERSION=0.9.3-0
 
-MAGICKCACHE_GIT_REVISION=0::20230430
+MAGICKCACHE_GIT_REVISION=177:8feacc1:20230430
 
 
 # Substitute library versioning
@@ -3975,7 +3975,7 @@ PACKAGE_LIB_VERSION=0x10A
 
 PACKAGE_LIB_VERSION_NUMBER=0,9,3,0
 
-PACKAGE_RELEASE_DATE=2023-04-29
+PACKAGE_RELEASE_DATE=2023-04-30
 
 
 # versioning of library
@@ -10215,10 +10215,6 @@ _lt_linker_boilerplate=`cat conftest.err`
 $RM -r conftest*
 
 
-## CAVEAT EMPTOR:
-## There is no encapsulation within the following macros, do not change
-## the running order or otherwise move them around unless you know exactly
-## what you are doing...
 if test -n "$compiler"; then
 
 lt_prog_compiler_no_builtin_flag=

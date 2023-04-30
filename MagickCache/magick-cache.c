@@ -689,6 +689,8 @@ MagickExport MagickCache *DestroyMagickCache(MagickCache *cache)
     cache->path=DestroyString(cache->path);
   if (cache->nonce != (StringInfo *) NULL )
     cache->nonce=DestroyStringInfo(cache->nonce);
+  if (cache->digest != (char *) NULL )
+    cache->digest=DestroyString(cache->digest);
   if (cache->random_info != (RandomInfo *) NULL)
     cache->random_info=DestroyRandomInfo(cache->random_info);
   if (cache->passkey != (StringInfo *) NULL )
@@ -892,6 +894,8 @@ static void GetMagickCacheResourceSentinel(MagickCacheResource *resource,
   p+=sizeof(resource->columns);
   (void) memcpy(&resource->rows,p,sizeof(resource->rows));
   p+=sizeof(resource->rows);
+  if (resource->id != (char *) NULL)
+    resource->id=DestroyString(resource->id);
   resource->id=StringInfoToDigest(resource->nonce);
   (void) memcpy(resource->id,p,strlen(resource->id));
   p+=strlen(resource->id);
@@ -978,6 +982,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
   passkey=DestroyStringInfo(passkey);
   if (strcmp(cache->digest,digest) != 0)
     SetMagickCacheResourceID(cache,resource);
+  digest=DestroyString(digest);
   /*
     Verify resource exists.
   */
@@ -1897,6 +1902,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   (void) ConcatenateString(&head->path,"/");
   (void) ConcatenateString(&head->path,iri);
   head->next=(struct ResourceNode *) NULL;
+  head->previous=(struct ResourceNode *) NULL;
   q=head;
   for (p=head; p != (struct ResourceNode *) NULL; p=p->next)
   {

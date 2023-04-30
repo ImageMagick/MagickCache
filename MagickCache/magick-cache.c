@@ -1175,6 +1175,11 @@ MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(NULL);
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+    {
+      errno=ESTALE;
+      return(NULL);
+    }
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->iri);
@@ -1373,6 +1378,11 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return((Image *) NULL);
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+    {
+      errno=ESTALE;
+      return((Image *) NULL);
+    }
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->iri);
@@ -1403,7 +1413,7 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
       CacheError,"cannot get resource","`%s'",resource->iri);
   else
     {
-      const Image *image=(const Image *) resource->blob;
+      const Image *image = (const Image *) resource->blob;
       resource->columns=image->columns;
       resource->rows=image->rows;
     }
@@ -1487,6 +1497,11 @@ MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return((char *) NULL);
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+    {
+      errno=ESTALE;
+      return(NULL);
+    }
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->iri);

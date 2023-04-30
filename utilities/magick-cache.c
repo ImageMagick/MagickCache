@@ -178,9 +178,6 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   const Image
     *image;
 
-  const void
-    *blob;
-
   ExceptionType
     severity = UndefinedException;
 
@@ -371,7 +368,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           {
             case BlobResourceType:
             {
-              blob=GetMagickCacheResourceBlob(cache,resource);
+              void *blob = GetMagickCacheResourceBlob(cache,resource);
               if (blob == (void *) NULL)
                 {
                   status=MagickFalse;
@@ -466,19 +463,20 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
           {
             case BlobResourceType:
             {
-              blob=FileToBlob(filename,~0UL,&extent,exception);
+              void *blob = FileToBlob(filename,~0UL,&extent,exception);
               if (blob == (void *) NULL)
                 {
                   status=MagickFalse;
                   break;
                 }
               status=PutMagickCacheResourceBlob(cache,resource,extent,blob);
+              blob=RelinquishMagickMemory(blob);
               break;
             }
             case ImageResourceType:
             {
               Image
-                *read_image;
+                *resource_image;
 
               image_info=AcquireImageInfo();
               (void) CopyMagickString(image_info->filename,filename,
@@ -490,12 +488,19 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
                   status=MagickFalse;
                   break;
                 }
-              read_image=CloneImageList(image,exception);
+              resource_image=CloneImageList(image,exception);
+              if (resource_image == (Image *) NULL)
+                {
+                  status=MagickFalse;
+                  break;
+                }
               if (passphrase != (StringInfo *) NULL)
-                status=PasskeyEncipherImage(read_image,passphrase,exception);
+                status=PasskeyEncipherImage(resource_image,passphrase,
+                  exception);
               if (status != MagickFalse)
-                status=PutMagickCacheResourceImage(cache,resource,read_image);
-              read_image=DestroyImageList(read_image);
+                status=PutMagickCacheResourceImage(cache,resource,
+                  resource_image);
+              resource_image=DestroyImageList(resource_image);
               break;
             }
             case MetaResourceType:

@@ -148,13 +148,13 @@ Be careful. After this command, your cache content is irrevocably lost.
 
 It's important to note that the security measures employed by MagickCache are not based on cryptographic strength. Instead, the system generates a unique hash of appropriate quality for each resource to ensure that the resource ID remains unknown. Access to a resource is granted to both the cache user and the owner, provided they can present their respective passkeys. Furthermore, anyone with adequate privileges to access the MagickCache path directly on disk will also be able to access the resources stored therein.
 
-## MagickCache API
-
-You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache) to conveniently include MagickCache functionality directly in your projects.
-
 ## Portable Digital Media Repository
 
 The digital asset repository you created is engineered to be portable and fully self-contained. This means that you can effortlessly transfer or duplicate the repository to any storage location within your current host or even to a different host altogether. You can then retrieve or upload resources to the repository as long as you use the same key that was used during the repository's initial creation.
+
+## MagickCache API
+
+You have seen how to create, put, get, identify, delete, or expire content to and from the MagickCache with the <samp>magick-cache</samp> command-line utility.  All these functions are also available from the [MagickCache API](https://github.com/ImageMagick/MagickCache) to conveniently include MagickCache functionality directly in your projects.
 
 ## ImageMagick Digital Media Repository Access
 

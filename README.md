@@ -2,17 +2,12 @@
 
 `The MagickCache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The MagickCache requires ImageMagick version 7.1.0-0 or above.`
 
-The MagickCache provides secure methods and tools to cache images, image
-sequences, video, audio or metadata in a local folder. Any content is
-memory-mapped for efficient retrieval.  Additional efficiencies are possible by
-retrieving a portion of an image.  Content can persist or you can assign a
-time-to-live (TTL) to automatically expire content when the TTL is exceeded.
-MagickCache supports virtually unlimited content upwards of billions of images,
-videos, metadata, or blobs making it suitable as a digital media repository.
+MagickCache is an advanced toolset that guarantees secure caching of images, image sequences, videos, audios, or metadata within a local folder. The content is memory-mapped to ensure fast and efficient retrieval, and retrieving a portion of an image further enhances its efficiency. You have the flexibility to choose whether the content should persist or have a specified time-to-live (TTL) to automatically expire when the TTL is exceeded. MagickCache has the ability to support virtually an unlimited amount of content, up to billions of images, videos, metadata, or blobs, making it ideal for use as a digital media repository.
 
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, audio, and any associated metadata.
 
 ## Create a Digital Media Repository
+
 You will require a place to store and retrieve your content.  Let's create a digital media repository on your local filesystem:
 
 ```
@@ -39,7 +34,7 @@ Let's add a movie cast image to our newly created digital media repository:</p>
 $ magick-cache put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Note, the image identifier is an IRI composed of `project/type/resource-path`. In this example, the project is `movies`, type is `image`, and the resource path is `mission-impossible/cast/rebecca-ferguson`. The path uniquely identifies a cache resource. Two different images cannot be stored with the same resource path. Instead use something like `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
+Note that the image identifier is an IRI comprising the project/type/resource-path components. In the given example, the project is movies, the type is image, and the resource path is mission-impossible/cast/rebecca-ferguson, which serves as a unique identifier for the cached resource. It is important to ensure that no two different images are stored using the same resource path. If you need to store multiple versions of an image, consider using a distinct identifier such as mission-impossible/cast/20210508-rebecca-ferguson-1 and mission-impossible/cast/20210508-rebecca-ferguson-2.
 
 Now, let's set a resource passkey and the time to live to 2 days. Anytime after the second day, the image is automatically deleted with the `expire` function. To get, delete, or expire the image, you will need to use the same resource passkey:
 
@@ -115,7 +110,7 @@ Each entry includes the IRI, image dimensions for images, the content extent in 
 
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get, identify, delete, or expire content that you did not create or does not match your secret passkey.
 
-The MagickCache owner can get, identify, delete, or expire all the content, including content you own, with this command, for example:
+The MagickCache creator can get, identify, delete, or expire all the content, including content you own, with this command, for example:
 
 ```
 $ magick-cache -passkey ~/.passkey identify /opt/dmr /
@@ -137,7 +132,7 @@ or
 $ magick-cache -passkey ~/.passkey put /opt/dmr movies/meta/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.txt
 ```
 
-Images must be in a format that ImageMagick [supports](https://imagemagick.org/script/formats.php).  Metadata should be text.  Blobs can be any content including images, video, audio, or binary files.
+Images must be in a format that ImageMagick [supports](https://imagemagick.org/script/formats.php).  Metadata should be text.  Blobs can be any content, text or binary, including metadata or images, video, audio, or binary files.
 
 ## Delete a Digital Media Repository
 
@@ -151,7 +146,7 @@ Be careful. After this command, your cache content is irrevocably lost.
 
 ## Digital Media Repository Security
 
-MagickCache security is *not* crytographically strong.  Instead it generates a unique hash of sufficient quality for each resource to ensure the resource ID cannot be discovered.  A resource is accessible to both the user of the cache and the cache owner provided they can present their respective passkeys.  They are also accessible to anyone with sufficient privileges to directly access the MagickCache path on disk.
+It's important to note that the security measures employed by MagickCache are not based on cryptographic strength. Instead, the system generates a unique hash of appropriate quality for each resource to ensure that the resource ID remains unknown. Access to a resource is granted to both the cache user and the owner, provided they can present their respective passkeys. Furthermore, anyone with adequate privileges to access the MagickCache path directly on disk will also be able to access the resources stored therein.
 
 ## MagickCache API
 

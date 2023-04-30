@@ -155,3 +155,21 @@ You have seen how to create, put, get, identify, delete, or expire content to an
 ## Portable Digital Media Repository
 
 The digital asset repository you created is engineered to be portable and fully self-contained. This means that you can effortlessly transfer or duplicate the repository to any storage location within your current host or even to a different host altogether. You can then retrieve or upload resources to the repository as long as you use the same key that was used during the repository's initial creation.
+
+## ImageMagick Digital Media Repository Access
+
+You can get media from, or put media to, the repository with [ImageMagick](https://imagemagick.org).  To convert a digital media resource to PNG, try:
+
+```
+convert -define dmr:path=/opt/dmr -define dmr:passkey=/dmr/.passkey \
+  dmr:movies/image/mission-impossible/cast/rebecca-ferguson \
+  rebecca-ferguson.png
+```
+
+To put or replace a resource in the repository, try:
+
+```
+convert rebecca-ferguson.png \
+  -define dmr:path=/opt/dmr -define dmr:passkey=/dmr/.passkey \
+  dmr:movies/image/mission-impossible/cast/rebecca-ferguson
+```

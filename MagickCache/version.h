@@ -28,9 +28,9 @@ extern "C" {
 #define MagickCachePackageName "MagickCache"
 #define MagickCacheCopyright  "Copyright @ 1999 ImageMagick Studio LLC"
 #define MagickCacheLibVersion  0x10A
-#define MagickCacheLibVersionText  "0.9.2"
+#define MagickCacheLibVersionText  "0.9.3"
 #define MagickCacheLibVersionNumber  0,0,0
-#define MagickCacheLibAddendum  "-1"
+#define MagickCacheLibAddendum  "-0"
 #define MagickCacheLibInterface  0
 #define MagickCacheLibMinInterface  0
 #define MagickCacheReleaseDate  "2023-04-29"

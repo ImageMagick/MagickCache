@@ -26,8 +26,8 @@
 m4_define([magickcache_name], [MagickCache])
 m4_define([magickcache_major_version], [0])
 m4_define([magickcache_minor_version], [9])
-m4_define([magickcache_micro_version], [2])
-m4_define([magickcache_patchlevel_version], [1])
+m4_define([magickcache_micro_version], [3])
+m4_define([magickcache_patchlevel_version], [0])
 m4_define([magickcache_bugreport],
           [https://github.com/ImageMagick/MagickCache/issues])
 m4_define([magickcache_url], [https://imagemagick.org])

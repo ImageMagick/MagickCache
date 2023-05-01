@@ -1898,6 +1898,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   assert(cache->signature == MagickCacheSignature);
   status=MagickTrue;
   head=(struct ResourceNode *) AcquireCriticalMemory(sizeof(*node));
+  (void) memset(head,0,sizeof(*head));
   head->path=AcquireString(cache->path);
   (void) ConcatenateString(&head->path,"/");
   (void) ConcatenateString(&head->path,iri);
@@ -1928,6 +1929,7 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
       if (S_ISDIR(attributes.st_mode) != 0)
         {
           node=(struct ResourceNode *) AcquireCriticalMemory(sizeof(*node));
+          (void) memset(node,0,sizeof(*node));
           node->path=path;
           node->next=(struct ResourceNode *) NULL;
           node->previous=q;

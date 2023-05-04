@@ -175,3 +175,11 @@ convert rebecca-ferguson.png \
   -define dmr:path=/opt/dmr -define dmr:passkey=/dmr/.passkey \
   dmr:movies/image/mission-impossible/cast/rebecca-ferguson
 ```
+
+You can also store an image as a blob instead.  To store meta data, set the `dmr:meta` property:
+
+```
+convert -define dmr:path=/opt/dmr -define dmr:passkey=/home/cristy/.passkey \
+  -define dmr:meta="Ilsa Faust" xc: \
+  dmr:movies/meta/mission-impossible/cast/rebecca-ferguson
+```

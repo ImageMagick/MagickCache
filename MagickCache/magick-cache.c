@@ -1909,7 +1909,10 @@ MagickExport MagickBooleanType IterateMagickCacheResources(MagickCache *cache,
   {
     directory=opendir(p->path);
     if (directory == (DIR *) NULL)
-      return(MagickFalse);
+      {
+        status=MagickFalse;
+        break;
+      }
     while ((entry=readdir(directory)) != (struct dirent *) NULL)
     {
       path=AcquireString(p->path);

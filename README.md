@@ -110,6 +110,15 @@ identified 1 resources
 
 Each entry includes the IRI, image dimensions for images, the content extent in bytes, time to live, whether the resource is expired (denoted with a `*`), and the creation date.
 
+MagickCache supports a wild resource type as in this example:
+
+```
+$ magick-cache -passkey ~/.passkey identify /opt/dmr movies/*/mission-impossible/cast
+movies/image/mission-impossible/cast/rebecca-ferguson[1368x912] 889B 0:0:0:0  2023-05-06T00:49:27Z
+movies/blob/mission-impossible/cast/rebecca-ferguson 1.14476MiB 0:0:0:0  2023-05-06T00:49:27Z
+movies/meta/mission-impossible/cast/rebecca-ferguson 11B 0:0:0:0  2023-05-06T00:49:27Z
+```
+
 Others can store content in the cache along side your content.  However, their content is unavailable to you.  You cannot get, identify, delete, or expire content that you did not create or does not match your secret passkey.
 
 The MagickCache creator can get, identify, delete, or expire all the content, including content you own, with this command, for example:

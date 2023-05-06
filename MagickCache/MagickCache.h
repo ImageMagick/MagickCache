@@ -40,7 +40,8 @@ typedef enum
   UndefinedResourceType,
   BlobResourceType,
   ImageResourceType,
-  MetaResourceType
+  MetaResourceType,
+  WildResourceType
 } MagickCacheResourceType;
 
 typedef struct _MagickCache

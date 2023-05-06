@@ -437,8 +437,41 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             Identify one or more resources in the cache repository.
           */
           ssize_t count = 0;
-          status=IterateMagickCacheResources(cache,iri,&count,
-            IdentifyResources);
+          MagickCacheResource *resource = AcquireMagickCacheResource(cache,iri);
+          MagickCacheResourceType type = GetMagickCacheResourceType(resource);
+          resource=DestroyMagickCacheResource(resource);
+          if (type != WildResourceType)
+            status=IterateMagickCacheResources(cache,iri,&count,
+              IdentifyResources);
+          else
+            {
+              char *clone_iri = AcquireString(iri);
+              (void) SubstituteString(&clone_iri,"/*/","/image/");      
+              resource=AcquireMagickCacheResource(cache,clone_iri);
+              if (resource != (MagickCacheResource *) NULL)
+                {
+                  status=IterateMagickCacheResources(cache,clone_iri,&count,
+                    IdentifyResources);
+                  resource=DestroyMagickCacheResource(resource);
+                }
+              (void) SubstituteString(&clone_iri,"/image/","/blob/");      
+              resource=AcquireMagickCacheResource(cache,clone_iri);
+              if (resource != (MagickCacheResource *) NULL)
+                {
+                  status=IterateMagickCacheResources(cache,clone_iri,&count,
+                    IdentifyResources);
+                  resource=DestroyMagickCacheResource(resource);
+                }
+              (void) SubstituteString(&clone_iri,"/blob/","/meta/");      
+              resource=AcquireMagickCacheResource(cache,clone_iri);
+              if (resource != (MagickCacheResource *) NULL)
+                {
+                  status=IterateMagickCacheResources(cache,clone_iri,&count,
+                    IdentifyResources);
+                  resource=DestroyMagickCacheResource(resource);
+                }
+              clone_iri=DestroyString(clone_iri);
+            }
           (void) fprintf(stderr,"identified %g resources\n",(double) count);
           if (status == MagickFalse)
             {

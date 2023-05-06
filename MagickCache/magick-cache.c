@@ -2338,20 +2338,23 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
   if (resource->id != (char *) NULL)
     resource->id=DestroyString(resource->id);
   resource->id=ConstantString("");
-  if (LocaleCompare(resource->type,"blob") == 0)
-    resource->resource_type=BlobResourceType;
+  if (LocaleCompare(resource->type,"*") == 0)
+    resource->resource_type=WildResourceType;
   else
-    if (LocaleCompare(resource->type,"image") == 0)
-      resource->resource_type=ImageResourceType;
+    if (LocaleCompare(resource->type,"blob") == 0)
+      resource->resource_type=BlobResourceType;
     else
-      if (LocaleCompare(resource->type,"meta") == 0)
-        resource->resource_type=MetaResourceType;
+      if (LocaleCompare(resource->type,"image") == 0)
+        resource->resource_type=ImageResourceType;
       else
-        {
-          (void) ThrowMagickException(resource->exception,GetMagickModule(),
-            CacheError,"unknown resource type","`%s'",resource->type);
-          return(MagickFalse);
-        }
+        if (LocaleCompare(resource->type,"meta") == 0)
+          resource->resource_type=MetaResourceType;
+        else
+          {
+            (void) ThrowMagickException(resource->exception,GetMagickModule(),
+              CacheError,"unknown resource type","`%s'",resource->type);
+            return(MagickFalse);
+          }
   return(MagickTrue);
 }
 

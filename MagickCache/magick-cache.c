@@ -430,8 +430,7 @@ MagickExport MagickBooleanType ClearMagickCacheResourceException(
 %
 %  The format of the GetMagickCacheResourceTTL method is:
 %
-%      const size_t GetMagickCacheResourceExtent(
-%        const MagickCacheResource *resource)
+%      size_t GetMagickCacheResourceExtent(const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
@@ -1180,7 +1179,7 @@ MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(NULL);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) < time(0)))
     {
       errno=ESTALE;
       return(NULL);
@@ -1383,7 +1382,7 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return((Image *) NULL);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl+1) < time(0)))
     {
       errno=ESTALE;
       return((Image *) NULL);
@@ -1502,7 +1501,7 @@ MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return((char *) NULL);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl+1) < time(0)))
     {
       errno=ESTALE;
       return(NULL);
@@ -1830,7 +1829,7 @@ MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(status);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) < time(0)))
     return(MagickTrue);
   return(MagickFalse);
 }

@@ -195,6 +195,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   /*
     Run the unit tests to exercise the MagickCache repository methods.
   */
+  (void) argv;
+  (void) argc;
   (void) FormatLocaleFile(stdout,"%g: create magick cache\n",(double) tests);
   tests++;
   status=CreateMagickCache(path,passkey);

@@ -1,6 +1,6 @@
 # MagickCache: an Efficient Digital Media Repository
 
-`The MagickCache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The MagickCache requires ImageMagick version 7.1.0-0 or above.`
+`The MagickCache is a work in progress. Do not use the cache in production services until the version is at least 1.0.0. It is currently 0.9.2. The MagickCache requires ImageMagick version 7.1.0-10 or above.`
 
 MagickCache is an advanced toolset that guarantees secure caching of images, image sequences, videos, audios, or metadata within a local folder. The content is memory-mapped to ensure fast and efficient retrieval, and retrieving a portion of an image further enhances its efficiency. You have the flexibility to choose whether the content should persist or have a specified time-to-live (TTL) to automatically expire when the TTL is exceeded. MagickCache has the ability to support virtually an unlimited amount of content, up to billions of images, videos, metadata, or blobs, making it ideal for use as a digital media repository.
 

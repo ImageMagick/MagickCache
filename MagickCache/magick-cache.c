@@ -430,7 +430,8 @@ MagickExport MagickBooleanType ClearMagickCacheResourceException(
 %
 %  The format of the GetMagickCacheResourceTTL method is:
 %
-%      size_t GetMagickCacheResourceExtent(const MagickCacheResource *resource)
+%      const size_t GetMagickCacheResourceExtent(
+%        const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
@@ -1179,11 +1180,6 @@ MagickExport void *GetMagickCacheResourceBlob(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(NULL);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl+1) < time(0)))
-    {
-      errno=ESTALE;
-      return(NULL);
-    }
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->iri);
@@ -1382,11 +1378,6 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return((Image *) NULL);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl+1) < time(0)))
-    {
-      errno=ESTALE;
-      return((Image *) NULL);
-    }
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->iri);
@@ -1501,11 +1492,6 @@ MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return((char *) NULL);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl+1) < time(0)))
-    {
-      errno=ESTALE;
-      return(NULL);
-    }
   path=AcquireString(cache->path);
   (void) ConcatenateString(&path,"/");
   (void) ConcatenateString(&path,resource->iri);
@@ -1781,7 +1767,7 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
   (void) GetMagickUTCTime(&resource->timestamp,&timestamp);
   (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",&timestamp);
   expired=' ';
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl+1) < time(0)))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) < time(0)))
     expired='*';
   (void) fprintf(file,"%s%s %s %g:%g:%g:%g%c %s\n",GetMagickCacheResourceIRI(
     resource),size,extent,(double) (resource->ttl/(3600*24)),(double)
@@ -1829,8 +1815,11 @@ MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(status);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl+1) < time(0)))
-    return(MagickTrue);
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) < time(0)))
+    {
+      errno=ESTALE;
+      return(MagickTrue);
+    }
   return(MagickFalse);
 }
 

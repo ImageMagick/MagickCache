@@ -22,7 +22,7 @@
 %                              March 2021                                     %
 %                                                                             %
 %                                                                             %
-%  Copyright 1999-2021 ImageMagick Studio LLC, a non-profit organization      %
+%  Copyright 1999 ImageMagick Studio LLC, a non-profit organization           %
 %  dedicated to making software imaging solutions freely available.           %
 %                                                                             %
 %  You may not use this file except in compliance with the License.  You may  %
@@ -38,13 +38,16 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  The MagickCache provides secure methods and tools to cache images, image
-%  sequences, video, audio or metadata in a local folder. Any content is
-%  memory-mapped for efficient retrieval.  Additional efficiences are possible
-%  by retrieving a portion of an image.  Content can persist or you can assign
-%  a time-to-live (TTL) to automatically expire content when the TTL is
-%  exceeded. MagickCache supports virtually unlimited content upwards of
-%  billions of images making it suitable as a web image service.
+%  The MagickCache offers robust techniques and utilities for caching
+%  various types of content, including images, image sequences, videos,
+%  audio files, and metadata, within a designated local directory. All
+%  content is memory-mapped to optimize retrieval efficiency. Furthermore,
+%  you can enhance efficiency by selectively retrieving specific portions
+%  of an image. Content can either be retained indefinitely or assigned
+%  a time-to-live (TTL) to automatically remove it once the TTL duration
+%  elapses. MagickCache is capable of accommodating an extensive library of
+%  content, scaling to handle billions of images, making it a well-suited
+%  choice for use as a web-based image service.
 %
 */
 

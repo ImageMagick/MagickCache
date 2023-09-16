@@ -94,17 +94,17 @@ extern MagickExport MagickCacheResourceType
 
 extern MagickExport size_t
   GetMagickCacheResourceExtent(const MagickCacheResource *),
-  GetMagickCacheResourceTTL(const MagickCacheResource *),
   GetMagickCacheResourceVersion(const MagickCacheResource *);
 
 extern MagickExport time_t
   GetMagickCacheTimestamp(const MagickCache *),
-  GetMagickCacheResourceTimestamp(const MagickCacheResource *);
+  GetMagickCacheResourceTimestamp(const MagickCacheResource *),
+  GetMagickCacheResourceTTL(const MagickCacheResource *);
 
 extern MagickExport void
   *GetMagickCacheResourceBlob(MagickCache *,MagickCacheResource *),
   GetMagickCacheResourceSize(const MagickCacheResource *,size_t *,size_t *),
-  SetMagickCacheResourceTTL(MagickCacheResource *,const size_t);
+  SetMagickCacheResourceTTL(MagickCacheResource *,const time_t);
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }

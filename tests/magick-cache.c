@@ -22,7 +22,7 @@
 %                               March 2021                                    %
 %                                                                             %
 %                                                                             %
-%  Copyright 1999-2021 ImageMagick Studio LLC, a non-profit organization      %
+%  Copyright 1999 ImageMagick Studio LLC, a non-profit organization           %
 %  dedicated to making software imaging solutions freely available.           %
 %                                                                             %
 %  You may not use this file except in compliance with the License.  You may  %
@@ -242,7 +242,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) FormatLocaleFile(stdout,"%g: put magick cache (image)\n",(double)
     tests);
   tests++;
-  (void) strcpy(image_info->filename,"rose:");
+  (void) strcpy(image_info->filename,"rose.miff");
   if (cache != (MagickCache *) NULL)
     rose=ReadImage(image_info,exception);
   if ((cache != (MagickCache *) NULL) &&
@@ -252,6 +252,8 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
       SetMagickCacheResourceTTL(image_resource,1);
       status=PutMagickCacheResourceImage(cache,image_resource,rose);
     }
+  else
+    status=MagickFalse;
   if (status == MagickFalse)
     {
       (void) FormatLocaleFile(stdout,"... fail @ %s/%s/%lu.\n",

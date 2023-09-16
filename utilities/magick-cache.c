@@ -200,12 +200,14 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     type;
 
   size_t
-    extent,
-    ttl = 0;
+    extent;
 
   StringInfo
     *passkey = (StringInfo *) NULL,
     *passphrase = (StringInfo *) NULL;
+
+  time_t
+    ttl = 0;
 
   if (argc < 2)
     MagickCacheUsage(argc,argv);
@@ -249,7 +251,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
         /*
           Time to live, absolute or relative, e.g. 1440, 2 hours, 3 days, ...
         */
-        ttl=(size_t) InterpretLocaleValue(argv[++i],&q);
+        ttl=(time_t) InterpretLocaleValue(argv[++i],&q);
         if (q != argv[i])
           {
             while (isspace((int) ((unsigned char) *q)) != 0)

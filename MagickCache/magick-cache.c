@@ -1138,7 +1138,7 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
       count;
 
     count=read(file,(unsigned char *) resource->blob+i,(size_t)
-      MagickCacheMin(resource->extent-i,(size_t) SSIZE_MAX));
+      MagickCacheMin(resource->extent-(size_t) i,(size_t) SSIZE_MAX));
     if (count <= 0)
       {
         count=0;
@@ -1315,7 +1315,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
     {
       if ((code[i] <= 32) || ((code[i] <= 0x9f && code[i] > 0x7F)))
         continue;
-      id[j++]=(int) code[i];
+      id[j++]=(char) code[i];
       if (j == (ssize_t) length)
         break;
     }
@@ -1594,7 +1594,7 @@ MagickExport time_t GetMagickCacheResourceTimestamp(
 %
 %  The format of the GetMagickCacheResourceTTL method is:
 %
-%      const size_t GetMagickCacheResourceTTL(
+%      const time_t GetMagickCacheResourceTTL(
 %        const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
@@ -1602,7 +1602,7 @@ MagickExport time_t GetMagickCacheResourceTimestamp(
 %    o resource: the resource.
 %
 */
-MagickExport size_t GetMagickCacheResourceTTL(
+MagickExport time_t GetMagickCacheResourceTTL(
   const MagickCacheResource *resource)
 {
   assert(resource != (MagickCacheResource *) NULL);
@@ -2376,7 +2376,7 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
 %
 */
 MagickExport void SetMagickCacheResourceTTL(MagickCacheResource *resource,
-  const size_t ttl)
+  const time_t ttl)
 {
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);

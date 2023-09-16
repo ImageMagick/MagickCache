@@ -1,13 +1,11 @@
 # Security Policy
 
-MagickCache recommended practices **strongly** encourages you to configure an ImageMagick [security policy](https://imagemagick.org/script/security-policy.php) that suits your local environment.
+MagickCache's security relies on the ImageMagick security policy.  Creating a [security policy](https://imagemagick.org/script/security-policy.php) that fits your specific local environment before making use of MagickCache is highly advised.
 
 ## Supported Versions
 
-We encourage users to upgrade to the lastest MagickCache release to ensure that all known security vulnerabilities are addressed.  On request, we can backport a vulnerability to other MagickCache versions.
+We encourage users to upgrade to the latest MagickCache release to ensure that all known security vulnerabilities are addressed.  On request, we can backport security fixes to other MagickCache versions.
 
 ## Reporting a Vulnerability
 
-Post any vulnerability as an [issue](https://github.com/ImageMagick/MagickCache/issues). Or you can post privately to the ImageMagick development [team](https://imagemagick.org/script/contact.php). Most vulnerabilities are fixed within 48 hours.
-
-In addition, request a [CVE](https://cve.mitre.org/cve/request_id.html).  We rely on you to post CVE's so our development team can concentrate on delivering a robust security patch.
+Before you post a vulnerability, first determine if the vulnerability can be mitigated by a properly curated security policy.  Next, verify your policy using the [validation tool](https://imagemagick-secevaluator.doyensec.com/).  Now use a [development container](https://containers.dev/), available in the `.devcontainer/security` folder, to verify that the security issue can be reproduced with the latest source code and your security policy.  If you feel confident that the security policy does not address the vulnerability, post the vulnerability as a [security advisory](https://github.com/ImageMagick/MagickCache/security/advisories/new).  Most vulnerabilities are reviewed and resolved within 48 hours.

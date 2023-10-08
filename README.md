@@ -34,7 +34,7 @@ Let's add a movie cast image to our newly created digital media repository:</p>
 $ magick-cache put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
 ```
 
-Note that the image identifier is an IRI comprising the _project/type/resource-path_ components. In the given example, _project_ is movies, _type_ is image, and _resource-path_ is `mission-impossible/cast/rebecca-ferguson`, which serves as a unique identifier for the cached resource. It is important to ensure that two different images are stored using unique resource paths to prevent overwriting. If you need to store multiple versions of an image, consider using a distinct identifier such as mission-impossible/cast/20210508-rebecca-ferguson-1 and mission-impossible/cast/20210508-rebecca-ferguson-2.
+Note that the image identifier is an IRI comprising the _project/type/resource-path_ components. In the given example, _project_ is movies, _type_ is image, and _resource-path_ is `mission-impossible/cast/rebecca-ferguson`, which serves as a unique identifier for the cached resource. It is important to ensure that two different images are stored using unique resource paths to prevent overwriting. If you need to store multiple versions of an image, consider using a distinct identifier such as `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
 
 Now, let's set a resource passkey and the time to live to 2 days:
 

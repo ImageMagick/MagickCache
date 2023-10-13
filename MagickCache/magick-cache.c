@@ -431,7 +431,7 @@ MagickExport MagickBooleanType ClearMagickCacheResourceException(
 %  GetMagickCacheResourceExtent() returns the resource extent associated with
 %  the resource.  That is, the number of bytes the resource consumes on disk.
 %
-%  The format of the GetMagickCacheResourceTTL method is:
+%  The format of the GetMagickCacheResourceExtent method is:
 %
 %      const size_t GetMagickCacheResourceExtent(
 %        const MagickCacheResource *resource)

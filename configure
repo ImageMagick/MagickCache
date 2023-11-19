@@ -3953,7 +3953,7 @@ MAGICKCACHE_PATCHLEVEL_VERSION=1
 
 MAGICKCACHE_VERSION=1.0.0-1
 
-MAGICKCACHE_GIT_REVISION=198:6584a54:20230916
+MAGICKCACHE_GIT_REVISION=207:4c50f5a:20231119
 
 
 # Substitute library versioning
@@ -5411,8 +5411,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 # Checks for libraries.
 
 pkg_failed=no
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for MAGICKCORE" >&5
-printf %s "checking for MAGICKCORE... " >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for MagickCore >= 7.1.0" >&5
+printf %s "checking for MagickCore >= 7.1.0... " >&6; }
 
 if test -n "$MAGICKCORE_CFLAGS"; then
     pkg_cv_MAGICKCORE_CFLAGS="$MAGICKCORE_CFLAGS"
@@ -5452,7 +5452,7 @@ fi
 
 
 if test $pkg_failed = yes; then
-   	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -5461,24 +5461,24 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "MagickCore >= 7.1.0" 2>&1`
+                MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "MagickCore >= 7.1.0" 2>&1`
         else
-	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "MagickCore >= 7.1.0" 2>&1`
+                MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "MagickCore >= 7.1.0" 2>&1`
         fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$MAGICKCORE_PKG_ERRORS" >&5
+        # Put the nasty error message in config.log where it belongs
+        echo "$MAGICKCORE_PKG_ERRORS" >&5
 
-	have_libMagickCore=no
+        have_libMagickCore=no
 elif test $pkg_failed = untried; then
-     	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-	have_libMagickCore=no
+        have_libMagickCore=no
 else
-	MAGICKCORE_CFLAGS=$pkg_cv_MAGICKCORE_CFLAGS
-	MAGICKCORE_LIBS=$pkg_cv_MAGICKCORE_LIBS
+        MAGICKCORE_CFLAGS=$pkg_cv_MAGICKCORE_CFLAGS
+        MAGICKCORE_LIBS=$pkg_cv_MAGICKCORE_LIBS
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
-	have_libMagickCore=yes
+        have_libMagickCore=yes
 fi
  if test "$have_libMagickCore" = "yes"; then
   LIB_MAGICKCORE_TRUE=

@@ -168,3 +168,34 @@ AC_CONFIG_FILES([Makefile
                  utilities/magick-cache.1
                  tests/Makefile])
 AC_OUTPUT
+
+AC_MSG_NOTICE([Dumping MagickCache configuration:
+  Compilation-related variables:
+    CC = $CC
+    CFLAGS = $CFLAGS
+    CXX = $CXX
+    CXXFLAGS = $CXXFLAGS
+    LIBS = $LIBS
+    LDFLAGS = $LDFLAGS
+  
+  Feature-related variables:
+    ac_cv_header_HEADERNAME = $ac_cv_header_HEADERNAME
+    ac_cv_func_FUNCTIONNAME = $ac_cv_func_FUNCTIONNAME
+    ac_cv_type_TYPENAME = $ac_cv_type_TYPENAME
+  
+  System and architecture variables:
+    host = $host
+    host_alias = $host_alias
+    host_cpu = $host_cpu
+    host_vendor = $host_vendor
+    host_os = $host_os
+  
+  Installation directories:
+    prefix = $prefix
+    exec_prefix = $exec_prefix
+    bindir = $bindir
+    libdir = $libdir
+  
+  Package information:
+    PACKAGE = $PACKAGE
+    VERSION = $VERSION])

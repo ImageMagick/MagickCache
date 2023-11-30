@@ -3953,7 +3953,7 @@ MAGICKCACHE_PATCHLEVEL_VERSION=1
 
 MAGICKCACHE_VERSION=1.0.0-1
 
-MAGICKCACHE_GIT_REVISION=207:4c50f5a:20231119
+MAGICKCACHE_GIT_REVISION=208:cffbb9b:20231129
 
 
 # Substitute library versioning
@@ -20469,4 +20469,65 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 printf "%s\n" "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: Dumping MagickCache configuration:
+  Compilation-related variables:
+    CC = $CC
+    CFLAGS = $CFLAGS
+    CXX = $CXX
+    CXXFLAGS = $CXXFLAGS
+    LIBS = $LIBS
+    LDFLAGS = $LDFLAGS
+
+  Feature-related variables:
+    ac_cv_header_HEADERNAME = $ac_cv_header_HEADERNAME
+    ac_cv_func_FUNCTIONNAME = $ac_cv_func_FUNCTIONNAME
+    ac_cv_type_TYPENAME = $ac_cv_type_TYPENAME
+
+  System and architecture variables:
+    host = $host
+    host_alias = $host_alias
+    host_cpu = $host_cpu
+    host_vendor = $host_vendor
+    host_os = $host_os
+
+  Installation directories:
+    prefix = $prefix
+    exec_prefix = $exec_prefix
+    bindir = $bindir
+    libdir = $libdir
+
+  Package information:
+    PACKAGE = $PACKAGE
+    VERSION = $VERSION" >&5
+printf "%s\n" "$as_me: Dumping MagickCache configuration:
+  Compilation-related variables:
+    CC = $CC
+    CFLAGS = $CFLAGS
+    CXX = $CXX
+    CXXFLAGS = $CXXFLAGS
+    LIBS = $LIBS
+    LDFLAGS = $LDFLAGS
+
+  Feature-related variables:
+    ac_cv_header_HEADERNAME = $ac_cv_header_HEADERNAME
+    ac_cv_func_FUNCTIONNAME = $ac_cv_func_FUNCTIONNAME
+    ac_cv_type_TYPENAME = $ac_cv_type_TYPENAME
+
+  System and architecture variables:
+    host = $host
+    host_alias = $host_alias
+    host_cpu = $host_cpu
+    host_vendor = $host_vendor
+    host_os = $host_os
+
+  Installation directories:
+    prefix = $prefix
+    exec_prefix = $exec_prefix
+    bindir = $bindir
+    libdir = $libdir
+
+  Package information:
+    PACKAGE = $PACKAGE
+    VERSION = $VERSION" >&6;}
 

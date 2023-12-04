@@ -2368,7 +2368,7 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
 %  The format of the SetMagickCacheResourceTTL method is:
 %
 %      void SetMagickCacheResourceTTL(MagickCacheResource *resource,
-%        const size_t ttl)
+%        const time_t ttl)
 %
 %  A description of each parameter follows:
 %

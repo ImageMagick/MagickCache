@@ -47,8 +47,8 @@
 %  billions of images making it suitable as a web image service.
 %
 */
-
-#include "MagickCore/studio.h"
+
+#include <MagickCore/studio.h>
 #include "MagickCache/MagickCache.h"
 #include "MagickCache/magick-cache-private.h"
 

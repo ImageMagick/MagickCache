@@ -433,8 +433,7 @@ MagickExport MagickBooleanType ClearMagickCacheResourceException(
 %
 %  The format of the GetMagickCacheResourceExtent method is:
 %
-%      const size_t GetMagickCacheResourceExtent(
-%        const MagickCacheResource *resource)
+%      size_t GetMagickCacheResourceExtent(const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
@@ -1023,7 +1022,7 @@ MagickExport MagickBooleanType GetMagickCacheResource(MagickCache *cache,
 %
 %  The format of the GetMagickCacheResourceBlob method is:
 %
-%      const void *GetMagickCacheResourceBlob(MagickCache *cache,
+%      void *GetMagickCacheResourceBlob(MagickCache *cache,
 %        MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
@@ -1344,7 +1343,7 @@ MagickExport MagickBooleanType GetMagickCacheResourceID(MagickCache *cache,
 %
 %  The format of the GetMagickCacheResourceImage method is:
 %
-%      const Image *GetMagickCacheResourceImage(MagickCache *cache,
+%      Image *GetMagickCacheResourceImage(MagickCache *cache,
 %        MagickCacheResource *resource,const char *extract)
 %
 %  A description of each parameter follows:
@@ -1436,7 +1435,7 @@ MagickExport Image *GetMagickCacheResourceImage(MagickCache *cache,
 %
 %  The format of the GetMagickCacheResourceIRI method is:
 %
-%      const char *GetMagickCacheResourceIRI(MagickCacheResource *resource)
+%      char *GetMagickCacheResourceIRI(MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
@@ -1467,7 +1466,7 @@ MagickExport char *GetMagickCacheResourceIRI(
 %
 %  The format of the GetMagickCacheResourceMeta method is:
 %
-%      const char *GetMagickCacheResourceMeta(MagickCacheResource *resource)
+%      char *GetMagickCacheResourceMeta(MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
@@ -1529,7 +1528,7 @@ MagickExport char *GetMagickCacheResourceMeta(MagickCache *cache,
 %
 %  The format of the GetMagickCacheResourceSize method is:
 %
-%      const void GetMagickCacheResourceSize(
+%      void GetMagickCacheResourceSize(
 %        const MagickCacheResource *resource,size_t *columns,size_t *rows)
 %
 %  A description of each parameter follows:
@@ -1562,7 +1561,7 @@ MagickExport void GetMagickCacheResourceSize(
 %
 %  The format of the GetMagickCacheResourceTimestamp method is:
 %
-%      const time_t GetMagickCacheResourceTimestamp(
+%      time_t GetMagickCacheResourceTimestamp(
 %        const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
@@ -1594,8 +1593,7 @@ MagickExport time_t GetMagickCacheResourceTimestamp(
 %
 %  The format of the GetMagickCacheResourceTTL method is:
 %
-%      const time_t GetMagickCacheResourceTTL(
-%        const MagickCacheResource *resource)
+%      time_t GetMagickCacheResourceTTL(const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
 %
@@ -1626,7 +1624,7 @@ MagickExport time_t GetMagickCacheResourceTTL(
 %
 %  The format of the GetMagickCacheResourceType method is:
 %
-%      const MagickCacheResourceType GetMagickCacheResourceType(
+%      MagickCacheResourceType GetMagickCacheResourceType(
 %        const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
@@ -1658,7 +1656,7 @@ MagickExport MagickCacheResourceType GetMagickCacheResourceType(
 %
 %  The format of the GetMagickCacheResourceVersion method is:
 %
-%      const size_t GetMagickCacheResourceVersion(
+%      size_t GetMagickCacheResourceVersion(
 %        const MagickCacheResource *resource)
 %
 %  A description of each parameter follows:
@@ -1690,7 +1688,7 @@ MagickExport size_t GetMagickCacheResourceVersion(
 %
 %  The format of the GetMagickCacheResource method is:
 %
-%      const time_t GetMagickCacheResourceTimestamp(const MagickCache *cache)
+%      time_t GetMagickCacheResourceTimestamp(const MagickCache *cache)
 %
 %  A description of each parameter follows:
 %
@@ -1770,8 +1768,7 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
   (void) GetMagickUTCTime(&resource->timestamp,&timestamp);
   (void) strftime(iso8601,sizeof(iso8601),"%FT%TZ",&timestamp);
   expired=' ';
-  if ((resource->ttl != 0) &&
-      (difftime(time(0),resource->timestamp) > (double) resource->ttl))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) < time(0)))
     expired='*';
   (void) fprintf(file,"%s%s %s %g:%g:%g:%g%c %s\n",GetMagickCacheResourceIRI(
     resource),size,extent,(double) (resource->ttl/(3600*24)),(double)
@@ -1819,8 +1816,7 @@ MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(status);
-  if ((resource->ttl != 0) &&
-      (difftime(time(0),resource->timestamp) > (double) resource->ttl))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
     {
       errno=ESTALE;
       return(MagickTrue);

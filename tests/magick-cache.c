@@ -242,7 +242,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
   (void) FormatLocaleFile(stdout,"%g: put magick cache (image)\n",(double)
     tests);
   tests++;
-  (void) strcpy(image_info->filename,"rose.miff");
+  (void) strcpy(image_info->filename,"rose:");
   if (cache != (MagickCache *) NULL)
     rose=ReadImage(image_info,exception);
   if ((cache != (MagickCache *) NULL) &&

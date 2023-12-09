@@ -33,7 +33,7 @@ extern "C" {
 #define MagickCacheLibAddendum  "-1"
 #define MagickCacheLibInterface  0
 #define MagickCacheLibMinInterface  0
-#define MagickCacheReleaseDate  "2023-12-04"
+#define MagickCacheReleaseDate  "2023-12-09"
 #define MagickCacheAuthoritativeURL  "http://www.imagemagick.org"
 #define MagickCacheVersion MagickCachePackageName " " MagickCacheLibVersionText \
   MagickCacheLibAddendum " " MagickCacheReleaseDate " " MagickCacheAuthoritativeURL

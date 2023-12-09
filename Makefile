@@ -89,10 +89,8 @@ build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/m4/version.m4 $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/version.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
@@ -216,7 +214,7 @@ AUTOHEADER = ${SHELL} '/home/cristy/MagickCache/missing' autoheader
 AUTOMAKE = ${SHELL} '/home/cristy/MagickCache/missing' automake-1.16
 AWK = gawk
 CC = gcc
-CCDEPMODE = depmode=none
+CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = 
@@ -224,7 +222,7 @@ CSCOPE = cscope
 CTAGS = ctags
 CXX = g++
 CXXCPP = g++ -E
-CXXDEPMODE = depmode=none
+CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -256,7 +254,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAGICKCACHE_GIT_REVISION = 214:5fe47ac:20231209
+MAGICKCACHE_GIT_REVISION = 215:785c382:20231209
 MAGICKCACHE_LIBRARY_AGE = 0
 MAGICKCACHE_LIBRARY_CURRENT = 0
 MAGICKCACHE_LIBRARY_CURRENT_MIN = 0
@@ -271,8 +269,8 @@ MAGICKCACHE_MINOR_VERSION = 0
 MAGICKCACHE_PATCHLEVEL_VERSION = 1
 MAGICKCACHE_PCFLAGS = 
 MAGICKCACHE_VERSION = 1.0.0-1
-MAGICKCORE_CFLAGS = -I/usr/include/ImageMagick-7 -fopenmp -DMAGICKCORE_HDRI_ENABLE=1 -DMAGICKCORE_QUANTUM_DEPTH=16
-MAGICKCORE_LIBS = -lMagickCore-7.Q16HDRI
+MAGICKCORE_CFLAGS = -I/usr/local/include/ImageMagick-7 -fopenmp -DMAGICKCORE_HDRI_ENABLE=1 -DMAGICKCORE_QUANTUM_DEPTH=16 -DMAGICKCORE_CHANNEL_MASK_DEPTH=64
+MAGICKCORE_LIBS = -L/usr/local/lib -lMagickCore-7.Q16HDRI
 MAGICKPP_LIB_VERSION_TEXT = 1.0.0
 MAKEINFO = ${SHELL} '/home/cristy/MagickCache/missing' makeinfo
 MANIFEST_TOOL = :
@@ -290,7 +288,7 @@ PACKAGE_LIB_VERSION = 0x10A
 PACKAGE_LIB_VERSION_NUMBER = 1,0,0,1
 PACKAGE_NAME = MagickCache
 PACKAGE_PATCHLEVEL_VERSION = 1
-PACKAGE_RELEASE_DATE = 2023-12-09
+PACKAGE_RELEASE_DATE = 2023-12-05
 PACKAGE_STRING = MagickCache 1.0.0-1
 PACKAGE_TARNAME = MagickCache
 PACKAGE_URL = https://imagemagick.org
@@ -299,7 +297,7 @@ PACKAGE_VERSION_ADDENDUM = -1
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = 
+PKG_CONFIG_PATH = /usr/local//lib/pkgconfig
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 

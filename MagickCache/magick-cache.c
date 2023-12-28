@@ -1816,7 +1816,7 @@ MagickExport MagickBooleanType IsMagickCacheResourceExpired(MagickCache *cache,
   status=GetMagickCacheResource(cache,resource);
   if (status == MagickFalse)
     return(status);
-  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) <= time(0)))
+  if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) < time(0)))
     {
       errno=ESTALE;
       return(MagickTrue);

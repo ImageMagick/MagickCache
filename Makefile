@@ -14,6 +14,7 @@
 
 
 
+
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
     false; \
@@ -103,6 +104,35 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = config/configure.xml
 CONFIG_CLEAN_VPATH_FILES =
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(bindir)"
+SCRIPTS = $(bin_SCRIPTS)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -216,7 +246,7 @@ AUTOHEADER = ${SHELL} '/home/cristy/MagickCache/missing' autoheader
 AUTOMAKE = ${SHELL} '/home/cristy/MagickCache/missing' automake-1.16
 AWK = gawk
 CC = gcc
-CCDEPMODE = depmode=gcc3
+CCDEPMODE = depmode=none
 CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = 
@@ -224,7 +254,7 @@ CSCOPE = cscope
 CTAGS = ctags
 CXX = g++
 CXXCPP = g++ -E
-CXXDEPMODE = depmode=gcc3
+CXXDEPMODE = depmode=none
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -256,7 +286,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAGICKCACHE_GIT_REVISION = 217:9b8f8c0:20231223
+MAGICKCACHE_GIT_REVISION = 219:02f1301:20240106
 MAGICKCACHE_LIBRARY_AGE = 0
 MAGICKCACHE_LIBRARY_CURRENT = 0
 MAGICKCACHE_LIBRARY_CURRENT_MIN = 0
@@ -290,7 +320,7 @@ PACKAGE_LIB_VERSION = 0x10A
 PACKAGE_LIB_VERSION_NUMBER = 1,0,0,1
 PACKAGE_NAME = MagickCache
 PACKAGE_PATCHLEVEL_VERSION = 1
-PACKAGE_RELEASE_DATE = 2023-12-05
+PACKAGE_RELEASE_DATE = 2024-01-06
 PACKAGE_STRING = MagickCache 1.0.0-1
 PACKAGE_TARNAME = MagickCache
 PACKAGE_URL = https://imagemagick.org
@@ -374,9 +404,15 @@ TOP_EXTRA_DIST = \
 	SECURITY.md
 
 
+# Binary scripts
+bin_SCRIPTS = \
+  MagickCache/MagickCache-config
+
+
 # Additional files to distribute
 EXTRA_DIST = \
-	$(TOP_EXTRA_DIST)
+	$(TOP_EXTRA_DIST) \
+	MagickCache/MagickCache-config.in
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -432,6 +468,41 @@ distclean-hdr:
 	-rm -f config.h stamp-h1
 config/configure.xml: $(top_builddir)/config.status $(top_srcdir)/config/configure.xml.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
+install-binSCRIPTS: $(bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -742,9 +813,12 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile config.h
+all-am: Makefile $(SCRIPTS) config.h
 installdirs: installdirs-recursive
 installdirs-am:
+	for dir in "$(DESTDIR)$(bindir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -803,7 +877,7 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am:
+install-exec-am: install-binSCRIPTS
 
 install-html: install-html-recursive
 
@@ -843,7 +917,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-binSCRIPTS
 
 .MAKE: $(am__recursive_targets) all install-am install-strip
 
@@ -855,14 +929,15 @@ uninstall-am:
 	distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am
+	install-binSCRIPTS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-binSCRIPTS
 
 .PRECIOUS: Makefile
 

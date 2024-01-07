@@ -102,7 +102,7 @@ DIST_COMMON = $(srcdir)/Makefile.am $(noinst_HEADERS) \
 	$(pkginclude_HEADERS) $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = version.h MagickCache.pc
+CONFIG_CLEAN_FILES = version.h MagickCache.pc MagickCache-config
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -203,7 +203,8 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-am__DIST_COMMON = $(srcdir)/MagickCache.pc.in $(srcdir)/Makefile.in \
+am__DIST_COMMON = $(srcdir)/MagickCache-config.in \
+	$(srcdir)/MagickCache.pc.in $(srcdir)/Makefile.in \
 	$(srcdir)/version.h.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -417,6 +418,8 @@ $(am__aclocal_m4_deps):
 version.h: $(top_builddir)/config.status $(srcdir)/version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 MagickCache.pc: $(top_builddir)/config.status $(srcdir)/MagickCache.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+MagickCache-config: $(top_builddir)/config.status $(srcdir)/MagickCache-config.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)

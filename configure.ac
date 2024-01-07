@@ -164,6 +164,7 @@ AC_CONFIG_FILES([Makefile
                  MagickCache/Makefile
                  MagickCache/version.h
                  MagickCache/MagickCache.pc
+                 MagickCache/MagickCache-config
                  utilities/Makefile
                  utilities/magick-cache.1
                  tests/Makefile])

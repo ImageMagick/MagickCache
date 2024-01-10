@@ -6,7 +6,8 @@
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-export PKG_CONFIG_LIBDIR="${exec_prefix}/lib/pkgconfig"
+pkgconfigdir=@pkgconfigdir@
+export PKG_CONFIG_LIBDIR="${pkgconfigdir}"
 
 usage="\
 Usage: MagickCache-config [--cflags] [--cppflags] [--exec-prefix] [--ldflags] [--libs] [--prefix] [--version]"

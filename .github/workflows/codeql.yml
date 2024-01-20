@@ -50,6 +50,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Configure MagickCache
+      run: |
+        export CFLAGS="-Wno-deprecated-declarations"
+        ./configure
+        echo "" > config.status
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3

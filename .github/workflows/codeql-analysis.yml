@@ -9,33 +9,26 @@ jobs:
     name: 'Linux'
     runs-on: ubuntu-latest
 
+    permissions:
+      security-events: write
+
     strategy:
       fail-fast: false
+      matrix:
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 2
 
-    - name: Configure MagickCache
-      run: |
-        sudo apt update
-        sudo apt-get install build-essential
-        wget https://www.imagemagick.org/download/ImageMagick.tar.gz
-        tar xvzf ImageMagick.tar.gz
-        cd ImageMagick-7*
-        ./configure
-        make
-        sudo make install
-
-    - name: Configure MagickCache
+    - name: Configure ImageMagick
       run: |
         export CFLAGS="-Wno-deprecated-declarations"
         ./configure
         echo "" > config.status
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v3
       with:
         languages: cpp
 
@@ -44,4 +37,4 @@ jobs:
         make
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v3

@@ -26,14 +26,13 @@ m4_define([magickcache_lib_version_number],
           [magickcache_major_version,magickcache_minor_version,magickcache_micro_version,magickcache_patchlevel_version])
 m4_define([magickcache_git_revision],
           m4_esyscmd([
-            c=$(git log --full-history --format=tformat:. HEAD | wc -l)
             h=$(git rev-parse --short HEAD)
-            d=$(date +%Y%m%d)
-            printf %s "$c:$h:$d"
+            d=$(git log -1 --format=:%cd --date=format:%Y%m%d || date -u +%Y%m%d -r ./m4/version.m4)
+            printf %s "$h$d"
           ]))
 m4_define([magickcache_release_date],
           m4_esyscmd([
-            d=$(date +%F -r ./ChangeLog.md)
+            d=$(git log -1 --format=%cd --date=format:%Y-%m-%d || date -u +%F -r ./m4/version.m4)
             printf %s "$d"
           ]))
 

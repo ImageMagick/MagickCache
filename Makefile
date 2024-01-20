@@ -90,8 +90,10 @@ build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/version.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/version.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
@@ -244,7 +246,7 @@ AUTOHEADER = ${SHELL} '/home/cristy/MagickCache/missing' autoheader
 AUTOMAKE = ${SHELL} '/home/cristy/MagickCache/missing' automake-1.16
 AWK = gawk
 CC = gcc
-CCDEPMODE = depmode=gcc3
+CCDEPMODE = depmode=none
 CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = 
@@ -252,7 +254,7 @@ CSCOPE = cscope
 CTAGS = ctags
 CXX = g++
 CXXCPP = g++ -E
-CXXDEPMODE = depmode=gcc3
+CXXDEPMODE = depmode=none
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
@@ -284,7 +286,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAGICKCACHE_GIT_REVISION = 222:84a8c38:20240113
+MAGICKCACHE_GIT_REVISION = 226:110fcd9:20240120
 MAGICKCACHE_LIBRARY_AGE = 0
 MAGICKCACHE_LIBRARY_CURRENT = 0
 MAGICKCACHE_LIBRARY_CURRENT_MIN = 0

@@ -52,7 +52,7 @@ jobs:
 
     - name: Configure MagickCache
       run: |
-        export CFLAGS="-Wno-deprecated-declarations"
+        autoreconf --force --install
         ./configure
         echo "" > config.status
 

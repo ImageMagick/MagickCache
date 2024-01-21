@@ -1,5 +1,8 @@
 # MagickCache: an Efficient Digital Media Repository
 
+[![Build Status](https://github.com/ImageMagick/ImageMagick/workflows/main/badge.svg)](https://github.com/ImageMagick/MagickCache/actions)
+[![Donate](https://img.shields.io/badge/%24-donate-ff00ff.svg)](https://github.com/sponsors/ImageMagick)
+
 MagickCache is an advanced toolset that guarantees secure caching of images, image sequences, videos, audio, or metadata within a local folder. The content is memory-mapped to ensure fast and efficient retrieval, and retrieving a portion of an image further enhances its efficiency. You have the flexibility to choose whether the content should persist or have a specified time-to-live (TTL) to automatically expire when the TTL is exceeded. MagickCache has the ability to support virtually an unlimited amount of content, up to billions of images, videos, metadata, or blobs, making it ideal for use as a digital media repository.
 
 The MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download the [MagickCache](https://github.com/ImageMagick/MagickCache) and install. You will now want to create the cache and populate it with images, video, audio, and any associated metadata.

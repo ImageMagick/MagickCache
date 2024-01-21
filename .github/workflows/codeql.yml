@@ -52,7 +52,9 @@ jobs:
 
     - name: Configure MagickCache
       run: |
+        wget 'https://dist.1-2.dev/imei.sh' -qO imv7.sh && sudo bash imv7.sh
         autoreconf --force --install
+        export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
         ./configure
         echo "" > config.status
 

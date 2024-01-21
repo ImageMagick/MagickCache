@@ -52,6 +52,7 @@ jobs:
 
     - name: Configure MagickCache
       run: |
+        sudo dpkg --purge --force-all imagemagick
         wget 'https://dist.1-2.dev/imei.sh' -qO imv7.sh && sudo bash imv7.sh
         autoreconf --force --install
         export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig

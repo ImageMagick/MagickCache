@@ -6,7 +6,6 @@ SUBDIRS = \
           tests
 
 TOP_EXTRA_DIST = \
-	ChangeLog.md \
 	INSTALL.md \
 	LICENSE \
 	README.md \

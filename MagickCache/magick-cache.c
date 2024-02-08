@@ -1770,10 +1770,12 @@ MagickExport MagickBooleanType IdentifyMagickCacheResource(MagickCache *cache,
   expired=' ';
   if ((resource->ttl != 0) && ((resource->timestamp+resource->ttl) < time(0)))
     expired='*';
-  (void) fprintf(file,"%s%s %s %g:%g:%g:%g%c %s\n",GetMagickCacheResourceIRI(
-    resource),size,extent,(double) (resource->ttl/(3600*24)),(double)
-    ((resource->ttl % (24*3600))/3600),(double) ((resource->ttl % 3600)/60),
-    (double) ((resource->ttl % 3600) % 60),expired,iso8601);
+  (void) fprintf(file,"%s%s %s %g:%02g:%02g:%02g%c %s\n",
+    GetMagickCacheResourceIRI(resource),size,extent,
+    ceil((double) (resource->ttl/(3600*24))),
+    ceil((double) ((resource->ttl % (24*3600))/3600)),
+    ceil((double) ((resource->ttl % 3600)/60)),
+    ceil((double) ((resource->ttl % 3600) % 60)),expired,iso8601);
   path=DestroyString(path);
   return(status);
 }

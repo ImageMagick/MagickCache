@@ -496,7 +496,7 @@ static StringInfo *SetMagickCacheSentinel(const char *path,
     signature;
 
   /*
-    Create a MagickCache sentiinel.
+    Create a MagickCache sentinel.
   */
   sentinel=AcquireStringInfo(MagickPathExtent);
   random_info=AcquireRandomInfo();

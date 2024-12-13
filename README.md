@@ -34,15 +34,15 @@ Once the MagickCache is created, you will want to populate the cache with conten
 Let's add a movie cast image to our newly created digital media repository:</p>
 
 ```
-$ magick-cache put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
+$ magick-cache put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20240508-rebecca-ferguson.jpg
 ```
 
-Note that the image identifier is an IRI comprising the _project/type/resource-path_ components. In the given example, _project_ is movies, _type_ is image, and _resource-path_ is `mission-impossible/cast/rebecca-ferguson`, which serves as a unique identifier for the cached resource. It is important to ensure that two different images are stored using unique resource paths to prevent overwriting. If you need to store multiple versions of an image, consider using a distinct identifier such as `mission-impossible/cast/20210508-rebecca-ferguson-1` and `mission-impossible/cast/20210508-rebecca-ferguson-2`.
+Note that the image identifier is an IRI comprising the _project/type/resource-path_ components. In the given example, _project_ is movies, _type_ is image, and _resource-path_ is `mission-impossible/cast/rebecca-ferguson`, which serves as a unique identifier for the cached resource. It is important to ensure that two different images are stored using unique resource paths to prevent overwriting. If you need to store multiple versions of an image, consider using a distinct identifier such as `mission-impossible/cast/20240508-rebecca-ferguson-1` and `mission-impossible/cast/20240508-rebecca-ferguson-2`.
 
 Now, let's set a resource passkey and the time to live to 2 days:
 
 ```
-$ magick-cache -passkey ~/.passkey -ttl "2 days" put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
+$ magick-cache -passkey ~/.passkey -ttl "2 days" put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20240508-rebecca-ferguson.jpg
 ```
 
 Where `~/.passkey` contains your resource key. Don't lose your resource passkey.  Without it, you will be unable to get, identify, delete, or expire resources you created.
@@ -52,7 +52,7 @@ Anytime after the second day, the image is automatically deleted with the `expir
 The resource passkey ensures only you and the cache owner can access your image.  To prevent the cache owner from viewing its content, scramble it with a passphrase:
 
 ```
-$ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase -ttl "2 days" put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.jpg
+$ magick-cache -passkey ~/.passkey -passphrase ~/.passphrase -ttl "2 days" put /opt/dmr movies/image/mission-impossible/cast/rebecca-ferguson 20240508-rebecca-ferguson.jpg
 ```
 
 You will need the same passphrase when you retrieve the image to restore it back to its original form.
@@ -107,7 +107,7 @@ Perhaps you want to identify all the content you own:
 
 ```
 $ magick-cache -passkey ~/.passkey identify /opt/dmr movies/image/mission-impossible/cast
-movies/image/mission-impossible/cast/rebecca-ferguson[1368x912] 406B  1:0:0:0 2021-05-30T17:41:42Z
+movies/image/mission-impossible/cast/rebecca-ferguson[1368x912] 406B  1:0:0:0 2024-05-30T17:41:42Z
 identified 1 resources
 ```
 
@@ -137,13 +137,13 @@ Note, expired resources are annotated with an asterisks.
 In addition to a type of image, you can store the image content in its original form, video, or audio as content type of `blob` or metadata with a content type of `meta`:
 
 ```
-$ magick-cache -passkey ~/.passkey put /opt/dmr movies/blob/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.mp4
+$ magick-cache -passkey ~/.passkey put /opt/dmr movies/blob/mission-impossible/cast/rebecca-ferguson 20240508-rebecca-ferguson.mp4
 ```
 
 or
 
 ```
-$ magick-cache -passkey ~/.passkey put /opt/dmr movies/meta/mission-impossible/cast/rebecca-ferguson 20210508-rebecca-ferguson.txt
+$ magick-cache -passkey ~/.passkey put /opt/dmr movies/meta/mission-impossible/cast/rebecca-ferguson 20240508-rebecca-ferguson.txt
 ```
 
 Images must be in a format that ImageMagick [supports](https://imagemagick.org/script/formats.php).  Metadata should be text.  Blobs can be any content, text or binary, including metadata or images, video, audio, or binary files.

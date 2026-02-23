@@ -40,6 +40,12 @@ extern "C" {
 #endif
 #endif
 
+#if defined(MAGICKCORE_WINDOWS_SUPPORT) && !defined(__CYGWIN__)
+#define close_utf8 _close
+#else
+#define close_utf8 close
+#endif
+
 static inline unsigned int CRC32(const unsigned char *message,
   const size_t length)
 {

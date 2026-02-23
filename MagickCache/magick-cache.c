@@ -1125,7 +1125,7 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
   if (resource->blob != NULL)
     {
       resource->memory_mapped=MagickTrue;
-      file=close(file)-1;
+      file=close_utf8(file)-1;
       return(MagickTrue);
     }
   resource->blob=AcquireMagickMemory(resource->extent);
@@ -1147,13 +1147,13 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
   }
   if (i < (ssize_t) resource->extent)
     {
-      file=close(file)-1;
+      file=close_utf8(file)-1;
       resource->blob=RelinquishMagickMemory(resource->blob);
       (void) ThrowMagickException(resource->exception,GetMagickModule(),
         CacheError,"cannot get resource","`%s'",resource->iri);
       return(MagickFalse);
     }
-  if (close(file) == -1)
+  if (close_utf8(file) == -1)
     {
       resource->blob=RelinquishMagickMemory(resource->blob);
       (void) ThrowMagickException(resource->exception,GetMagickModule(),

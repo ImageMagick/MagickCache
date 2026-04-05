@@ -1,0 +1,81 @@
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: 0 6 * * *
+  push:
+    branches:
+    - main
+    paths:
+    - .github/workflows/codeql-analysis.yml
+
+permissions: {}
+
+name: Codeql analysis
+jobs:
+  c_cpp:
+    name: CodeQL analysis (MagickCache)
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          sudo tee /etc/apt/sources.list.d/plucky.list << EOF
+          deb http://de.archive.ubuntu.com/ubuntu plucky main universe
+          EOF
+
+          sudo tee /etc/apt/preferences.d/pin-plucky << EOF
+          Package: *
+          Pin: release n=plucky
+          Pin-Priority: 100
+          EOF
+
+          sudo apt update
+          sudo apt install -t plucky libmagickcore-dev
+
+      - name: Configure MagickCache
+        run: |
+          autoreconf -fiv
+          ./configure
+          echo "" > config.status
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@0d579ffd059c29b07949a3cce3983f0780820c98 #v4.32.6
+        with:
+          languages: c-cpp
+
+      - name: Build MagickCache
+        run: |
+          make
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@0d579ffd059c29b07949a3cce3983f0780820c98 #v4.32.6
+
+  actions:
+    name: CodeQL analysis (GitHub Actions)
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@0d579ffd059c29b07949a3cce3983f0780820c98 #v4.32.6
+        with:
+          languages: actions
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@0d579ffd059c29b07949a3cce3983f0780820c98 #v4.32.6

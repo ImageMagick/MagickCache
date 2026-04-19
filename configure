@@ -2835,8 +2835,8 @@ ac_cxx_conftest_cxx11_main='
 }
 {
   // Unicode literals
-  char const *utf8 = u8"UTF-8 string \u2500";
-  char16_t const *utf16 = u"UTF-8 string \u2500";
+  auto const *utf8 = u8"UTF-8 string \u2500";
+  char16_t const *utf16 = u"UTF-16 string \u2500";
   char32_t const *utf32 = U"UTF-32 string \u2500";
 }
 '
@@ -4147,7 +4147,7 @@ MAGICKCACHE_PATCHLEVEL_VERSION=1
 
 MAGICKCACHE_VERSION=1.0.0-1
 
-MAGICKCACHE_GIT_REVISION=96454f3:20250615
+MAGICKCACHE_GIT_REVISION=0e23bc9:20251213
 
 
 # Substitute library versioning
@@ -4169,7 +4169,7 @@ PACKAGE_LIB_VERSION=0x10A
 
 PACKAGE_LIB_VERSION_NUMBER=1,0,0,1
 
-PACKAGE_RELEASE_DATE=2025-06-15
+PACKAGE_RELEASE_DATE=2025-12-13
 
 
 # versioning of library

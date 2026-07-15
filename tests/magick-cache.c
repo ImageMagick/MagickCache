@@ -458,7 +458,7 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
     Unit tests accounting.
   */
   (void) FormatLocaleFile(stdout,
-    "validation suite: %.20g tests; %.20g passed; %.20g failed.\n",(double)
+    "validation suite: %.17g tests; %.17g passed; %.17g failed.\n",(double)
      tests,(double) (tests-fail),(double) fail);
   return(fail == 0 ? MagickTrue : MagickFalse);
 }

@@ -5,7 +5,7 @@
 
 ![MagickCache](MagickCache.png)
 
-MagickCache is a free and open-source high-performance repository for securely storing images, image sequences, video, audio, metadata, and arbitrary binary content. Resources are memory-mapped for fast access, and image retrieval can be limited to a specific region for additional efficiency.
+MagickCache is a free and [open-source](https://imagemagick.org/script/license.php) high-performance repository for securely storing images, image sequences, video, audio, metadata, and arbitrary binary content. Resources are memory-mapped for fast access, and image retrieval can be limited to a specific region for additional efficiency.
 
 Resources may be stored permanently or assigned a time-to-live (TTL), after which they can be automatically expire. A single MagickCache repository can scale to billions of resources, making it suitable for digital media archiving, asset management, and content delivery workloads.
 

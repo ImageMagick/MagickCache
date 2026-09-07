@@ -3,6 +3,8 @@
 [![Build Status](https://github.com/ImageMagick/ImageMagick/workflows/main/badge.svg)](https://github.com/ImageMagick/MagickCache/actions)
 [![Donate](https://img.shields.io/badge/%24-donate-ff00ff.svg)](https://github.com/sponsors/ImageMagick)
 
+![MagickCache](MagickCache.png)
+
 MagickCache is a high-performance repository for securely storing images, image sequences, video, audio, metadata, and arbitrary binary content. Resources are memory-mapped for fast access, and image retrieval can be limited to a specific region for additional efficiency.
 
 Resources may be stored permanently or assigned a time-to-live (TTL), after which they can be automatically expire. A single MagickCache repository can scale to billions of resources, making it suitable for digital media archiving, asset management, and content delivery workloads.

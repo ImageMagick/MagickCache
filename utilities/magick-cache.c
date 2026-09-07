@@ -439,47 +439,47 @@ static MagickBooleanType MagickCacheCLI(int argc,char **argv,
             Identify one or more resources in the cache repository.
           */
           ssize_t count = 0;
-          MagickCacheResource *resource = AcquireMagickCacheResource(cache,iri);
-          MagickCacheResourceType type = GetMagickCacheResourceType(resource);
-          resource=DestroyMagickCacheResource(resource);
-          if (type != WildResourceType)
+          MagickCacheResource *resources = AcquireMagickCacheResource(cache,iri);
+          MagickCacheResourceType types = GetMagickCacheResourceType(resources);
+          resources=DestroyMagickCacheResource(resources);
+          if (types != WildResourceType)
             status=IterateMagickCacheResources(cache,iri,&count,
               IdentifyResources);
           else
             {
               char *clone_iri = AcquireString(iri);
               (void) SubstituteString(&clone_iri,"/*/","/image/");      
-              resource=AcquireMagickCacheResource(cache,clone_iri);
-              if (resource != (MagickCacheResource *) NULL)
+              resources=AcquireMagickCacheResource(cache,clone_iri);
+              if (resources != (MagickCacheResource *) NULL)
                 {
                   status=IterateMagickCacheResources(cache,clone_iri,&count,
                     IdentifyResources);
-                  resource=DestroyMagickCacheResource(resource);
+                  resources=DestroyMagickCacheResource(resources);
                 }
               (void) SubstituteString(&clone_iri,"/image/","/blob/");      
-              resource=AcquireMagickCacheResource(cache,clone_iri);
-              if (resource != (MagickCacheResource *) NULL)
+              resources=AcquireMagickCacheResource(cache,clone_iri);
+              if (resources != (MagickCacheResource *) NULL)
                 {
                   status=IterateMagickCacheResources(cache,clone_iri,&count,
                     IdentifyResources);
-                  resource=DestroyMagickCacheResource(resource);
+                  resources=DestroyMagickCacheResource(resources);
                 }
               (void) SubstituteString(&clone_iri,"/blob/","/meta/");      
-              resource=AcquireMagickCacheResource(cache,clone_iri);
-              if (resource != (MagickCacheResource *) NULL)
+              resources=AcquireMagickCacheResource(cache,clone_iri);
+              if (resources != (MagickCacheResource *) NULL)
                 {
                   status=IterateMagickCacheResources(cache,clone_iri,&count,
                     IdentifyResources);
-                  resource=DestroyMagickCacheResource(resource);
+                  resources=DestroyMagickCacheResource(resources);
                 }
               clone_iri=DestroyString(clone_iri);
             }
-          (void) fprintf(stderr,"identified %g resources\n",(double) count);
+          (void) fprintf(stderr,"identified %g resourcess\n",(double) count);
           if (status == MagickFalse)
             {
               (void) ThrowMagickException(exception,GetMagickModule(),
-                OptionError,"unable to identify resource","`%s'",filename);
-              ThrowMagickCacheResourceException(cache,resource);
+                OptionError,"unable to identify resources","`%s'",filename);
+              ThrowMagickCacheResourceException(cache,resources);
             }
           break;
         }

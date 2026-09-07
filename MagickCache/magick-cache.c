@@ -455,7 +455,7 @@ MagickExport size_t GetMagickCacheResourceExtent(
 %                                                                             %
 %   C r e a t e M a g i c k C a c h e                                         %
 %                                                                             %
-%                                                                             % %                                                                             %
+%                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  CreateMagickCache() creates a MagickCache repository suitably prepared for
@@ -1133,9 +1133,6 @@ static MagickBooleanType ResourceToBlob(MagickCacheResource *resource,
     return(MagickFalse);
   for (i=0; i < (ssize_t) resource->extent; i+=count)
   {
-    ssize_t
-      count;
-
     count=read(file,(unsigned char *) resource->blob+i,(size_t)
       MagickCacheMin(resource->extent-(size_t) i,(size_t) SSIZE_MAX));
     if (count <= 0)
@@ -2311,6 +2308,7 @@ MagickExport MagickBooleanType SetMagickCacheResourceIRI(MagickCache *cache,
   */
   assert(resource != (MagickCacheResource *) NULL);
   assert(resource->signature == MagickCoreSignature);
+  (void) cache;
   if (resource->iri != (char *) NULL)
     resource->iri=DestroyString(resource->iri);
   resource->iri=ConstantString(iri);

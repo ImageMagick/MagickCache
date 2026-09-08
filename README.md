@@ -9,7 +9,7 @@ MagickCache is a free and [open-source](https://imagemagick.org/script/license.p
 
 Resources may be stored permanently or assigned a time-to-live (TTL), after which they can be automatically expire. A single MagickCache repository can scale to billions of resources, making it suitable for digital media archiving, asset management, and content delivery workloads.
 
-MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download and install [MagickCache](https://github.com/ImageMagick/MagickCache), then create and populate a repository with your media and metadata.
+MagickCache works in concert with [ImageMagick](https://imagemagick.org). Download and install [MagickCache](https://github.com/ImageMagick/MagickCache), then create and populate a repository with your media and metadata. MagickCache is available as both a command-line utility and a C API.
 
 ## Create a Digital Media Repository
 

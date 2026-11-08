@@ -14,7 +14,7 @@ name: Codeql analysis
 jobs:
   c_cpp:
     name: CodeQL analysis (MagickCache)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     permissions:
       contents: read
@@ -28,18 +28,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo tee /etc/apt/sources.list.d/plucky.list << EOF
-          deb http://de.archive.ubuntu.com/ubuntu plucky main universe
-          EOF
-
-          sudo tee /etc/apt/preferences.d/pin-plucky << EOF
-          Package: *
-          Pin: release n=plucky
-          Pin-Priority: 100
-          EOF
-
           sudo apt update
-          sudo apt install -t plucky libmagickcore-dev
+          sudo apt install libmagickcore-dev
 
       - name: Configure MagickCache
         run: |
